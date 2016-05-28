@@ -6,26 +6,30 @@
 <div class="container">
 <h2>Willst Du eine neue Geschichte starten?</h2>
 <a href="{% url 'new_story' %}">Neue Geschichte starten</a><p/>
-<h2>Deine Geschichten</h2>
-{% if my_stories %}
+<h2>Laufende Geschichten</h2>
+{% if running_stories %}
   <ul>
-	  {% for s in my_stories %}
+	  {% for s in running_stories %}
 	    <li>
 			Geschichte Nr. {{ s.id }} (gestartet von {{ s.started_by.username }}):
-			<a href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
+			{% if s.waiting_for = user %}
+			  <a href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
+			{% else %}
+			  wartet auf {{ s.waiting_for }}...
+			{% endif  %}
 	     </li>
 	  {% endfor %}
   </ul>
 {% else %}
-<p>Es gibt gerade keine Geschichten, die Du fortsetzen kannst.</p>
+<p>Es gibt gerade keine laufenden Geschichten.</p>
 {% endif %}
 <h2>Beendete Geschichten </h2>
 {% if finished_stories %}
   <ul>
 	  {% for f in finished_stories %}
 	    <li>
-			Geschichte Nr. {{ s.id }}, gestartet von {{ s.started_by.username }}<p/>
-			<a href="{% url 'show_story' story_id=s.id %}">Geschichte anzeigen</a><p/>
+			Geschichte Nr. {{ s.id }}, gestartet von {{ s.started_by.username }}:
+			<a href="{% url 'show_story' story_id=s.id %}">lesen</a><p/>
 		<li>
 	  {% endfor %}
   </ul>

@@ -118,10 +118,12 @@ def show_story(request, story_id):
 
 @login_required
 def overview(request):
-    my_stories = Story.objects.all()
+    running_stories = Story.objects.filter(is_finished = False)
+    finished_stories = Story.objects.filter(is_finished = True)
     context = {
         'username': request.user.username,
-        'my_stories': my_stories
+        'running_stories': running_stories,
+        'finished_stories': finished_stories,
     }
     return render(request, 'umklapp/overview.html', context)
 
