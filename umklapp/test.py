@@ -14,39 +14,46 @@ class UmklappTestCase(TestCase):
             )
             self.users.append(u)
 
+    def stdStory(self):
+        return Story.create_new_story(startUser=self.users[0],
+                                      participating_users=self.users,
+                                      first_sentence="first",
+                                      title="foo")
+
+
 class NewStoryTest(UmklappTestCase):
     def setUp(self):
         self.addUsers()
 
     def testNewStory(self):
-        Story.create_new_story(self.users[0], self.users, "first")
+        self.stdStory()
 
 class ContinueStoryTest(UmklappTestCase):
     def setUp(self):
         self.addUsers()
 
     def testContinueStory(self):
-        s = Story.create_new_story(self.users[0], self.users[1:], "first")
+        s = self.stdStory()
         self.assertEquals(1, s.whose_turn)
         s.continue_story("second")
         self.assertEquals(2, s.whose_turn)
 
     def testLatestStoryPart1(self):
-        s = Story.create_new_story(self.users[0], self.users[1:], "first")
+        s = self.stdStory()
         latest = s.latest_story_part()
         self.assertEquals(0, latest.position)
 
     def testLatestStoryPart2(self):
-        s = Story.create_new_story(self.users[0], self.users[1:], "first")
+        s = self.stdStory()
         s.continue_story("second")
         latest = s.latest_story_part()
         self.assertEquals(1, latest.position)
 
     def testWaitingFor(self):
-        s = Story.create_new_story(self.users[0], self.users[1:], "first")
+        s = self.stdStory()
         self.assertEquals(s.waiting_for(), self.users[1])
 
     def testFinish(self):
-        s = Story.create_new_story(self.users[0], self.users[1:], "first")
+        s = self.stdStory()
         s.finish()
         self.assertTrue(s.is_finished)
