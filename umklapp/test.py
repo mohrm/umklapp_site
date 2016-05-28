@@ -29,3 +29,13 @@ class ContinueStoryTest(UmklappTestCase):
         s = Story.create_new_story(self.users[0], self.users, "first")
         s.continue_story("second")
 
+    def testLatestStoryPart1(self):
+        s = Story.create_new_story(self.users[0], self.users, "first")
+        latest = s.latest_story_part()
+        self.assertEquals(0, latest.position)
+
+    def testLatestStoryPart2(self):
+        s = Story.create_new_story(self.users[0], self.users, "first")
+        s.continue_story("second")
+        latest = s.latest_story_part()
+        self.assertEquals(1, latest.position)
