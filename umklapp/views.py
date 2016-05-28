@@ -8,6 +8,7 @@ from django.contrib.auth import logout
 from django.forms import Form, CharField, TextInput, MultipleChoiceField
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from random import shuffle
 
 
 
@@ -43,6 +44,7 @@ def start_new_story(request):
         form.set_choices(request.user)
         if form.is_valid():
             users = [ User.objects.get(pk=uid) for uid in form.cleaned_data['mitspieler'] ]
+            shuffle(users)
             s = Story.create_new_story(
                 startUser = request.user,
                 first_sentence = form.cleaned_data['firstSentence'],
