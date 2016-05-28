@@ -27,7 +27,9 @@ class ContinueStoryTest(UmklappTestCase):
 
     def testContinueStory(self):
         s = Story.create_new_story(self.users[0], self.users, "first")
+        self.assertEquals(1, s.whose_turn)
         s.continue_story("second")
+        self.assertEquals(2, s.whose_turn)
 
     def testLatestStoryPart1(self):
         s = Story.create_new_story(self.users[0], self.users, "first")
