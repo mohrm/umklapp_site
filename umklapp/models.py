@@ -29,6 +29,11 @@ class Story(models.Model):
             t.save()
         return s
 
+    def waiting_for(self):
+        if not self.is_finished:
+            return Teller.objects.get(corresponding_story=self,position=self.whose_turn).user
+        else:
+            return None
 
     def continue_story(self, text):
         myparts = StoryPart.objects.filter(teller__corresponding_story=self)

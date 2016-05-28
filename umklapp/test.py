@@ -41,3 +41,7 @@ class ContinueStoryTest(UmklappTestCase):
         s.continue_story("second")
         latest = s.latest_story_part()
         self.assertEquals(1, latest.position)
+
+    def testWaitingFor(self):
+        s = Story.create_new_story(self.users[0], self.users[1:], "first")
+        self.assertEquals(s.waiting_for(), self.users[1])
