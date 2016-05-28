@@ -33,18 +33,23 @@ class Story(models.Model):
             t.save()
         return s
 
-    def waiting_for(self):
+    def waiting_for_teller(self):
         if not self.is_finished:
-            return Teller.objects.get(corresponding_story=self,position=self.whose_turn).user
+            return Teller.objects.get(corresponding_story=self,position=self.whose_turn)
+        else:
+            return None
+
+    def waiting_for(self):
+        teller = self.waiting_for_teller()
+        if teller:
+            return teller.user
         else:
             return None
 
     def continue_story(self, text):
         last_part = self.latest_story_part()
         nextPos = last_part.position + 1
-        nextTeller = Teller.objects.get(corresponding_story=self,
-                                        position=nextPos % self.tellers.count())
-        newPart = StoryPart(teller=nextTeller, content=text, position=nextPos)
+        newPart = StoryPart(teller=self.waiting_for_teller(), content=text, position=nextPos)
         newPart.save()
         self.advance_teller()
 

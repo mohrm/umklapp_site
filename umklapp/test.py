@@ -35,8 +35,10 @@ class ContinueStoryTest(UmklappTestCase):
     def testContinueStory(self):
         s = self.stdStory()
         self.assertEquals(1, s.whose_turn)
+        self.assertEquals(self.users[1], s.waiting_for())
         s.continue_story("second")
         self.assertEquals(2, s.whose_turn)
+        self.assertEquals(self.users[2], s.waiting_for())
 
     def testLatestStoryPart1(self):
         s = self.stdStory()
@@ -48,6 +50,12 @@ class ContinueStoryTest(UmklappTestCase):
         s.continue_story("second")
         latest = s.latest_story_part()
         self.assertEquals(1, latest.position)
+
+    def testLatestStoryPart3(self):
+        s = self.stdStory()
+        s.continue_story("second")
+        latest = s.latest_story_part()
+        self.assertEquals(self.users[1], latest.teller.user)
 
     def testWaitingFor(self):
         s = self.stdStory()
