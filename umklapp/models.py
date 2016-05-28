@@ -62,6 +62,8 @@ class Story(models.Model):
     def latest_story_part(self):
         return self.parts().last()
 
+    def __unicode__(self):
+        return self.title
 
 
 class StoryPart(models.Model):
