@@ -112,9 +112,12 @@ def story_continued(request, story_id):
     s = Story.objects.get(id=story_id)
     s.continue_story("text")
 
-
 def show_story(request, story_id):
-    return HttpResponse('Fertige Geschichte Nr. ' + story_id + ' anzeigen')
+    s = get_object_or_404(Story.objects, id=story_id)
+    context = {
+        'story': s,
+    }
+    return render(request, 'umklapp/show_story.html', context)
 
 @login_required
 def overview(request):
