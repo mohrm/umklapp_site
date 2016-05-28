@@ -16,7 +16,7 @@ class UmklappTestCase(TestCase):
 
     def stdStory(self):
         return Story.create_new_story(startUser=self.users[0],
-                                      participating_users=self.users,
+                                      participating_users=self.users[1:],
                                       first_sentence="first",
                                       title="foo")
 
