@@ -122,7 +122,7 @@ body {
    {% if user.is_authenticated %}
     <div class="navbar-right">
      <p class="navbar-text">
-      Hallo <a href="{% url 'stats' %}" class="navbar-link">{{user}}</a>!
+      Hallo {{user}}!
      </p>
     </div>
    {% else %}

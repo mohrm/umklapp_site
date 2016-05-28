@@ -1,3 +1,9 @@
+{% extends "umklapp/base.html" %}
+{% load bootstrap %}
+{% block title %}Neue Geschichte starten{% endblock %}
+
+{% block content %}
+<div class="container">
 <h1>Hallo {{ username }} </h1>
 <a href="{% url 'auth_logout' %}">Abmelden</a>
 <h1>Willst Du eine neue Geschichte starten?</h1>
@@ -31,5 +37,5 @@
 {% else %}
 <p>Es gibt gerade keine fertigen Geschichten.</p>
 {% endif %}
-
-
+</div>
+{% endblock %}

@@ -15,13 +15,12 @@ class Story(models.Model):
     tellers = models.ManyToManyField('Teller', related_name="tellers")
 
     def continue_story(self, text):
-        myparts = StoryPart.objects.filter(owning_story=self)
+        myparts = StoryPart.objects.filter(teller__corresponding_story=self)
         if (not myparts):
             nextPos = 0
         else:
             nextPos = max([part.position for part in myparts])
-        newPart = StoryPart(author=self.whose_turn, owning_story=self,
-                            position=nextPos,content=text)
+        newPart = StoryPart(teller=self.whose_turn, position=nextPos,content=text)
         newPart.save()
         self.advance_teller()
 
@@ -32,7 +31,6 @@ class Story(models.Model):
 
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE)
-    owning_story = models.ForeignKey(Story, on_delete=models.CASCADE)
     content = models.CharField(max_length=256)
 
 
