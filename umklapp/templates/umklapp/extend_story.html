@@ -1,0 +1,21 @@
+{% extends "umklapp/base.html" %}
+{% load bootstrap %}
+{% block title %}Geschichte weiterschreiben{% endblock %}
+
+
+{% block content %}
+<div class="container">
+<p>
+Was bisher geschah:
+<blockquote>
+{{ story.latest_story_part }}
+</blockquote>
+</p>
+
+<form method="post" action="">
+  {% csrf_token %}
+  {{ form|bootstrap }}
+  <button type="submit" class="btn btn-default">Geschichte starten</button>
+</form>
+</div>
+{% endblock %}

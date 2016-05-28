@@ -1,12 +1,14 @@
 # encoding: utf-8
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Story
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.forms import Form, CharField, TextInput, MultipleChoiceField
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
+
 
 
 def index(request):
@@ -41,12 +43,12 @@ def start_new_story(request):
         form.set_choices(request.user)
         if form.is_valid():
             users = [ User.objects.get(pk=uid) for uid in form.cleaned_data['mitspieler'] ]
-            Story.create_new_story(
+            s = Story.create_new_story(
                 startUser = request.user,
                 first_sentence = form.cleaned_data['firstSentence'],
                 participating_users = users
                 )
-            messages.success(request, u"Spiel gestartet")
+            messages.success(request, u"Spiel %s gestartet" % str(s))
             return redirect('overview')
     else:
         form = NewStoryForm()
@@ -57,8 +59,36 @@ def start_new_story(request):
     }
     return render(request, 'umklapp/start_story.html', context)
 
+class ExtendStoryForm(Form):
+    nextSentence = CharField(
+        label = "Wie soll die Geschichte weitergehen?",
+        widget = TextInput(attrs={'placeholder': 'und dann...'}),
+        )
+
+class NotYourTurnException(Exception):
+    pass
+
+
 def continue_story(request, story_id):
-    return HttpResponse('Geschichte Nr. ' + story_id + ' fortsetzen')
+    s = get_object_or_404(Story.objects, id=story_id)
+    t = get_object_or_404(s.tellers, user=request.user)
+
+    if s.whose_turn != t.position:
+        raise NotYourTurnException
+
+    if request.method == 'POST':
+        form = ExtendStoryForm(request.POST)
+        if form.is_valid():
+            s.continue_story(form.cleaned_data['nextSentence'])
+            messages.success(request, u"Spiel %s weitergeführt" % str(s))
+            return redirect('overview')
+    else:
+        form = ExtendStoryForm()
+    context = {
+        'story': s,
+        'form': form
+    }
+    return render(request, 'umklapp/extend_story.html', context)
 
 def story_continued(request, story_id):
     s = Story.objects.get(id=story_id)
