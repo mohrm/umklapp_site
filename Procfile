@@ -1,1 +1,1 @@
-web: ./manage.py runserver --log-file -
+web: gunicorn umklapp_site.wsgi --log-file -
