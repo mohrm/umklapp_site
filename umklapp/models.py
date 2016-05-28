@@ -11,6 +11,7 @@ class Teller(models.Model):
 
 class Story(models.Model):
     started_by = models.ForeignKey(User, related_name="started_by", on_delete=models.CASCADE)
+    title = models.CharField(max_length=256)
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
 
@@ -55,11 +56,10 @@ class Story(models.Model):
         self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
         self.save()
 
-    def parts(self):
-        return StoryPart.objects.filter(teller__corresponding_story=self)
-
     def latest_story_part(self):
-        return self.parts().last()
+        myparts = StoryPart.objects.filter(teller__corresponding_story=self).order_by('position').reverse()
+        return myparts[0]
+
 
 
 class StoryPart(models.Model):
@@ -67,6 +67,5 @@ class StoryPart(models.Model):
     position = models.IntegerField()
     content = models.CharField(max_length=256)
 
-    class Meta:
-        ordering = ['position']
+
 
