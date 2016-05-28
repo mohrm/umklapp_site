@@ -40,11 +40,8 @@ class Story(models.Model):
             return None
 
     def continue_story(self, text):
-        myparts = StoryPart.objects.filter(teller__corresponding_story=self)
-        if (not myparts):
-            nextPos = 0
-        else:
-            nextPos = max([part.teller.position for part in myparts]) + 1
+        last_part = self.latest_story_part()
+        nextPos = last_part.position + 1
         nextTeller = Teller.objects.get(corresponding_story=self,
                                         position=nextPos % self.tellers.count())
         newPart = StoryPart(teller=nextTeller, content=text, position=nextPos)
