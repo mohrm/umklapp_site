@@ -11,6 +11,10 @@ from django.core.exceptions import PermissionDenied
 from random import shuffle
 
 class NewStoryForm(Form):
+    title = CharField(
+        label = "Wie soll die Geschichte heißen?",
+        widget = TextInput(attrs={'placeholder': 'Das Märchen von der Fabel'}),
+        )
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
         widget = TextInput(attrs={'placeholder': 'Es war einmal…'}),
@@ -39,6 +43,7 @@ def start_new_story(request):
             users = [ User.objects.get(pk=uid) for uid in form.cleaned_data['mitspieler'] ]
             shuffle(users)
             s = Story.create_new_story(
+                title = form.cleaned_data['title'],
                 startUser = request.user,
                 first_sentence = form.cleaned_data['firstSentence'],
                 participating_users = users
