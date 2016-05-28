@@ -48,7 +48,7 @@ def start_new_story(request):
                 first_sentence = form.cleaned_data['firstSentence'],
                 participating_users = users
                 )
-            messages.success(request, u"Spiel %s gestartet" % str(s))
+            messages.success(request, u"Geschichte „%s“ gestartet" % s.title)
             return redirect('overview')
     else:
         form = NewStoryForm()
@@ -97,11 +97,11 @@ def continue_story(request, story_id):
                 if form.cleaned_data['nextSentence']:
                     s.continue_story(form.cleaned_data['nextSentence'])
                 s.finish()
-                messages.success(request, u"Spiel %s beendet" % str(s))
+                messages.success(request, u"Geschichte „%s“ beendet" % s.title)
                 return redirect('overview')
             else:
                 s.continue_story(form.cleaned_data['nextSentence'])
-                messages.success(request, u"Spiel %s weitergeführt" % str(s))
+                messages.success(request, u"Geschichte „%s“ weitergeführt" % s.title)
                 return redirect('overview')
     else:
         form = ExtendStoryForm()
