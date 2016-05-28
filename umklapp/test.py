@@ -45,3 +45,8 @@ class ContinueStoryTest(UmklappTestCase):
     def testWaitingFor(self):
         s = Story.create_new_story(self.users[0], self.users[1:], "first")
         self.assertEquals(s.waiting_for(), self.users[1])
+
+    def testFinish(self):
+        s = Story.create_new_story(self.users[0], self.users[1:], "first")
+        s.finish()
+        self.assertTrue(s.is_finished)

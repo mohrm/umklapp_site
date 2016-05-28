@@ -47,6 +47,10 @@ class Story(models.Model):
         newPart.save()
         self.advance_teller()
 
+    def finish(self):
+        self.is_finished = True
+        self.save()
+
     def advance_teller(self):
         self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
         self.save()
