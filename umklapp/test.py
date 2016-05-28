@@ -53,6 +53,11 @@ class ContinueStoryTest(UmklappTestCase):
         s = self.stdStory()
         self.assertEquals(s.waiting_for(), self.users[1])
 
+    def testContinueWaitingFor(self):
+        s = self.stdStory()
+        s.continue_story("second")
+        self.assertEquals(s.waiting_for(), self.users[2])
+
     def testFinish(self):
         s = self.stdStory()
         s.finish()
