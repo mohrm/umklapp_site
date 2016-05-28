@@ -40,10 +40,10 @@ def start_new_story(request):
         form = NewStoryForm(request.POST)
         form.set_choices(request.user)
         if form.is_valid():
-            Story.start_new_story(
-                started_by = request.user,
+            Story.create_new_story(
+                startUser = request.user,
                 first_sentence = form.cleaned_data['firstSentence'],
-                other_players = form.cleaned_data['mitspieler'],
+                participating_users = form.cleaned_data['mitspieler'],
                 )
             messages.success(request, u"Spiel gestartet")
             return redirect('overview')
