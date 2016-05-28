@@ -121,6 +121,7 @@ body {
 
    {% if user.is_authenticated %}
     <div class="navbar-right">
+     <a href="{% url 'auth_logout' %}" class="navbar-right btn navbar-btn">Abmelden</a>
      <p class="navbar-text">
       Hallo {{user}}!
      </p>

@@ -4,27 +4,23 @@
 
 {% block content %}
 <div class="container">
-<h1>Hallo {{ username }} </h1>
-<a href="{% url 'auth_logout' %}">Abmelden</a>
-<h1>Willst Du eine neue Geschichte starten?</h1>
+<h2>Willst Du eine neue Geschichte starten?</h2>
 <a href="{% url 'new_story' %}">Neue Geschichte starten</a><p/>
-<h1>Deine Geschichten</h1>
-<h2>Folgende Geschichten kannst Du fortsetzen:</h2>
+<h2>Deine Geschichten</h2>
 {% if my_stories %}
   <ul>
 	  {% for s in my_stories %}
 	    <li>
-			Geschichte Nr. {{ s.id }}, gestartet von {{ s.started_by.username }}<p/>
-			<a href="{% url 'continue_story' story_id=s.id %}">Geschichte fortsetzen</a><p/>
-			<a href="{% url 'finish_story' story_id=s.id %}">Geschichte beenden</a><p/>
-		</li>
+			Geschichte Nr. {{ s.id }} (gestartet von {{ s.started_by.username }}):
+			<a href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>,
+			<a href="{% url 'finish_story' story_id=s.id %}">beenden</a>
+	     </li>
 	  {% endfor %}
   </ul>
 {% else %}
 <p>Es gibt gerade keine Geschichten, die Du fortsetzen kannst.</p>
 {% endif %}
-<h1>Beendete Geschichten </h1>
-<h2>Folgende Geschichten sind beendet</h2>
+<h2>Beendete Geschichten </h2>
 {% if finished_stories %}
   <ul>
 	  {% for f in finished_stories %}
