@@ -26,7 +26,7 @@
 <h2>Beendete Geschichten </h2>
 {% if finished_stories %}
   <ul>
-	  {% for f in finished_stories %}
+	  {% for s in finished_stories %}
 	    <li>
 			Geschichte Nr. {{ s.id }}, gestartet von {{ s.started_by.username }}:
 			<a href="{% url 'show_story' story_id=s.id %}">lesen</a><p/>
