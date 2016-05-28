@@ -83,6 +83,9 @@ def continue_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
     t = get_object_or_404(s.tellers, user=request.user)
 
+    if s.finished:
+        raise PermissionDenied
+
     if s.whose_turn != t.position:
         raise NotYourTurnException
 
@@ -114,6 +117,10 @@ def story_continued(request, story_id):
 
 def show_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.finished:
+        raise PermissionDenied
+
     context = {
         'story': s,
     }
