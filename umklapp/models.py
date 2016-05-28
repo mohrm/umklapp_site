@@ -15,6 +15,9 @@ class Story(models.Model):
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
 
+    def __unicode__(self):
+        return title
+
     @staticmethod
     def create_new_story(startUser, participating_users, title, first_sentence):
         s = Story(started_by=startUser, is_finished=False, title=title, whose_turn=1)
