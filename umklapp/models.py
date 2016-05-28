@@ -66,5 +66,6 @@ class StoryPart(models.Model):
     position = models.IntegerField()
     content = models.CharField(max_length=256)
 
-
+    class Meta:
+        ordering = ['position']
 
