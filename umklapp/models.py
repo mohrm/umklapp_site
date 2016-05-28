@@ -20,7 +20,7 @@ class Story(models.Model):
         s.save()
         t0 = Teller(user=startUser, corresponding_story=s, position=0)
         t0.save()
-        firstPart = StoryPart(teller=t0, content=first_sentence)
+        firstPart = StoryPart(teller=t0, position=0, content=first_sentence)
         firstPart.save()
 
         positions = range(1, len(participating_users)+1)
@@ -35,8 +35,10 @@ class Story(models.Model):
         if (not myparts):
             nextPos = 0
         else:
-            nextPos = max([part.position for part in myparts])
-        newPart = StoryPart(teller=self.whose_turn, position=nextPos,content=text)
+            nextPos = max([part.teller.position for part in myparts]) + 1
+        nextTeller = Teller.objects.get(corresponding_story=self,
+                                        position=nextPos % self.tellers.count())
+        newPart = StoryPart(teller=nextTeller, content=text, position=nextPos)
         newPart.save()
         self.advance_teller()
 
@@ -47,6 +49,7 @@ class Story(models.Model):
 
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE)
+    position = models.IntegerField()
     content = models.CharField(max_length=256)
 
 
