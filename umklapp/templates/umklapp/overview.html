@@ -27,7 +27,7 @@
 {% if finished_stories %}
   <ul>
 	  {% for s in finished_stories %}
-	    <li><a href="{% url 'show_story' story_id=s.id %}">„{{ s.title }}“ lesen</a></li>
+	    <li>„{{ s.title }}“: <a href="{% url 'show_story' story_id=s.id %}">lesen</a></li>
 	  {% endfor %}
   </ul>
 {% else %}
