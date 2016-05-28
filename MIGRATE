@@ -1,0 +1,3 @@
+Here is what to do after the data model has changed:
+- python manage.py makemigrations umklapp
+- python manage.py migrate umklapp 0001
