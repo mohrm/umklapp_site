@@ -27,6 +27,7 @@ class Story(models.Model):
         for (u,p) in zip(participating_users, positions):
             t = Teller(user=u, corresponding_story=s, position=p)
             t.save()
+        return s
 
 
     def continue_story(self, text):
