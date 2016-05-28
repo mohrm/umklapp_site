@@ -52,13 +52,15 @@ class Story(models.Model):
         self.is_finished = True
         self.save()
 
+    def parts(self):
+        return StorryPart.objects.filter(teller__corresponding_story=self)
+
     def advance_teller(self):
         self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
         self.save()
 
     def latest_story_part(self):
-        myparts = StoryPart.objects.filter(teller__corresponding_story=self).order_by('position').reverse()
-        return myparts[0]
+        return self.parts().last()
 
 
 
