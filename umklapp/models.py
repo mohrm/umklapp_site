@@ -47,8 +47,7 @@ class Story(models.Model):
         self.save()
 
     def latest_story_part(self):
-        myparts =
-        StoryPart.objects.filter(teller__corresponding_story=self).order_by('position').reverse()
+        myparts = StoryPart.objects.filter(teller__corresponding_story=self).order_by('position').reverse()
         return myparts[0]
 
 
