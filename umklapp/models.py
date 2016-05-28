@@ -16,7 +16,7 @@ class Story(models.Model):
 
     @staticmethod
     def create_new_story(startUser, participating_users, first_sentence):
-        s = Story(started_by=startUser, is_finished=False, whose_turn=0)
+        s = Story(started_by=startUser, is_finished=False, whose_turn=1)
         s.save()
         t0 = Teller(user=startUser, corresponding_story=s, position=0)
         t0.save()
