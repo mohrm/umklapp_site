@@ -53,7 +53,7 @@ class Story(models.Model):
         self.save()
 
     def parts(self):
-        return StorryPart.objects.filter(teller__corresponding_story=self)
+        return StoryPart.objects.filter(teller__corresponding_story=self)
 
     def advance_teller(self):
         self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
