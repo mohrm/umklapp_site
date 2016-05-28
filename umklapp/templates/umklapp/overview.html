@@ -1,7 +1,7 @@
 <h1>Hallo {{ username }} </h1>
-<a href="/umklapp/logout">Abmelden</a>
+<a href="{% url auth_logout %}">Abmelden</a>
 <h1>Willst Du eine neue Geschichte starten?</h1>
-<a href="/umklapp/start_new_story">Neue Geschichte starten</a><p/>
+<a href="{% url 'new_story' %}">Neue Geschichte starten</a><p/>
 <h1>Deine Geschichten</h1>
 <h2>Folgende Geschichten kannst Du fortsetzen:</h2>
 {% if my_stories %}
@@ -9,8 +9,8 @@
 	  {% for s in my_stories %}
 	    <li>
 			Geschichte Nr. {{ s.id }}, gestartet von {{ s.started_by.username }}<p/>
-			<a href="/umklapp/continue_story/{{ s.id }}/">Geschichte fortsetzen</a><p/>
-			<a href="/umklapp/finish_story/{{ s.id }}/">Geschichte beenden</a><p/>
+			<a href="{% url 'continue_story' story_id=s.id %}">Geschichte fortsetzen</a><p/>
+			<a href="{% url 'finish_story' story_id=s.id %}">Geschichte beenden</a><p/>
 		</li>
 	  {% endfor %}
   </ul>
@@ -24,7 +24,7 @@
 	  {% for f in finished_stories %}
 	    <li>
 			Geschichte Nr. {{ s.id }}, gestartet von {{ s.started_by.username }}<p/>
-			<a href="/umklapp/show_story/{{ s.id }}/">Geschichte anzeigen</a><p/>
+			<a href="{% url 'show_story' story_id=s.id %}">Geschichte anzeigen</a><p/>
 		<li>
 	  {% endfor %}
   </ul>
