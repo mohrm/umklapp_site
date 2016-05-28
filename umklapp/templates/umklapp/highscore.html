@@ -1,0 +1,284 @@
+{% extends "umklapp/base.html" %}
+
+{% block page-css %}
+
+table.highscore thead th {
+	text-align:center;
+}
+table.highscore thead th:nth-child(2) {
+	text-align:left;
+}
+
+table.highscore tbody td {
+	text-align:right;
+}
+table.highscore tbody td:nth-child(2) {
+	text-align:left;
+}
+
+table.highscore col.active {
+	background-color: #F7F7F9;
+}
+
+table.highscore thead th {
+	background-color: white;
+}
+
+{% endblock %}
+
+{% block page-js %}
+
+var highscorerows = [];
+var bothighscorerows = [];
+
+var highscores = [
+	{
+		col: 9,
+		name: "Bester Score",
+	},
+	{
+		col: 2,
+		name: "Fleißigster Autor",
+	},
+	{
+		col: 3,
+		name: "Größter Erfinder",
+	},
+	{
+		col: 4,
+		name: "Aktivster Spieler",
+	},
+	{
+		col: 6,
+		name: "Größter Klugscheißer",
+	},
+	{
+		col: 8,
+		name: "Hinterhältigster Lügner",
+	},
+];
+
+// General helper to animate a few things
+function smooth_highscore (callback) {
+	var pos_now = {};
+	var bot_pos_now = {};
+	$("#highscore tbody tr").each(function (i,e) {
+		pos_now[$(e).data('user_id')] = $(e).offset();
+	});
+	$("#highscore-bot tbody tr").each(function (i,e) {
+		bot_pos_now[$(e).data('bot_id')] = $(e).offset();
+	});
+
+	callback();
+
+	// animate all motion
+	$("#highscore tbody tr").each(function (i,e) {
+		var e_pos_now = pos_now[$(e).data('user_id')];
+		if (e_pos_now) {
+			var e_pos_target = $(e).offset();
+
+			$(e).find("td > *").css('position', 'relative');
+			$(e).find("td > *").css('top', e_pos_now.top - e_pos_target.top);
+			$(e).find("td > *").css('left', e_pos_now.left - e_pos_target.left);
+			$(e).find("td > *").animate({left: 0, top: 0});
+		}
+	});
+	$("#highscore-bot tbody tr").each(function (i,e) {
+		var e_pos_now = bot_pos_now[$(e).data('bot_id')];
+		if (e_pos_now) {
+			var e_pos_target = $(e).offset();
+
+			$(e).find("td > *").css('position', 'relative');
+			$(e).find("td > *").css('top', e_pos_now.top - e_pos_target.top);
+			$(e).find("td > *").css('left', e_pos_now.left - e_pos_target.left);
+			$(e).find("td > *").animate({left: 0, top: 0});
+		}
+	});
+}
+
+
+function perc(a,b) {
+	if (a + b > 0) {
+		return (a / (a + b)).toFixed(3);
+	} else {
+		return "–";
+	}
+}
+
+function score(r) {
+    return Math.pow((1+r[2]) * (1+r[3]) * (1+r[4]/10), 0.5)
+        * (r[5] + 1) / (r[5] + r[6] + 1)
+        * (r[7] + 1) / (r[7] + r[8] + 1)
+}
+
+function cell(c) {
+	return $("<td>").append($("<div>").text(c));
+}
+
+function fillhighscoretable() {smooth_highscore(function() {
+    $("#highscore tbody").empty();
+    jQuery.map(highscorerows, function(rowdata,i) {
+	var r = $("<tr>").append([
+		cell(i+1),
+		cell(rowdata[1]),
+		cell(rowdata[2]),
+		cell(rowdata[3]),
+		cell(rowdata[4]),
+		cell(rowdata[5]),
+		cell(rowdata[6]).addClass("small"),
+		cell(rowdata[7]),
+		cell(rowdata[8]).addClass("small"),
+		cell(rowdata[9].toFixed(3)),
+	]).data('user_id', rowdata[0]);
+	$("#highscore tbody").append(r);
+    });
+    $("#highscore-bot tbody").empty();
+    jQuery.map(bothighscorerows, function(rowdata,i) {
+	var r = $("<tr>").append([
+		cell(i+1),
+		cell("„" + rowdata[1] + "“ by " + rowdata[2]),
+		cell(rowdata[3]),
+		cell(rowdata[4]).addClass("small"),
+	]).data('bot_id', rowdata[0]);
+	$("#highscore-bot tbody").append(r);
+    });
+});}
+
+function sort_highscore() {
+    var col = highscores[0]['col'];
+    highscorerows.sort(function (a,b) {
+	    return (b[col] - a[col]);
+    });
+    bothighscorerows.sort(function (a,b) {
+	    return (b[4] - a[4]);
+    });
+}
+
+function change_highscore(d) {
+    if (d < 0) { d += highscores.length };
+    highscores = highscores.slice(d).concat(highscores.slice(0,d));
+    $("#highscore-title").text(highscores[0]['name']);
+    $("#highscore col").removeClass('active');
+    $("#highscore col:nth-child(" + (highscores[0]['col'] + 1) + ")")
+	.addClass('active');
+    sort_highscore();
+    fillhighscoretable();
+}
+
+
+function update_highscore() {
+    $.getJSON("{% url "highscore_data" %}")
+	.done(function (data) {
+		highscorerows = jQuery.map(data['rows'], function (row) {
+		    return [[
+			row[0],
+			row[1],
+			row[2],
+			row[3],
+			row[4],
+			row[5],
+			perc(row[5], row[6]),
+			row[7],
+			perc(row[7], row[8]),
+			score(row),
+		    ]]
+		});
+		bothighscorerows = jQuery.map(data['bot_rows'], function (row) {
+		    return [[
+			row[0],
+			row[1],
+			row[2],
+			row[3],
+			perc(row[3], row[4]),
+		    ]]
+		});
+		sort_highscore();
+		fillhighscoretable();
+	});
+    setTimeout(update_highscore, 30000);
+}
+
+$(function() {
+    update_highscore();
+    change_highscore(0);
+
+    $("#highscore-prev").click(function(){change_highscore(-1)});
+    $("#highscore-next").click(function(){change_highscore(1)});
+})
+
+{% endblock %}
+
+{% block title %}Highscore{% endblock %}
+
+{% block content %}
+
+<div class="container">
+ <div class="row">
+  <div class="col-md-8">
+
+ <h3>
+  Highscore der Menschen
+  <small>
+    <span id="highscore-prev"><span class="glyphicon glyphicon-chevron-left"></span></span>
+    <span id="highscore-title">Bester Score</span>
+    <span id="highscore-next"><span class="glyphicon glyphicon-chevron-right"></span></span>
+  </small>
+ </h3>
+ <table class="table highscore" id="highscore">
+   <colgroup>
+    <col width="0%"/>
+    <col width="100%"/>
+    <col width="0%"/>
+    <col width="0%"/>
+    <col width="0%"/>
+    <col width="0%"/>
+    <col width="0%"/>
+    <col width="0%"/>
+    <col width="0%"/>
+    <col width="0%"/>
+  </colgroup>
+  <thead>
+   <tr>
+     <th>#</th>
+     <th>User</th>
+     <th>Wörter</th>
+     <th>Erklärungen</th>
+     <th>Spiele</th>
+     <th colspan="2">Richtig geraten</th>
+     <th colspan="2">Andere reingelegt</th>
+     <th>Score</th>
+   </tr>
+  </thead>
+  <tbody>
+  </tbody>
+ </table>
+
+</div>
+<div class="col-md-4">
+
+ <h3>
+  Highscore der Bots
+ </h3>
+ <table class="table highscore" id="highscore-bot">
+   <colgroup>
+    <col width="0%"/>
+    <col width="100%"/>
+    <col width="0%"/>
+    <col class="active" width="0%"/>
+  </colgroup>
+  <thead>
+   <tr>
+     <th>#</th>
+     <th>Bot</th>
+     <th colspan="2">Andere reingelegt</th>
+   </tr>
+  </thead>
+  <tbody>
+  </tbody>
+ </table>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

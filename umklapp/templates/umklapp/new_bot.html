@@ -1,0 +1,31 @@
+{% extends "umklapp/base.html" %}
+
+{% load bootstrap %}
+
+{% block title %}Neuen Bot anlegen{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<form class="form-horizontal" role="form" method="POST">
+ {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+ {% endfor %}
+ {% csrf_token %}
+
+<div class="form-group">
+  <span class="control-label col-sm-4 col-lg-4 ">
+   Meinen neuen Bot nenne ich
+  </span>
+  <div class="col-sm-4 col-lg-4 ">
+    <input class="form-control" id="id_name" name="name" type="text" placeholder="{{user}}’s bot"/>
+  </div>
+ <div class="col-sm-2 col-lg-2">
+  <input  class="btn btn-default" type="submit" value="Submit" />
+ </div>
+</div>
+</form>
+
+</div>
+{% endblock %}
+

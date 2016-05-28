@@ -1,0 +1,140 @@
+{% load staticfiles %}
+{% load current from navigation %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<title>Umklapp – {% block title %}{% endblock %}</title>
+<style type="text/css">
+/*
+ Have the icon have no influence on the navigation height.
+ http://stackoverflow.com/a/11818212/946226 
+ */
+.navbar .navbar-brand.logo {
+    max-height: 1px;
+    overflow: visible;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Based on http://matthewjamestaylor.com/blog/keeping-footers-at-the-bottom-of-the-page */
+html,
+body {
+   margin:0;
+   padding:0;
+   height:100%;
+}
+#wrap {
+   min-height:100%;
+   position:relative;
+}
+#footer-space {
+   padding-bottom:50px;   /* Height of the footer */
+}
+#footer {
+   position:absolute;
+   bottom:0;
+   width:100%;
+   height:50px;   /* Height of the footer */
+   background-color: rgb(238,238,238);
+}
+#footer .navbar {
+   margin: 0px;
+   border: 0px;
+}
+#footer a {
+   color: inherit;
+}
+
+
+
+{% block page-css %}{% endblock %}
+
+</style>
+
+<!-- Bootstrap -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/cosmo/bootstrap.min.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+{% block page-header %}{% endblock %}
+
+<script type="text/javascript">
+{% block page-js %}{% endblock %}
+</script>
+
+</head>
+
+<body>
+<div id="wrap">
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="container">
+
+<div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+<a class="navbar-brand logo" href="{% url 'overview' %}">
+  <img src="{% static "Maria-50.png" %}" alt="Logo"/>
+</a>
+<a class="navbar-brand" href="{% url 'overview' %}">
+  No bot is perfect
+</a>
+</div>
+
+</div>
+</nav>
+
+
+{% if messages %}
+ <div class="container">
+  {% for message in messages %}
+   <div class="alert alert-{{ message.tags }}">
+    <button type="button" class="close" aria-hidden="true" data-dismiss="alert">&times;</button>
+    {{ message }}
+   </div>
+  {% endfor %}
+ </div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<div id="footer-space"/>
+
+<div id="footer">
+ <div class="navbar">
+   <div class="container">
+    <p class="text-muted navbar-text">
+     <a href="https://github.com/entropia/no-bot-is-perfect">Source</a>
+    </p>
+    <p class="text-muted navbar-text">
+     <a href="https://github.com/entropia/no-bot-is-perfect/issues">Issues</a>
+    </p>
+
+   {% if user.is_authenticated %}
+    <div class="navbar-right">
+     <p class="navbar-text">
+      Hallo <a href="{% url 'stats' %}" class="navbar-link">{{user}}</a>!
+     </p>
+    </div>
+   {% else %}
+    <a href="{% url 'registration_register' %}" class="navbar-right btn navbar-btn">Registrieren</a>
+    <a href="{% url 'auth_login' %}" class="navbar-right btn navbar-btn">Einloggen</a>
+   {% endif %}
+  </div>
+ </div>
+</div>
+
+</div> <!-- wrap -->
+
+</body>
+</html>
+

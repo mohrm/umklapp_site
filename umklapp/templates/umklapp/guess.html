@@ -1,0 +1,169 @@
+{% extends "umklapp/base.html" %}
+{% load staticfiles %}
+{% load countup %}
+
+{% block title %}Was ist richtig?{% endblock %}
+
+{% block page-js %}
+// Grey out the submit button if the answers do not make sense
+function update_submit () {
+	var counts = [0,0,0];
+	$(".result-count").each(function (_,input) {
+		var n = $(input).attr('name').substr(6);
+		counts[n] = $(input).val();
+	});
+
+	var actual = [0,0,0];
+	$("select").each(function (_,select) {
+		var n = $(select).val();
+		if (n) {actual[n]++};
+	});
+
+	$(":submit").attr("disabled", false);
+	$(":submit").show();
+	actual.map(function(_,i) {
+		if (actual[i] != counts[i]) {
+			$(":submit").attr("disabled", true);
+			$(":submit").hide();
+		}
+	});
+}
+
+// Drag'n'drop functionality
+function update_form (){
+	var selects = $("select");
+	var answers = $(".answer-panel");
+	answers.each(function (i,a){
+		var icon = $(a).find(".answer-icon");
+		if (icon.length) {
+			$(selects.get(i)).val(icon.data('answer'));
+		} else {
+			$(selects.get(i)).val('');
+		}
+	});
+	update_submit();
+}
+
+// General helper to animate a few things
+function smoothly (things, callback) {
+	things.each(function (i,e) {
+		$(e).data('pos_now', $(e).offset())
+	});
+
+	callback();
+
+	// animate all motion
+	things.each(function (n,e) {
+		var e_pos_now = $(e).data('pos_now');
+		var e_pos_target = $(e).offset();
+
+		$(e).css('position', 'relative');
+		$(e).css('top', e_pos_now.top - e_pos_target.top);
+		$(e).css('left', e_pos_now.left - e_pos_target.left);
+		$(e).animate({left: 0, top: 0});
+	});
+}
+
+$(function (){
+	$(".answer-icon").draggable({
+		revert: true,
+		zIndex: 100 ,
+	});
+	$(".answer-panel").droppable({
+		accept: '.answer-icon',
+		hoverClass: "panel-success",
+		drop: function( event, ui ) {
+			var panel = this;
+			smoothly($(".answer-icon"), function() {
+				// move existing icons back to the store
+				$(panel).find(".answer-icon").appendTo("#answer-icons");
+
+				// move draggable here
+				ui.draggable.css({position: "relative", top:"", left:""});
+				$(panel).find(".answer-icon-holder").prepend(ui.draggable);
+
+				// Show placeholders only where relevant
+				$(".answer-placeholder").show();
+				$(".answer-panel").has(".answer-icon").find(".answer-placeholder").hide();
+			});
+			// Finally: Update form
+			update_form();
+		},
+	});
+});
+
+$(function (){
+	update_form();
+	$("select").on('change', update_submit);
+});
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+ <h2>
+  <small>Was mag denn ein/eine</small>
+  {{ word.lemma }}
+  <small>sein?</small>
+ </h2>
+
+ <form role="form" method="POST">
+  {% csrf_token %}
+
+  {% for k, v in counts.items %}
+   <input type="hidden" class="result-count" name="count-{{k}}" value="{{v}}" />
+  {% endfor %}
+
+  {% for e in explanations %}
+   <div class="form-group" style="display: none">
+   <label for="guess{{forloop.counter0}}" class="col-sm-4 control-label">{{ e.text }}</label>
+    <div class="col-sm-2">
+     <select id="id_guess{{forloop.counter0}}" name="guess{{forloop.counter0}}">
+      <option value=""></option>
+      <option value="0">Richtig</option>
+      <option value="1">Mensch</option>
+      <option value="2">Computer</option>
+     </select>
+    </div>
+   </div>
+  {% endfor %}
+
+ <div class="container-fluid">
+  <div class="row">
+   {% for e in explanations %}
+    <div class="col-md-4 col-sm-6">
+     <div class="panel panel-default answer-panel">
+      <table><tr>
+       <td class="answer-icon-holder">
+	    <img class="answer-placeholder" src="{% static "empty.png" %}"/>
+	   </td>
+       <td>
+        {{ e.text }}
+	   </td>
+      </tr></table>
+     </div>
+    </div>
+   {% if forloop.counter|divisibleby:"3" %}
+    <div class="clearfix visible-md"></div>
+   {% endif %}
+   {% if forloop.counter|divisibleby:"2" %}
+    <div class="clearfix visible-sm"></div>
+   {% endif %}
+   {% endfor %}
+   <div class="col-md-4 col-md-6 text-center">
+    <div id="answer-icons">
+     {% for answer, count in counts.items %}
+      {% for i in count|countup %}
+       <img class="answer-icon" src="{% static "icon-" %}{{answer}}.png" data-answer="{{answer}}" alt="Antwort {{answer}}"/>
+      {% endfor %}
+     {% endfor %}
+    </div>
+    <input  class="btn btn-default" type="submit" value="Fertig!"/>
+   </div>
+  </div>
+ </div>
+
+ </form>
+</div>
+
+{% endblock %}
