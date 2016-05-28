@@ -10,13 +10,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from random import shuffle
 
-
-
-def index(request):
-    return HttpResponse("Hello World.")
-
-
-
 class NewStoryForm(Form):
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
