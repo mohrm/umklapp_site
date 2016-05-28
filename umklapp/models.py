@@ -46,6 +46,12 @@ class Story(models.Model):
         self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
         self.save()
 
+    def latest_story_part(self):
+        myparts =
+        StoryPart.objects.filter(teller__corresponding_story=self).order_by('position').reverse()
+        return myparts[0]
+
+
 
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE)
