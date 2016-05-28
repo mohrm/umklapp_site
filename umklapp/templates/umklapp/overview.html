@@ -12,8 +12,7 @@
 	  {% for s in my_stories %}
 	    <li>
 			Geschichte Nr. {{ s.id }} (gestartet von {{ s.started_by.username }}):
-			<a href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>,
-			<a href="{% url 'finish_story' story_id=s.id %}">beenden</a>
+			<a href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
 	     </li>
 	  {% endfor %}
   </ul>

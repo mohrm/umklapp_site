@@ -63,7 +63,17 @@ class ExtendStoryForm(Form):
     nextSentence = CharField(
         label = "Wie soll die Geschichte weitergehen?",
         widget = TextInput(attrs={'placeholder': 'und dann...'}),
+        required=False,
         )
+
+    def clean(self):
+        cleaned_data = super(ExtendStoryForm, self).clean()
+
+        finishing = 'finish' in self.data
+        nextSentence = cleaned_data.get("nextSentence")
+
+        if not finishing and not nextSentence:
+            self.add_error('nextSentence', 'Irgendwas muss doch passieren...')
 
 class NotYourTurnException(Exception):
     pass
@@ -77,11 +87,19 @@ def continue_story(request, story_id):
         raise NotYourTurnException
 
     if request.method == 'POST':
+        finish = 'finish' in request.POST
         form = ExtendStoryForm(request.POST)
         if form.is_valid():
-            s.continue_story(form.cleaned_data['nextSentence'])
-            messages.success(request, u"Spiel %s weitergeführt" % str(s))
-            return redirect('overview')
+            if 'finish' in form.data:
+                if form.cleaned_data['nextSentence']:
+                    s.continue_story(form.cleaned_data['nextSentence'])
+                s.finish()
+                messages.success(request, u"Spiel %s beendet" % str(s))
+                return redirect('overview')
+            else:
+                s.continue_story(form.cleaned_data['nextSentence'])
+                messages.success(request, u"Spiel %s weitergeführt" % str(s))
+                return redirect('overview')
     else:
         form = ExtendStoryForm()
     context = {
@@ -94,9 +112,6 @@ def story_continued(request, story_id):
     s = Story.objects.get(id=story_id)
     s.continue_story("text")
 
-
-def finish_story(request, story_id):
-    return HttpResponse('Geschichte Nr. ' + story_id + ' beenden')
 
 def show_story(request, story_id):
     return HttpResponse('Fertige Geschichte Nr. ' + story_id + ' anzeigen')
