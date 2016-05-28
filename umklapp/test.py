@@ -21,3 +21,11 @@ class NewStoryTest(UmklappTestCase):
     def testNewStory(self):
         Story.create_new_story(self.users[0], self.users, "first")
 
+class ContinueStoryTest(UmklappTestCase):
+    def setUp(self):
+        self.addUsers()
+
+    def testContinueStory(self):
+        s = Story.create_new_story(self.users[0], self.users, "first")
+        s.continue_story("second")
+
