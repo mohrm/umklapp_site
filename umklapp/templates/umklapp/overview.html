@@ -11,7 +11,7 @@
   <ul>
 	  {% for s in running_stories %}
 	    <li>
-			Geschichte Nr. {{ s.id }} (gestartet von {{ s.started_by.username }}):
+			„{{ s.title }}“:
 			{% if s.waiting_for = user %}
 			  <a href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
 			{% else %}
@@ -27,10 +27,7 @@
 {% if finished_stories %}
   <ul>
 	  {% for s in finished_stories %}
-	    <li>
-			Geschichte Nr. {{ s.id }}, gestartet von {{ s.started_by.username }}:
-			<a href="{% url 'show_story' story_id=s.id %}">lesen</a><p/>
-		</li>
+	    <li><a href="{% url 'show_story' story_id=s.id %}">„{{ s.title }}“ lesen</a></li>
 	  {% endfor %}
   </ul>
 {% else %}
