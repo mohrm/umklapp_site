@@ -136,7 +136,10 @@ def show_story(request, story_id):
 def overview(request):
     all_running_stories = Story.objects.filter(is_finished = False)
     finished_stories = Story.objects.filter(is_finished = True)
-    running_stories = filter(lambda (s): s.participates_in(request.user),
+    if request.user.is_staff:
+        running_stories = all_running_stories
+    else:
+        running_stories = filter(lambda (s): s.participates_in(request.user),
                              all_running_stories)
     context = {
         'username': request.user.username,
