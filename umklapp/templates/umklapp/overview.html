@@ -18,6 +18,13 @@
 			{% else %}
 			  wartet auf {{ s.waiting_for }}...
 			{% endif  %}
+			{% if specialpowers %}
+			<form method="post" action="skip">
+				{% csrf_token %}
+				<input type="hidden" name="story_id" value="{{ s.id }}"/>
+				<button type="submit" class="btn btn-default">&uuml;berspringen</button>
+			</form>
+			{% endif %}
 	     </li>
 	  {% endfor %}
   </ul>

@@ -111,6 +111,12 @@ def continue_story(request, story_id):
     }
     return render(request, 'umklapp/extend_story.html', context)
 
+def skip(request):
+    story_id = request.POST['story_id']
+    s = get_object_or_404(Story.objects, id=story_id)
+    s.advance_teller()
+    return redirect('overview')
+
 def story_continued(request, story_id):
     s = Story.objects.get(id=story_id)
     s.continue_story("text")
@@ -134,6 +140,7 @@ def overview(request):
                              all_running_stories)
     context = {
         'username': request.user.username,
+        'specialpowers': request.user.is_staff,
         'running_stories': running_stories,
         'finished_stories': finished_stories,
     }
