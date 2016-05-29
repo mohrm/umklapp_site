@@ -67,6 +67,13 @@ class Story(models.Model):
     def latest_story_part(self):
         return self.parts().last()
 
+    def participates_in(self, user):
+        tellers = Teller.objects.filter(corresponding_story=self)
+        for t in tellers:
+            if t.user == user:
+                return True
+        return False
+
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE)
     position = models.IntegerField()
