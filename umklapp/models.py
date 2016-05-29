@@ -62,6 +62,8 @@ class Story(models.Model):
 
     def advance_teller(self):
         self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
+        while not self.waiting_for().is_active:
+            self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
         self.save()
 
     def latest_story_part(self):
