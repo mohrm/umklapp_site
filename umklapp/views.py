@@ -24,11 +24,11 @@ class NewStoryForm(Form):
         )
 
     def set_choices(self,user):
-        """ Sets the mitspieler selection to all other users"""
+        """ Sets the mitspieler choices to all other non-admin users"""
         choices = []
         initial = []
         for u in User.objects.all():
-            if u != user:
+            if u != user and not u.is_superuser and not u.is_staff:
                 initial.append(u.pk)
                 choices.append((u.pk, str(u)))
         self.fields['mitspieler'].choices = choices
