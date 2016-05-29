@@ -107,6 +107,7 @@ def continue_story(request, story_id):
         form = ExtendStoryForm()
     context = {
         'story': s,
+        'part_number': s.latest_story_part().position + 1,
         'form': form
     }
     return render(request, 'umklapp/extend_story.html', context)
