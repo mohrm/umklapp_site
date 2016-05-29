@@ -128,8 +128,10 @@ def show_story(request, story_id):
 
 @login_required
 def overview(request):
-    running_stories = Story.objects.filter(is_finished = False)
+    all_running_stories = Story.objects.filter(is_finished = False)
     finished_stories = Story.objects.filter(is_finished = True)
+    running_stories = filter(lambda (s): s.participates_in(request.user),
+                             all_running_stories)
     context = {
         'username': request.user.username,
         'running_stories': running_stories,
