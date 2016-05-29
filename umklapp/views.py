@@ -32,7 +32,7 @@ class NewStoryForm(Form):
                 initial.append(u.pk)
                 choices.append((u.pk, str(u)))
         self.fields['mitspieler'].choices = choices
-        self.fields['mitspieler'].initial = initial
+        self.fields['mitspieler'].initial = []
 
 
 def start_new_story(request):
