@@ -27,7 +27,7 @@ SECRET_KEY = '=2ihc^r%kso(_q*+=chno5t$=(+7*tu!r2w+o5tup9r%+4c0q3'
 
 if 'OPENSHIFT_APP_NAME' in os.environ:
     DEBUG = False
-    ALLOWED_HOSTS = ['.rhcloud.com']
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 else:
     DEBUG = True
 
