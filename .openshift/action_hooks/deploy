@@ -5,7 +5,7 @@
 # ruby, etc.
 
 # Not needed?
-source ${OPENSHIFT_PYHON_DIR}/virtenv/bin/activate
+source ${OPENSHIFT_PYTHON_DIR}/virtenv/bin/activate
 cd $OPENSHIFT_REPO_DIR
 echo "Executing 'python manage.py migrate'"
 python manage.py migrate
