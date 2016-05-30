@@ -1,10 +1,19 @@
-from setuptools import setup
+import os
+from setuptools import setup, find_packages
 
-setup(name='YourAppName',
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+setup(name='Umklapp',
       version='1.0',
-      description='OpenShift App',
-      author='Your Name',
-      author_email='example@example.com',
-      url='http://www.python.org/sigs/distutils-sig/',
-#      install_requires=['Django>=1.3'],
+      author='Martin Mohr',
+      author_email='martin.mohr@posteo.de',
+      url='http://github.com/mohrm/umklapp_site',
+      packages=find_packages(),
+      include_package_data=True,
+      description='A Story-Continuation Game',
+      install_requires=open('%s/requirements.txt' %
+                            os.environ.get('OPENSHIFT_REPO_DIR',
+                                           PROJECT_ROOT
+                                          )
+                           ).readlines(),
      )
