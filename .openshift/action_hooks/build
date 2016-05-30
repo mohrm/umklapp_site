@@ -5,7 +5,12 @@
 # could be python, php, ruby, etc.
 
 if [ ! -d ${OPENSHIFT_DATA_DIR}media ]; then
-mkdir ${OPENSHIFT_DATA_DIR}media
+	mkdir ${OPENSHIFT_DATA_DIR}media
 fi
 
-ln -sf $OPENSHIFT_DATA_DIR/media $OPENSHIFT_REPO_DIR/wsgi/static/media
+if [ ! -d ${OPENSHIFT_DATA_DIR}static ]; then
+	mkdir ${OPENSHIFT_DATA_DIR}static
+fi
+
+ln -sf $OPENSHIFT_DATA_DIR/media $OPENSHIFT_REPO_DIR/umklapp_site/wsgi/static/media
+ln -sf $OPENSHIFT_DATA_DIR/static $OPENSHIFT_REPO_DIR/umklapp_site/wsgi/static/
