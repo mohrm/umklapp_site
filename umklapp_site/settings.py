@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'debug_toolbar'
 ]
 
+if 'OPENSHIFT_MYSQL_DB_URL' in os.environ:
+    INSTALLED_APPS += ['south']
+
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
