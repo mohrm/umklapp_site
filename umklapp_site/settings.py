@@ -24,7 +24,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=2ihc^r%kso(_q*+=chno5t$=(+7*tu!r2w+o5tup9r%+4c0q3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+if 'OPENSHIFT_APP_NAME' in os.environ:
+    DEBUG = False
+else:
+    DEBUG = True
+
 
 ALLOWED_HOSTS = []
 
