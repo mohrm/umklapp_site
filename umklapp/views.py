@@ -116,6 +116,23 @@ def continue_story(request, story_id):
     return render(request, 'umklapp/extend_story.html', context)
 
 @login_required
+def leave_story(request):
+    if request.method == 'POST':
+        story_id = request.POST['story_id']
+        s = get_object_or_404(Story.objects, id=story_id)
+        u = request.user
+
+        if s.is_finished:
+            raise PermissionDenied
+        if not s.participates_in(u):
+            raise PermissionDenied
+
+        if (s.numberOfActiveTellers() >= Story.MINIMUM_NUMBER_OF_ACTIVE_TELLERS + 1):
+            s.leave_story(u)
+        return redirect('overview')
+
+
+@login_required
 def skip(request):
     if not request.user.is_staff:
         raise PermissionDenied
@@ -152,7 +169,8 @@ def overview(request):
         running_stories = all_running_stories
         finished_stories = all_finished_stories
     else:
-        running_stories = filter(lambda (s): s.participates_in(request.user),
+        running_stories = filter(lambda (s): s.participates_in(request.user) and
+                                 not s.hasLeft(request.user),
                              all_running_stories)
         finished_stories = filter(lambda (s): s.participates_in(request.user),
                                       all_finished_stories)

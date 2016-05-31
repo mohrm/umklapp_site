@@ -18,6 +18,11 @@
 			{% else %}
 			  wartet auf {{ s.waiting_for }}...
 			{% endif  %}
+			<form method="post" action="leave_story">
+				{% csrf_token %}
+				<input type="hidden" name="story_id" value="{{ s.id }}"/>
+				<button type="submit" class="btn btn-default">Geschichte verlassen</button>
+			</form>
 			{% if specialpowers %}
 			<form method="post" action="skip">
 				{% csrf_token %}
