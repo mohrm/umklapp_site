@@ -136,12 +136,15 @@ def show_story(request, story_id):
 @login_required
 def overview(request):
     all_running_stories = Story.objects.filter(is_finished = False)
-    finished_stories = Story.objects.filter(is_finished = True)
+    all_finished_stories = Story.objects.filter(is_finished = True)
     if request.user.is_staff:
         running_stories = all_running_stories
+        finished_stories = all_finished_stories
     else:
         running_stories = filter(lambda (s): s.participates_in(request.user),
                              all_running_stories)
+        finished_stories = filter(lambda (s): s.participates_in(request.user),
+                                      all_running_stories)
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
