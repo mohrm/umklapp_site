@@ -115,11 +115,15 @@ def continue_story(request, story_id):
     }
     return render(request, 'umklapp/extend_story.html', context)
 
+@login_required
 def skip(request):
-    story_id = request.POST['story_id']
-    s = get_object_or_404(Story.objects, id=story_id)
-    s.advance_teller()
-    return redirect('overview')
+    if not request.user.is_staff:
+        raise PermissionDenied
+    if request.method == 'POST':
+        story_id = request.POST['story_id']
+        s = get_object_or_404(Story.objects, id=story_id)
+        s.advance_teller()
+        return redirect('overview')
 
 def story_continued(request, story_id):
     s = Story.objects.get(id=story_id)
