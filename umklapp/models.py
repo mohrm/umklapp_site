@@ -11,6 +11,7 @@ class Teller(models.Model):
     hasLeft = models.BooleanField()
 
 class Story(models.Model):
+    MINIMUM_NUMBER_OF_ACTIVE_TELLERS = 2
     started_by = models.ForeignKey(User, related_name="started_by", on_delete=models.CASCADE)
     title = models.CharField(max_length=256)
     whose_turn = models.IntegerField()
@@ -62,7 +63,7 @@ class Story(models.Model):
 
     def leave_story(self, user):
         # capture the case that the teller leaves behind only one active person
-        if (self.numberOfActiveTellers() <= 2):
+        if (self.numberOfActiveTellers() <= Story.MINIMUM_NUMBER_OF_ACTIVE_TELLERS):
             raise NotEnoughActivePlayers
 
         # mark corresponding teller as 'has left'
