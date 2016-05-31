@@ -84,3 +84,44 @@ class ContinueStoryTest(UmklappTestCase):
         s = self.stdStory()
         s.finish()
         self.assertTrue(s.is_finished)
+
+    # A.) A non-current teller leaves
+    def testLeaveStory1(self):
+        s = self.stdStory()
+        self.assertEquals(s.numberOfActiveTellers(), 7)
+        s.leave_story(self.users[1])
+        self.assertEquals(s.numberOfActiveTellers(), 6)
+
+    # B.) The current teller leaves
+    def testLeaveStory2(self):
+        s = self.stdStory()
+        self.assertEquals(s.numberOfActiveTellers(), 7)
+        s.advance_teller() # 1
+        s.advance_teller() # 2
+        s.leave_story(self.users[2])
+        self.assertEquals(s.waiting_for(), self.users[3])
+        self.assertEquals(s.numberOfActiveTellers(), 6)
+
+    # C.) A teller leaves twice
+    def testLeaveStory3(self):
+        s = self.stdStory()
+        self.assertEquals(s.numberOfActiveTellers(), 7)
+        s.leave_story(self.users[2])
+        s.leave_story(self.users[2])
+        self.assertEquals(s.numberOfActiveTellers(), 6)
+
+    # D.) Too many tellers leave
+    def testLeaveStory4(self):
+        s = self.stdStory()
+        self.assertEquals(s.numberOfActiveTellers(), 7)
+        s.leave_story(self.users[0])
+        self.assertEquals(s.numberOfActiveTellers(), 6)
+        s.leave_story(self.users[1])
+        self.assertEquals(s.numberOfActiveTellers(), 5)
+        s.leave_story(self.users[2])
+        self.assertEquals(s.numberOfActiveTellers(), 4)
+        s.leave_story(self.users[3])
+        self.assertEquals(s.numberOfActiveTellers(), 3)
+        s.leave_story(self.users[4])
+        self.assertEquals(s.numberOfActiveTellers(), 2)
+        self.assertRaises(NotEnoughActivePlayers, s.leave_story, self.users[5])
