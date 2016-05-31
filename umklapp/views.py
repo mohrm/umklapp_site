@@ -129,10 +129,11 @@ def story_continued(request, story_id):
     s = Story.objects.get(id=story_id)
     s.continue_story("text")
 
+@login_required
 def show_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
-    if not s.is_finished:
+    if not s.is_finished or not s.participates_in(request.user):
         raise PermissionDenied
 
     context = {
