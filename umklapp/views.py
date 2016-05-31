@@ -152,7 +152,7 @@ def overview(request):
         running_stories = filter(lambda (s): s.participates_in(request.user),
                              all_running_stories)
         finished_stories = filter(lambda (s): s.participates_in(request.user),
-                                      all_running_stories)
+                                      all_finished_stories)
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
