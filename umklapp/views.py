@@ -78,12 +78,15 @@ class ExtendStoryForm(Form):
 class NotYourTurnException(Exception):
     pass
 
-
+@login_required
 def continue_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
     t = get_object_or_404(s.tellers, user=request.user)
 
     if s.is_finished:
+        raise PermissionDenied
+
+    if not s.participates_in(request.user):
         raise PermissionDenied
 
     if s.whose_turn != t.position:
@@ -112,20 +115,25 @@ def continue_story(request, story_id):
     }
     return render(request, 'umklapp/extend_story.html', context)
 
+@login_required
 def skip(request):
-    story_id = request.POST['story_id']
-    s = get_object_or_404(Story.objects, id=story_id)
-    s.advance_teller()
-    return redirect('overview')
+    if not request.user.is_staff:
+        raise PermissionDenied
+    if request.method == 'POST':
+        story_id = request.POST['story_id']
+        s = get_object_or_404(Story.objects, id=story_id)
+        s.advance_teller()
+        return redirect('overview')
 
 def story_continued(request, story_id):
     s = Story.objects.get(id=story_id)
     s.continue_story("text")
 
+@login_required
 def show_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
-    if not s.is_finished:
+    if not s.is_finished or not s.participates_in(request.user):
         raise PermissionDenied
 
     if not s.participates_in(request.user):
@@ -139,12 +147,15 @@ def show_story(request, story_id):
 @login_required
 def overview(request):
     all_running_stories = Story.objects.filter(is_finished = False)
-    finished_stories = Story.objects.filter(is_finished = True)
+    all_finished_stories = Story.objects.filter(is_finished = True)
     if request.user.is_staff:
         running_stories = all_running_stories
+        finished_stories = all_finished_stories
     else:
         running_stories = filter(lambda (s): s.participates_in(request.user),
                              all_running_stories)
+        finished_stories = filter(lambda (s): s.participates_in(request.user),
+                                      all_finished_stories)
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
