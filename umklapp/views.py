@@ -128,6 +128,9 @@ def show_story(request, story_id):
     if not s.is_finished:
         raise PermissionDenied
 
+    if not s.participates_in(request.user):
+        raise PermissionDenied
+
     context = {
         'story': s,
     }
