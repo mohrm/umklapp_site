@@ -78,7 +78,7 @@ class ExtendStoryForm(Form):
 class NotYourTurnException(Exception):
     pass
 
-
+@login_required
 def continue_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
     t = get_object_or_404(s.tellers, user=request.user)
