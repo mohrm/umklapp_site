@@ -12,3 +12,6 @@ python manage.py migrate
 
 echo "Executing 'python manage.py collectstatic --noinput -v0'"
 python manage.py collectstatic --noinput -v0
+
+echo "Executing 'python manage.py compilemessages'"
+python manage.py compilemessages
