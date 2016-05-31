@@ -86,6 +86,9 @@ def continue_story(request, story_id):
     if s.is_finished:
         raise PermissionDenied
 
+    if not s.participates_in(request.user):
+        raise PermissionDenied
+
     if s.whose_turn != t.position:
         raise NotYourTurnException
 
