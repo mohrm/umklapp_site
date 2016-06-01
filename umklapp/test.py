@@ -97,7 +97,7 @@ class ContinueStoryTest(UmklappTestCase):
         s = self.stdStory()
         self.assertEquals(s.numberOfActiveTellers(), 7)
         s.advance_teller() # 1
-        s.advance_teller() # 2
+        self.assertEquals(s.waiting_for(), self.users[2])
         s.leave_story(self.users[2])
         self.assertEquals(s.waiting_for(), self.users[3])
         self.assertEquals(s.numberOfActiveTellers(), 6)
