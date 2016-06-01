@@ -9,30 +9,44 @@
 <a href="{% url 'new_story' %}">Neue Geschichte starten</a><p/>
 <h2>Laufende Geschichten</h2>
 {% if running_stories %}
-  <ul>
-	  {% for s in running_stories %}
-	    <li>
-			„{{ s.title }}“ ({{ s.parts.count }} Sätze):
-			{% if s.waiting_for = user %}
-			  <a class="btn btn-primary btn-sm" href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
-			{% else %}
-			  wartet auf {{ s.waiting_for }}...
-			{% endif  %}
-			<form style="display:inline" method="post" action="leave_story">
-				{% csrf_token %}
-				<input type="hidden" name="story_id" value="{{ s.id }}"/>
-				<button type="submit" class="btn btn-default btn-sm">verlassen</button>
-			</form>
-			{% if specialpowers %}
-			<form method="post" action="skip">
-				{% csrf_token %}
-				<input type="hidden" name="story_id" value="{{ s.id }}"/>
-				<button type="submit" class="btn btn-default btn-sm">&uuml;berspringen</button>
-			</form>
-			{% endif %}
-	     </li>
-	  {% endfor %}
-  </ul>
+  <table class="table table-hover">
+   <thead>
+    <tr>
+     <th>Titel</th>
+     <th>Sätze</th>
+     <th>Nächster </th>
+     <th>Aktionen </th>
+    </tr>
+   </thead>
+   <tbody>
+    {% for s in running_stories %}
+     <tr {% if s.waiting_for = user %} class="active" {% endif %}>
+      <td>{{ s.title }}</td>
+      <td>{{ s.parts.count }}</td>
+      <td>{{ s.waiting_for }}</td>
+      <td>
+       {% if s.waiting_for = user %}
+        <a class="btn btn-primary btn-sm" href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
+       {% else %}
+        <button class="btn btn-primary btn-sm" disabled="disabled" href="">fortsetzen</button>
+       {% endif %}
+	<form style="display:inline" method="post" action="leave_story">
+          {% csrf_token %}
+	  <input type="hidden" name="story_id" value="{{ s.id }}"/>
+	  <button type="submit" class="btn btn-default btn-sm">verlassen</button>
+	</form>
+	{% if specialpowers %}
+	 <form method="post" action="skip">
+           {% csrf_token %}
+           <input type="hidden" name="story_id" value="{{ s.id }}"/>
+           <button type="submit" class="btn btn-default btn-sm">&uuml;berspringen</button>
+	 </form>
+	{% endif %}
+      </td>
+     </tr>
+   {% endfor %}
+   </tbody>
+  </table>
 {% else %}
 <p>Es gibt gerade keine laufenden Geschichten.</p>
 {% endif %}
