@@ -22,7 +22,8 @@
    <tbody>
     {% for s in running_stories %}
      <tr {% if s.waiting_for = user %} class="success" {% endif %}>
-      <td>{{ s.title }}</td>
+      {# dynamic width, but ellipsize the text: http://stackoverflow.com/a/20412246/946226  #}
+      <td style="max-width:1px"><div style="text-overflow:ellipsis; overflow:hidden; white-space:nowrap">{{ s.title }}</div></td>
       <td class="text-right hidden-xs">{{ s.parts.count }}</td>
       <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right hidden-xs">{{ s.waiting_for }}</td>
