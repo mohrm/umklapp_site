@@ -74,7 +74,7 @@ class Story(models.Model):
         # if it was the leaving teller's turn, fast forward to the next active
         # teller - note that there are at least two active tellers, so that
         # advance_teller will terminate
-        if self.waiting_for == user:
+        if self.waiting_for() == user:
             self.advance_teller()
 
     def finish(self):
