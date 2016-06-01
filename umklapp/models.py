@@ -57,9 +57,9 @@ class Story(models.Model):
         self.advance_teller()
 
     def numberOfActiveTellers(self):
-        return len(filter(lambda t: t.user.is_active and not t.hasLeft,
-                      Teller.objects.filter(corresponding_story=self)
-                     ))
+        return Teller.objects \
+           .filter(corresponding_story=self, user__is_active = True, hasLeft = False) \
+           .count()
 
     def leave_story(self, user):
         # capture the case that the teller leaves behind only one active person
