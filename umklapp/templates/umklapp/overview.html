@@ -9,14 +9,14 @@
 <a href="{% url 'new_story' %}">Neue Geschichte starten</a><p/>
 <h2>Laufende Geschichten</h2>
 {% if running_stories %}
-  <table class="table table-hover">
+  <table class="table">
    <thead>
     <tr>
      <th style="width:100%">Titel</th>
      <th class="text-right">Sätze</th>
      <th class="text-right">Erzähler</th>
-     <th class="text-right">Nächster </th>
-     <th class="text-right">Aktionen </th>
+     <th class="text-right">Nächster</th>
+     <th class="text-right">Aktionen</th>
     </tr>
    </thead>
    <tbody>
@@ -62,23 +62,62 @@
 {% else %}
 <p>Es gibt gerade keine laufenden Geschichten.</p>
 {% endif %}
+</div>
+
+<div class="container">
+<div class="row">
+<div class="col-md-6">
 <h2>Beendete Geschichten </h2>
 {% if finished_stories %}
-  <ul>
-	  {% for s in finished_stories %}
-	    <li>„{{ s.title }}“: <a href="{% url 'show_story' story_id=s.id %}">lesen</a></li>
-	  {% endfor %}
-  </ul>
+  <table class="table">
+   <thead>
+    <tr>
+     <th style="width:100%">Titel</th>
+     <th class="text-right">Sätze</th>
+     <th class="text-right">Erzähler</th>
+     <th class="text-right">Aktionen</th>
+    </tr>
+   </thead>
+   <tbody>
+    {% for s in finished_stories %}
+      <td>{{ s.title }}</td>
+      <td class="text-right">{{ s.parts.count }}</td>
+      <td class="text-right">{{ s.numberOfActiveTellers }}</td>
+      <td class="text-right" style="white-space: nowrap">
+        <a title="Geschichte lesen" class="btn btn-primary btn-sm" href="{% url 'show_story' story_id=s.id %}"><span class="glyphicon glyphicon-book" aria-hidden="true"></span></a>
+      </td>
+     </tr>
+   {% endfor %}
+   </tbody>
+  </table>
 {% else %}
 <p>Es gibt gerade keine fertigen Geschichten.</p>
 {% endif %}
+</div>
+
+<div class="col-md-6">
 {% if user_activity %}
 <h2>The Top Ten Tellers</h2>
-<ol>
-{% for u in user_activity %}
-	<li>{{ u.username }}: {{ u.parts_written }} Sätze</li>
-{% endfor %}
-</ol>
+<table class="table">
+ <thead>
+  <tr>
+   <th>#</th>
+   <th style="width:100%">Erzähler</th>
+   <th class="text-right">Sätze</th>
+  </tr>
+ </thead>
+ <tbody>
+  {% for u in user_activity %}
+   <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ u.username }}</td>
+    <td class="text-right">{{ u.parts_written }}</td>
+   </tr>
+  {% endfor %}
+ </tbody>
+</table>
 {% endif %}
+</div>
+</div>
 </div>
 {% endblock %}
