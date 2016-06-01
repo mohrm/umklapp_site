@@ -14,20 +14,20 @@
 	    <li>
 			„{{ s.title }}“:
 			{% if s.waiting_for = user %}
-			  <a href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
+			  <a class="btn btn-primary btn-sm" href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
 			{% else %}
 			  wartet auf {{ s.waiting_for }}...
 			{% endif  %}
-			<form method="post" action="leave_story">
+			<form style="display:inline" method="post" action="leave_story">
 				{% csrf_token %}
 				<input type="hidden" name="story_id" value="{{ s.id }}"/>
-				<button type="submit" class="btn btn-default">Geschichte verlassen</button>
+				<button type="submit" class="btn btn-default btn-sm">verlassen</button>
 			</form>
 			{% if specialpowers %}
 			<form method="post" action="skip">
 				{% csrf_token %}
 				<input type="hidden" name="story_id" value="{{ s.id }}"/>
-				<button type="submit" class="btn btn-default">&uuml;berspringen</button>
+				<button type="submit" class="btn btn-default btn-sm">&uuml;berspringen</button>
 			</form>
 			{% endif %}
 	     </li>
