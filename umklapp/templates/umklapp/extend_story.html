@@ -8,10 +8,10 @@
 <h2>{{ story.title }} (Teil {{ part_number }})</h2>
 <p>
 Was bisher geschah:
+</p>
 <blockquote>
 {{ story.latest_story_part.content }}
 </blockquote>
-</p>
 
 <form method="post" action="">
   {% csrf_token %}
