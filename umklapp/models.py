@@ -16,6 +16,7 @@ class Story(models.Model):
     title = models.CharField(max_length=256)
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
+    is_public = models.BooleanField(default=False,blank=False)
 
     def __unicode__(self):
         return self.title
@@ -79,6 +80,10 @@ class Story(models.Model):
 
     def finish(self):
         self.is_finished = True
+        self.save()
+
+    def publish(self):
+        self.is_public = True
         self.save()
 
     def parts(self):

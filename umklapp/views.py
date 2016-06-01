@@ -151,16 +151,24 @@ def story_continued(request, story_id):
 def show_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
-    if not s.is_finished or not s.participates_in(request.user):
-        raise PermissionDenied
-
-    if not s.participates_in(request.user):
+    if not s.is_finished or (not s.participates_in(request.user) and not s.is_public):
         raise PermissionDenied
 
     context = {
         'story': s,
     }
     return render(request, 'umklapp/show_story.html', context)
+
+@login_required
+def publish_story(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.is_finished or not s.started_by == request.user:
+        raise PermissionDenied
+
+    s.publish()
+
+    return redirect('overview')
 
 @login_required
 def overview(request):
@@ -173,7 +181,7 @@ def overview(request):
         running_stories = filter(lambda (s): s.participates_in(request.user) and
                                  not s.hasLeft(request.user),
                              all_running_stories)
-        finished_stories = filter(lambda (s): s.participates_in(request.user),
+        finished_stories = filter(lambda (s): s.participates_in(request.user) or s.is_public,
                                       all_finished_stories)
     user_activity = User.objects.filter(is_staff=False).annotate(parts_written=Count('teller__storypart')).order_by('-parts_written', 'username')[:10]
     action_count = len(filter(lambda (s): s.waiting_for() == request.user, running_stories))
