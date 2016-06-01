@@ -176,13 +176,15 @@ def overview(request):
         finished_stories = filter(lambda (s): s.participates_in(request.user),
                                       all_finished_stories)
     user_activity = User.objects.filter(is_staff=False).annotate(parts_written=Count('teller__storypart')).order_by('-parts_written', 'username')[:10]
+    action_count = len(filter(lambda (s): s.waiting_for() != request.user, running_stories))
 
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
         'running_stories': running_stories,
         'finished_stories': finished_stories,
-	'user_activity': user_activity
+	'user_activity': user_activity,
+        'action_count': action_count,
     }
     return render(request, 'umklapp/overview.html', context)
 

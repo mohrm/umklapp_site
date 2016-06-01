@@ -2,6 +2,8 @@
 {% load bootstrap %}
 {% block title %}Das Umklappspiel{% endblock %}
 
+{% block pretitle %}{% if action_count %}({{action_count}}) {% endif %}{% endblock %}
+
 {% block content %}
 <meta http-equiv="refresh" content="10">
 <div class="container">
