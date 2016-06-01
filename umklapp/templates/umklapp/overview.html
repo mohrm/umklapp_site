@@ -12,7 +12,7 @@
   <ul>
 	  {% for s in running_stories %}
 	    <li>
-			„{{ s.title }}“:
+			„{{ s.title }}“ ({{ s.parts.count }} Sätze):
 			{% if s.waiting_for = user %}
 			  <a class="btn btn-primary btn-sm" href="{% url 'continue_story' story_id=s.id %}">fortsetzen</a>
 			{% else %}
