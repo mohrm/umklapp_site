@@ -10,9 +10,9 @@
 <h2>Laufende Geschichten</h2>
 {% if running_stories %}
   <table class="table">
-   <thead>
+   <thead class="hidden-xs">
     <tr>
-     <th style="width:100%">Titel</th>
+     <th style="width:99%">Titel</th>
      <th class="text-right">Sätze</th>
      <th class="text-right">Erzähler</th>
      <th class="text-right">Nächster</th>
@@ -23,9 +23,9 @@
     {% for s in running_stories %}
      <tr {% if s.waiting_for = user %} class="success" {% endif %}>
       <td>{{ s.title }}</td>
-      <td class="text-right">{{ s.parts.count }}</td>
-      <td class="text-right">{{ s.numberOfActiveTellers }}</td>
-      <td class="text-right">{{ s.waiting_for }}</td>
+      <td class="text-right hidden-xs">{{ s.parts.count }}</td>
+      <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
+      <td class="text-right hidden-xs">{{ s.waiting_for }}</td>
       <td class="text-right" style="white-space: nowrap">
 
        {% if s.waiting_for = user %}
@@ -70,19 +70,19 @@
 <h2>Beendete Geschichten </h2>
 {% if finished_stories %}
   <table class="table">
-   <thead>
+   <thead class="hidden-xs">
     <tr>
-     <th style="width:100%">Titel</th>
-     <th class="text-right">Sätze</th>
-     <th class="text-right">Erzähler</th>
+     <th style="width:99%">Titel</th>
+     <th class="text-right hidden-xs">Sätze</th>
+     <th class="text-right hidden-xs">Erzähler</th>
      <th class="text-right">Aktionen</th>
     </tr>
    </thead>
    <tbody>
     {% for s in finished_stories %}
       <td>{{ s.title }}</td>
-      <td class="text-right">{{ s.parts.count }}</td>
-      <td class="text-right">{{ s.numberOfActiveTellers }}</td>
+      <td class="text-right hidden-xs">{{ s.parts.count }}</td>
+      <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right" style="white-space: nowrap">
         <a title="Geschichte lesen" class="btn btn-primary btn-sm" href="{% url 'show_story' story_id=s.id %}"><span class="glyphicon glyphicon-book" aria-hidden="true"></span></a>
       </td>
