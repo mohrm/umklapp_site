@@ -8,6 +8,7 @@ from django.contrib.auth import logout
 from django.forms import Form, CharField, TextInput, MultipleChoiceField
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count
 from random import shuffle
 
 class NewStoryForm(Form):
@@ -174,11 +175,14 @@ def overview(request):
                              all_running_stories)
         finished_stories = filter(lambda (s): s.participates_in(request.user),
                                       all_finished_stories)
+    user_activity = User.objects.filter(is_staff=False).annotate(parts_written=Count('teller__storypart')).order_by('-parts_written')[:10]
+
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
         'running_stories': running_stories,
         'finished_stories': finished_stories,
+	'user_activity': user_activity
     }
     return render(request, 'umklapp/overview.html', context)
 

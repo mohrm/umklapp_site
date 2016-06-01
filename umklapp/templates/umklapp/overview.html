@@ -72,5 +72,13 @@
 {% else %}
 <p>Es gibt gerade keine fertigen Geschichten.</p>
 {% endif %}
+{% if user_activity %}
+<h2>The Top Ten Tellers</h2>
+<ol>
+{% for u in user_activity %}
+	<li>{{ u.username }}: {{ u.parts_written }} Sätze</li>
+{% endfor %}
+</ol>
+{% endif %}
 </div>
 {% endblock %}
