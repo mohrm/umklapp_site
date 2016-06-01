@@ -1,9 +1,16 @@
 language: python
 python:
-  - "2.7"
-# command to install dependencies
+- '2.7'
 install:
- - pip install -r requirements.txt
-# command to run tests
+- pip install -r requirements.txt
 script:
- - ./manage.py test -v2
+- "./manage.py test -v2"
+deploy:
+  provider: openshift
+  user: martin.mohr@posteo.de
+  password:
+    secure: htdT0Rq7Tc/AhrGADjQS1Hn201mTEY6GHyC9FLs0qzYgYwHoPW6xpSmhATCqVTBA3T2zXYoVQ4a4ez4Gil2pBluBugQQJ2KV7/GhufL85n8uc+wNqNAlNZgS3KPFI42bDvMlp1cjaAmXh+I+WVfyzhsH9u0wXLkXiDLFWDJ+CIRavDFX3RJhLNWWjmcmhfFJ91wrxppK5Qhg1h59E6qP1eoS2VEsc+YnrQtL5eMryb34gAbgb2sA49VjUBVqhalB1ySWGBvDnwkOYeUQqQOqtygWB5R822fTQnJ99VWl7DIqrpFd8Uxg2BGmRo23hK8fRPaBoT6fIEYuJAj2jivo5Ih1w/614QAgA2RNYn8D8nnVla/aWP1Vzm0gMiBbkHD+bJ8I94Tb7WcDIj5RD0Gw7IGKRgNghfCLme1CgRP4/Na5ARhaW4BbamWmvw7TxYitm1OTzW1/AMmNZqknSuLdcEid5a4/cZ78NNiN3+qI9FQ3U3CU3AO5h+2DCIvJTRLQWv4B0UL4AQbyG5zU8aSxE7i//oGr8aJX9vhvkcJy/RMGAl/GsQFZEvWkT8HAvfGqPAewQyzpuiIQExJvjI2mLr6VvbjQgYhHy3PjEr7CF0buppTNyCllc/ANP2SIPIyFV8+u3bIkgh7ysXKJWCMjc5Wi6HTRnsC3Un42bYZa0lg=
+  app: umklapp
+  domain: spielchen
+  on:
+    repo: mohrm/umklapp_site
