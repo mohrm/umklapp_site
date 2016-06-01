@@ -109,7 +109,7 @@
  <tbody>
   {% for u in user_activity %}
    <tr>
-    <td>{{ forloop.counter }}</td>
+    <td>{% ifchanged u.parts_written %}{{ forloop.counter }}{% endifchanged %}</td>
     <td>{{ u.username }}</td>
     <td class="text-right">{{ u.parts_written }}</td>
    </tr>
