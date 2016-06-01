@@ -21,7 +21,7 @@
    </thead>
    <tbody>
     {% for s in running_stories %}
-     <tr {% if s.waiting_for = user %} class="active" {% endif %}>
+     <tr {% if s.waiting_for = user %} class="success" {% endif %}>
       <td>{{ s.title }}</td>
       <td class="text-right">{{ s.parts.count }}</td>
       <td class="text-right">{{ s.numberOfActiveTellers }}</td>
