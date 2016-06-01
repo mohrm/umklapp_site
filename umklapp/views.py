@@ -14,11 +14,11 @@ from random import shuffle
 class NewStoryForm(Form):
     title = CharField(
         label = "Wie soll die Geschichte heißen?",
-        widget = TextInput(attrs={'placeholder': 'Das Märchen von der Fabel'}),
+        widget = TextInput(attrs={'placeholder': 'Das Märchen von der Fabel', 'autocomplete': 'off'}),
         )
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
-        widget = TextInput(attrs={'placeholder': 'Es war einmal…'}),
+        widget = TextInput(attrs={'placeholder': 'Es war einmal…', 'autocomplete': 'off'}),
         )
     mitspieler = MultipleChoiceField(
         label = "Wer soll alles noch mitspielen?",
@@ -63,7 +63,7 @@ def start_new_story(request):
 class ExtendStoryForm(Form):
     nextSentence = CharField(
         label = "Wie soll die Geschichte weitergehen?",
-        widget = TextInput(attrs={'placeholder': 'und dann...'}),
+        widget = TextInput(attrs={'placeholder': 'und dann...', 'autocomplete': 'off'}),
         required=False,
         )
 
