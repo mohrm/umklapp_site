@@ -13,6 +13,7 @@
    <thead>
     <tr>
      <th>Titel</th>
+     <th>Teilnehmer</th>
      <th>Sätze</th>
      <th>Nächster </th>
      <th>Aktionen </th>
@@ -22,6 +23,7 @@
     {% for s in running_stories %}
      <tr {% if s.waiting_for = user %} class="active" {% endif %}>
       <td>{{ s.title }}</td>
+      <td>{{ s.numberOfActiveTellers }}</td>
       <td>{{ s.parts.count }}</td>
       <td>{{ s.waiting_for }}</td>
       <td>
