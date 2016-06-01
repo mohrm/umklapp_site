@@ -1,11 +1,10 @@
-{% extends "umklapp/base.html" %}
+{% extends request.is_ajax|yesno:"umklapp/base_ajax.html,umklapp/base.html"%}
 {% load bootstrap %}
 {% block title %}Das Umklappspiel{% endblock %}
 
 {% block pretitle %}{% if action_count %}({{action_count}}) {% endif %}{% endblock %}
 
 {% block content %}
-<meta http-equiv="refresh" content="10">
 <div class="container">
 <h2>Willst Du eine neue Geschichte starten?</h2>
 <a href="{% url 'new_story' %}">Neue Geschichte starten</a><p/>
@@ -127,3 +126,23 @@
 </div>
 </div>
 {% endblock %}
+
+{% block pageend %}
+<script>
+/*  http://stackoverflow.com/a/13324909/946226 */
+$(function() {
+    setTimeout(startRefresh,20*1000);
+});
+
+function startRefresh() {
+    $.get('/', function(data) {
+        $('#content').html(data);
+	if ($('#settitle')) {
+	    $('title').text($('#settitle').text());
+	    $('#settitle').remove();
+	}
+    });
+}
+</script>
+{% endblock %}
+

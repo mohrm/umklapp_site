@@ -99,7 +99,10 @@ body {
  </div>
 {% endif %}
 
+<div id="content">
 {% block content %}{% endblock %}
+</div>
+
 
 <div id="footer-space"/>
 
@@ -129,6 +132,8 @@ body {
 </div>
 
 </div> <!-- wrap -->
+
+{% block pageend %}{% endblock %}
 
 </body>
 </html>
