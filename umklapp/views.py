@@ -134,11 +134,11 @@ def leave_story(request):
 
 @login_required
 def skip(request):
-    if not request.user.is_staff:
-        raise PermissionDenied
     if request.method == 'POST':
         story_id = request.POST['story_id']
         s = get_object_or_404(Story.objects, id=story_id)
+        if not request.user.is_staff and s.waiting_for() != request.user:
+            raise PermissionDenied
         s.advance_teller()
         return redirect('overview')
 
