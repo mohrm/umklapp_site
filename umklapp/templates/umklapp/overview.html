@@ -187,7 +187,7 @@ Du könntest <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
 <script>
 /*  http://stackoverflow.com/a/13324909/946226 */
 $(function() {
-    setTimeout(startRefresh,20*1000);
+    setInterval(startRefresh,20*1000);
 });
 
 function startRefresh() {
