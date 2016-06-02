@@ -158,6 +158,50 @@ class ViewTests(UmklappTestCase):
         for i in range(uid+1,7):
             assert("user%d" % i in vals), i
         r2 = c.post(reverse("create_new_story"),
-            dict(title="test title", firstSentence="it begins", mitspieler=("user2", "user3")))
-        self.assertEquals(r2.status_code, 200)
-        self.assertTrue(r2.context['form'].is_valid)
+            dict(title="test title", firstSentence="it begins", mitspieler=("3", "4")))
+        self.assertRedirects(r2, '/')
+
+    def testFullCycle(self):
+        c1 = Client()
+        c2 = Client()
+        c1.login(username="user1", password="p455w0rd")
+
+        r1 = c1.get(reverse("new_story"))
+        self.assertEquals(r1.status_code, 200)
+        assert(r1.context['form'].fields.has_key("title"))
+        assert(r1.context['form'].fields.has_key("firstSentence"))
+        assert(r1.context['form'].fields.has_key("mitspieler"))
+        vals = list(v for (k,v) in r1.context['form'].fields["mitspieler"].choices)
+        for i in range(2,7):
+            assert("user%d" % i in vals), i
+        r2 = c1.post(reverse("create_new_story"),
+            dict(title="test title", firstSentence="it begins", mitspieler=("3",)))
+        self.assertRedirects(r2, '/')
+
+        # is it ok to hard-code the story_id here?
+        story_id = 2
+
+        c2.login(username="user2", password="p455w0rd")
+        r = c2.get(reverse("show_story", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 200)
+        assert(r.context['form'].fields.has_key("nextSentence"))
+        r = c2.post(reverse("continue_story", kwargs={'story_id':story_id}),
+            dict(nextSentence="it continues"))
+        self.assertRedirects(r, reverse("overview"))
+
+        r = c1.get(reverse("show_story", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 200)
+        assert(r.context['form'].fields.has_key("nextSentence"))
+        r = c1.post(reverse("continue_story", kwargs={'story_id':story_id}),
+            dict(nextSentence="it ends", finish="finish"))
+        self.assertRedirects(r, reverse("overview"))
+
+        r = c2.post(reverse("publish_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
+
+        r = c1.post(reverse("publish_story",  kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+
+        r = c1.post(reverse("unpublish_story",  kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+
