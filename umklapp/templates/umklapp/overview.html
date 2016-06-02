@@ -76,9 +76,9 @@
       <th colspan="4" class="ellipsis">{{ s.title }}</th>
      </tr>
      <tr class="second-row">
-      <td style="white-space:nowrap">{{ s.waiting_for }} ist dran</td>
-      <td class="text-right">{{ s.parts_count }}&nbsp;Sätze</td>
-      <td class="text-right">{{ s.numberOfActiveTellers }}&nbsp;Erzähler</td>
+      <td class="text-right" style="white-space:nowrap">{{ s.parts_count }}&nbsp;<span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></td>
+      <td class="text-right" style="white-space:nowrap">{{ s.numberOfActiveTellers }}&nbsp;<span class="glyphicon glyphicon-user" aria-hidden="true"></span></td>
+      <td style="white-space:nowrap"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{ s.waiting_for }}</td>
       <td class="text-right expand" style="white-space: nowrap">
 
        {% if s.waiting_for = user %}
