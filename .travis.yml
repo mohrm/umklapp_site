@@ -4,7 +4,8 @@ python:
 install:
 - pip install -r requirements.txt
 script:
-- "./manage.py test -v2"
+- "coverage run --source='umklapp,umklapp_site' ./manage.py test -v2"
+- "coverage report --skip-covered --fail-under=75"
 deploy:
   provider: openshift
   user: martin.mohr@posteo.de
