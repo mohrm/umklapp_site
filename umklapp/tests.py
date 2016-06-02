@@ -1,5 +1,6 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.test.utils import override_settings
+from django.core.urlresolvers import reverse
 
 from umklapp.models import *
 
@@ -125,3 +126,25 @@ class ContinueStoryTest(UmklappTestCase):
         s.leave_story(self.users[4])
         self.assertEquals(s.numberOfActiveTellers(), 2)
         self.assertRaises(NotEnoughActivePlayers, s.leave_story, self.users[5])
+
+class ViewTests(UmklappTestCase):
+    def setUp(self):
+        self.addUsers()
+        self.stdStory()
+
+    def testLogin(self):
+        c = Client()
+        r1 = c.get("/", follow=True)
+        self.assertEquals(r1.status_code, 200)
+        assert(r1.context['form'].fields.has_key("username"))
+        assert(r1.context['form'].fields.has_key("password"))
+        r2 = c.post(reverse('django.contrib.auth.views.login'),
+            dict(username="user1", password="p455w0rd"), follow=True)
+        self.assertEquals(r2.status_code, 200)
+        assert("finished_stories" in r2.context.keys())
+        assert("running_stories" in r2.context.keys())
+        # Login successful
+
+    def testLoginQuick(self):
+        c = Client()
+        c.login(username="user1", password="p455w0rd")
