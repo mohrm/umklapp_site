@@ -181,7 +181,7 @@ $(function() {
 });
 
 function startRefresh() {
-    $.get('/', function(data) {
+    $.get('/ajax', function(data) {
         $('#content').html(data);
 	if ($('#settitle')) {
 	    $('title').text($('#settitle').text());

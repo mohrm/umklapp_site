@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.overview, name='overview'),
+    url(r'^(?:ajax)?$', views.overview, name='overview'),
     url(r'^start_new_story/', views.start_new_story, name='new_story'),
     url(r'^continue_story/(?P<story_id>[0-9]+)', views.continue_story,
         name='continue_story'),
