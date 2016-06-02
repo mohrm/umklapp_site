@@ -16,5 +16,13 @@
   {% if not forloop.last %}•{% endif %}
 {% endfor %}
 </p>
+
+{% if story.started_by = user %}
+  {% if not story.is_public %}
+    <a title="Erlaube allen die Geschichte zu sehen" class="btn btn-default btn-sm" href="{% url 'publish_story' story_id=story.id %}">Geschichte öffentlich sichbar machen</a>
+  {% else %}
+    <a title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-default btn-sm" href="{% url 'unpublish_story' story_id=story.id %}">Geschichte nur den Erzählern sichbar machen</a>
+  {% endif %}
+{% endif %}
 </div>
 {% endblock %}

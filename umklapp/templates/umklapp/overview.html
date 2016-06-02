@@ -130,7 +130,6 @@ Du könntest <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
      <th class="expand">Titel</th>
      <th class="text-right hidden-xs">Sätze</th>
      <th class="text-right hidden-xs">Erzähler</th>
-     <th class="text-right">Aktionen</th>
     </tr>
    </thead>
    <tbody>
@@ -138,15 +137,6 @@ Du könntest <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right hidden-xs">{{ s.parts_count }}</td>
       <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
-      <td class="text-right" style="white-space: nowrap">
-        {% if s.started_by = user %}
-          {% if not s.is_public %}
-            <a title="Erlaube allen die Geschichte zu sehen" class="btn btn-primary btn-sm" href="{% url 'publish_story' story_id=s.id %}"><span class="glyphicon glyphicon-sunglasses" aria-hidden="true" /></a>
-          {% else %}
-            <a title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-primary btn-sm" href="{% url 'unpublish_story' story_id=s.id %}"><span class="glyphicon glyphicon-lock" aria-hidden="true" /></a>
-          {% endif %}
-        {% endif %}
-      </td>
      </tr>
    {% endfor %}
    </tbody>

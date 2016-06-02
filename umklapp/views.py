@@ -180,7 +180,7 @@ def publish_story(request, story_id):
 
     s.public(True)
 
-    return redirect('overview')
+    return redirect('show_story', story_id=s.id)
 
 @login_required
 def unpublish_story(request, story_id):
@@ -191,7 +191,7 @@ def unpublish_story(request, story_id):
 
     s.public(False)
 
-    return redirect('overview')
+    return redirect('show_story', story_id=s.id)
 
 @login_required
 def overview(request):
