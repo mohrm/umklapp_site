@@ -12,6 +12,15 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import urlparse
+import sys
+import logging
+
+TESTING = "test" in sys.argv
+
+if TESTING:
+    # use fast hashing
+    PASSWORD_HASHERS = [ 'django.contrib.auth.hashers.MD5PasswordHasher', ]
+    logging.disable(logging.CRITICAL)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,10 +39,11 @@ if 'OPENSHIFT_APP_NAME' in os.environ:
     ALLOWED_HOSTS = [
         '.rhcloud.com'
     ]
+elif TESTING:
+    DEBUG = False
+    TEMPLATE_DEBUG = False
 else:
     DEBUG = True
-
-
 
 # Application definition
 
@@ -97,6 +107,13 @@ if 'OPENSHIFT_MYSQL_DB_URL' in os.environ:
         'HOST': url.hostname,
         'PORT': url.port,
     }
+elif TESTING:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ":memory:",
+        }
+    }
 else:
     DATABASES = {
         'default': {
@@ -123,7 +140,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
