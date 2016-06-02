@@ -6,6 +6,9 @@
 {% block content %}
 <div class="container">
 <h2>{{ story.title }} (Teil {{ part_number }})</h2>
+<p>(von {{ story.started_by }} und {{ story.tellers.count|add:-1 }} weiteren Erzählern)</p>
+
+{% if form %}
 <p>
 Was bisher geschah:
 </p>
@@ -13,12 +16,21 @@ Was bisher geschah:
 {{ story.latest_story_part.content }}
 </blockquote>
 
-<form method="post" action="{% url 'continue_story' story_id=story.id %}">
+<form style="display:inline" method="post" action="{% url 'continue_story' story_id=story.id %}">
   {% csrf_token %}
   {{ form|bootstrap }}
   <button type="submit" class="btn btn-primary">Geschichte weiterschreiben</button>
   <button type="submit" name="finish" class="btn btn-default">Geschichte beenden</button>
 </form>
+<form style="display:inline" method="post" action="{% url 'skip_story' story_id=story.id %}">
+	   {% csrf_token %}
+	   <button title="Überspringen" type="submit" class="btn btn-default">Mich einmal überpringen</button>
+</form>
+<form style="display:inline" method="post" action="{% url 'leave_story' story_id=story.id %}">
+  {% csrf_token %}
+  <button title="Geschichte verlassen" type="submit" class="btn btn-default">Geschichte verlassen</button>
+</form>
+
 
 <h2>Tipps</h2>
 <ul>
@@ -27,5 +39,26 @@ Was bisher geschah:
 <li>Baue am Ende Spannung auf, die dein Nachfolger auflösen kann.</li>
 <li>Sehr abstrus oder surreal ist zwar einmal lustig, aber auf Dauer naja. Lieber selten einsetzen.</li>
 </ul>
+
+{% else %}
+
+<p>
+Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong> weitergeschrieben.
+</p>
+
+
+{% if specialpowers %}
+ <form  style="display:inline" method="post" action="{% url 'skip_story' story_id=story.id %}">
+	   {% csrf_token %}
+	   <button title="Überspringen" type="submit" class="btn btn-default">{{ story.waiting_for }} einmal überpringen</button>
+ </form>
+{% endif %}
+ <form style="display:inline" method="post" action="{% url 'leave_story' story_id=story.id %}">
+  {% csrf_token %}
+  <button title="Geschichte verlassen" type="submit" class="btn btn-default">Geschichte verlassen</button>
+ </form>
+
+{% endif %}
+
 </div>
 {% endblock %}

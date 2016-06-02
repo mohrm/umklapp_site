@@ -188,10 +188,12 @@ def show_story(request, story_id):
         if not s.participates_in(request.user):
             raise PermissionDenied
 
-        if s.whose_turn != t.position:
-            raise NotYourTurnException
+        form = None
 
-        form = ExtendStoryForm()
+        if s.whose_turn == t.position:
+            # only show form if its the user's turn
+            form = ExtendStoryForm()
+
         context = {
             'story': s,
             'part_number': s.latest_story_part().position + 1,

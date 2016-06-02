@@ -25,11 +25,7 @@
    <tbody>
     {% for s in running_stories %}
      <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
-      {% if s.waiting_for = user %}
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
-      {% else %}
-      <td class="ellipsis">{{ s.title }}</td>
-	  {% endif %}
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right">{{ s.waiting_for }}</td>
@@ -72,11 +68,7 @@
    <tbody>
     {% for s in running_stories %}
      <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
-      {% if s.waiting_for = user %}
       <td class="ellipsis" colspan="4"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
-      {% else %}
-      <td class="ellipsis" colspan="4">{{ s.title }}</td>
-	  {% endif %}
      </tr>
      <tr class="second-row">
       <td class="text-right" style="white-space:nowrap">{{ s.parts_count }}&nbsp;<span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></td>
