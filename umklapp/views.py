@@ -210,8 +210,11 @@ def overview(request):
                              all_running_stories)
         finished_stories = filter(lambda (s): s.participates_in(request.user) or s.is_public,
                                       all_finished_stories)
-    user_activity = User.objects.filter(is_staff=False).annotate(parts_written=Count('teller__storyparts')).order_by('-parts_written', 'username')[:10]
-    action_count = len(filter(lambda (s): s.waiting_for() == request.user, running_stories))
+    user_activity = User.objects \
+            .filter(is_staff=False) \
+            .annotate(parts_written=Count('teller__storyparts')) \
+            .order_by('-parts_written', 'username')[:10]
+    action_count = len([s for s in running_stories if s.waiting_for() == request.user])
 
     context = {
         'username': request.user.username,
