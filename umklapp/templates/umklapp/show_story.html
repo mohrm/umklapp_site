@@ -6,16 +6,11 @@
 <div class="container">
 <h2>{{ story.title }}</h2>
 
-<p>
 {% for p in story.parts %}
-  {% if anonymized %}
-    <span class="sentence">{{ p.content }}</span>
-  {% else %}
-    <span  class="sentence" title="{{p.teller.user}}">{{ p.content }}</span>
-  {% endif %}
-  {% if not forloop.last %}•{% endif %}
+  <p class="sentence" {% if not anonymized %} title="{{p.teller.user}}" {% endif %}>
+  {{ p.content }}
+  </p>
 {% endfor %}
-</p>
 
 {% if story.started_by = user %}
   {% if not story.is_public %}
