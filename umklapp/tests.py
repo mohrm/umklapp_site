@@ -145,6 +145,19 @@ class ViewTests(UmklappTestCase):
         assert("running_stories" in r2.context.keys())
         # Login successful
 
-    def testLoginQuick(self):
+    def testNewStory(self):
         c = Client()
-        c.login(username="user1", password="p455w0rd")
+        uid = 1
+        c.login(username="user"+str(uid), password="p455w0rd")
+        r1 = c.get(reverse("new_story"))
+        self.assertEquals(r1.status_code, 200)
+        assert(r1.context['form'].fields.has_key("title"))
+        assert(r1.context['form'].fields.has_key("firstSentence"))
+        assert(r1.context['form'].fields.has_key("mitspieler"))
+        vals = list(v for (k,v) in r1.context['form'].fields["mitspieler"].choices)
+        for i in range(uid+1,7):
+            assert("user%d" % i in vals), i
+        r2 = c.post(reverse("new_story"),
+            dict(title="test title", firstSentence="it begins", mitspieler=("user2", "user3")))
+        self.assertEquals(r2.status_code, 200)
+        self.assertTrue(r2.context['form'].is_valid)
