@@ -160,9 +160,14 @@ def show_story(request, story_id):
     if not s.is_finished or (not s.participates_in(request.user) and not s.is_public):
         raise PermissionDenied
 
+    anonym = True
+    for t in s.tellers.all():
+        if t.user == request.user:
+            anonym = False
+
     context = {
         'story': s,
-        'anonymized' : request.user in s.tellers.all(),
+        'anonymized' : anonym,
     }
     return render(request, 'umklapp/show_story.html', context)
 
