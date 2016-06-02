@@ -72,6 +72,17 @@ tr.second-row td, tr.second-row tr {
 tr.waiting td { background-color: #bfb; }
 tr.waiting td.story-name { font-weight: bold; }
 
+a.tablelink {
+  display: block;
+  text-decoration: none !important; /* important: Override bootstrap */
+  color: rgb(51,51,51);
+}
+
+a.tablelink:hover {
+  text-decoration: underline !important;
+}
+
+
 {% block page-css %}{% endblock %}
 
 </style>

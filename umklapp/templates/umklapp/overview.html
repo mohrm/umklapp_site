@@ -135,7 +135,7 @@ Du könntest <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
    </thead>
    <tbody>
     {% for s in finished_stories %}
-      <td class="ellipsis"><a href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
+      <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right hidden-xs">{{ s.parts_count }}</td>
       <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right" style="white-space: nowrap">
