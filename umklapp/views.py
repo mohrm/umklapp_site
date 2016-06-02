@@ -166,7 +166,18 @@ def publish_story(request, story_id):
     if not s.is_finished or not s.started_by == request.user:
         raise PermissionDenied
 
-    s.publish()
+    s.public(True)
+
+    return redirect('overview')
+
+@login_required
+def unpublish_story(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.is_finished or not s.started_by == request.user:
+        raise PermissionDenied
+
+    s.public(False)
 
     return redirect('overview')
 
