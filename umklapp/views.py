@@ -14,14 +14,19 @@ from random import shuffle
 class NewStoryForm(Form):
     title = CharField(
         label = "Wie soll die Geschichte heißen?",
+        required = True,
         widget = TextInput(attrs={'placeholder': 'Das Märchen von der Fabel', 'autocomplete': 'off'}),
+        help_text = "Der Titel ist immer sichtbar. Je besser der Titel einen Kontext vorgibt, desto eher bleibt eine Geschichte konsistent.",
         )
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
+        required = True,
         widget = TextInput(attrs={'placeholder': 'Es war einmal…', 'autocomplete': 'off'}),
+        help_text = "Das ist der erste Satz der Geschichte. Baue Spannung auf!",
         )
     mitspieler = MultipleChoiceField(
         label = "Wer soll alles noch mitspielen?",
+        help_text = "Wähle deine Freunde aus oder füge auch ein paar Unbekannte hinzu.",
         )
 
     def set_choices(self,user):
@@ -65,6 +70,7 @@ class ExtendStoryForm(Form):
         label = "Wie soll die Geschichte weitergehen?",
         widget = TextInput(attrs={'placeholder': 'und dann...', 'autocomplete': 'off'}),
         required=False,
+        help_text = "Falls du die Geschichte beendest, musst du nicht unbedingt einen Satz eingaben."
         )
 
     def clean(self):
@@ -166,7 +172,18 @@ def publish_story(request, story_id):
     if not s.is_finished or not s.started_by == request.user:
         raise PermissionDenied
 
-    s.publish()
+    s.public(True)
+
+    return redirect('overview')
+
+@login_required
+def unpublish_story(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.is_finished or not s.started_by == request.user:
+        raise PermissionDenied
+
+    s.public(False)
 
     return redirect('overview')
 

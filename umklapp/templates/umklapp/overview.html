@@ -6,9 +6,9 @@
 
 {% block content %}
 <div class="container">
+
 <h2>Willst Du eine neue Geschichte starten?</h2>
 <a href="{% url 'new_story' %}">Neue Geschichte starten</a><p/>
-
 
 <h2>Laufende Geschichten</h2>
 {% if running_stories %}
@@ -27,7 +27,7 @@
    </thead>
    <tbody>
     {% for s in running_stories %}
-     <tr {% if s.waiting_for = user %} class="success" {% endif %}>
+     <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
       <td class="ellipsis">{{ s.title }}</td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.numberOfActiveTellers }}</td>
@@ -72,7 +72,7 @@
   <table class="table">
    <tbody>
     {% for s in running_stories %}
-     <tr {% if s.waiting_for = user %} class="success" {% endif %}>
+     <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
       <th colspan="4" class="ellipsis">{{ s.title }}</th>
      </tr>
      <tr class="second-row">
@@ -114,8 +114,12 @@
   </table>
   </div>
 {% else %}
-<p>Es gibt gerade keine laufenden Geschichten.</p>
+<p>Es gibt gerade keine laufenden Geschichten.
+Du könntest <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
+<a href="{% url 'new_story' %}">Klick hier</a>!</p>
 {% endif %}
+
+<h2>Willst Du eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>?</h2>
 </div>
 
 <div class="container">
@@ -134,14 +138,17 @@
    </thead>
    <tbody>
     {% for s in finished_stories %}
-      <td class="ellipsis">{{ s.title }}</td>
+      <td class="ellipsis"><a href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right hidden-xs">{{ s.parts_count }}</td>
       <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right" style="white-space: nowrap">
-        {% if not s.is_public and s.started_by = user %}
-        <a title="Geschichte veröffentlichen" class="btn btn-primary btn-sm" href="{% url 'publish_story' story_id=s.id %}"><span class="glyphicon glyphicon-send" aria-hidden="true" /></a>
+        {% if s.started_by = user %}
+          {% if not s.is_public %}
+            <a title="Erlaube allen die Geschichte zu sehen" class="btn btn-primary btn-sm" href="{% url 'publish_story' story_id=s.id %}"><span class="glyphicon glyphicon-sunglasses" aria-hidden="true" /></a>
+          {% else %}
+            <a title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-primary btn-sm" href="{% url 'unpublish_story' story_id=s.id %}"><span class="glyphicon glyphicon-lock" aria-hidden="true" /></a>
+          {% endif %}
         {% endif %}
-        <a title="Geschichte lesen" class="btn btn-primary btn-sm" href="{% url 'show_story' story_id=s.id %}"><span class="glyphicon glyphicon-book" aria-hidden="true"></span></a>
       </td>
      </tr>
    {% endfor %}
