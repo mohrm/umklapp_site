@@ -39,7 +39,9 @@ class Story(models.Model):
 
     def waiting_for_teller(self):
         if not self.is_finished:
-            return Teller.objects.get(corresponding_story=self,position=self.whose_turn)
+            # do not use .get() here, as this will incur additional database
+            # queries, even if self.tellers is prefetched already
+            return [t for t in list(self.tellers.all()) if t.position == self.whose_turn][0]
         else:
             return None
 
@@ -58,9 +60,9 @@ class Story(models.Model):
         self.advance_teller()
 
     def numberOfActiveTellers(self):
-        return Teller.objects \
-           .filter(corresponding_story=self, user__is_active = True, hasLeft = False) \
-           .count()
+        # do not use filter and count here, as this will incur additional database
+        # queries, even if self.tellers is prefetched already
+        return len([t for t in self.tellers.all() if t.user.is_active and not t.hasLeft])
 
     def leave_story(self, user):
         # capture the case that the teller leaves behind only one active person
@@ -96,20 +98,16 @@ class Story(models.Model):
         self.save()
 
     def hasLeft(self, user):
-        t0 = Teller.objects.get(corresponding_story=self, user=user)
-        return t0.hasLeft
+        return [t.hasLeft for t in list(self.tellers.all()) if t.user == user][0]
+
     def latest_story_part(self):
         return self.parts().last()
 
     def participates_in(self, user):
-        tellers = Teller.objects.filter(corresponding_story=self)
-        for t in tellers:
-            if t.user == user:
-                return True
-        return False
+        return bool([t for t in list(self.tellers.all()) if t.user == user])
 
 class StoryPart(models.Model):
-    teller = models.ForeignKey('Teller', on_delete=models.CASCADE)
+    teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')
     position = models.IntegerField()
     content = models.CharField(max_length=256)
 

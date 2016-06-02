@@ -172,8 +172,16 @@ def publish_story(request, story_id):
 
 @login_required
 def overview(request):
-    all_running_stories = Story.objects.filter(is_finished = False)
-    all_finished_stories = Story.objects.filter(is_finished = True)
+    all_running_stories = Story.objects \
+            .filter(is_finished = False) \
+            .annotate(parts_count = Count('tellers__storyparts')) \
+            .prefetch_related('tellers') \
+            .prefetch_related('tellers__user')
+    all_finished_stories = Story.objects \
+            .filter(is_finished = True) \
+            .annotate(parts_count = Count('tellers__storyparts')) \
+            .prefetch_related('tellers') \
+            .prefetch_related('tellers__user')
     if request.user.is_staff:
         running_stories = all_running_stories
         finished_stories = all_finished_stories
@@ -183,7 +191,7 @@ def overview(request):
                              all_running_stories)
         finished_stories = filter(lambda (s): s.participates_in(request.user) or s.is_public,
                                       all_finished_stories)
-    user_activity = User.objects.filter(is_staff=False).annotate(parts_written=Count('teller__storypart')).order_by('-parts_written', 'username')[:10]
+    user_activity = User.objects.filter(is_staff=False).annotate(parts_written=Count('teller__storyparts')).order_by('-parts_written', 'username')[:10]
     action_count = len(filter(lambda (s): s.waiting_for() == request.user, running_stories))
 
     context = {
