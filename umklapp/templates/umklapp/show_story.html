@@ -8,7 +8,11 @@
 
 <p>
 {% for p in story.parts %}
-  <span title="{{p.teller.user}}">{{ p.content }}</span>
+  {% if anonymized %}
+    <span class="sentence">{{ p.content }}</span>
+  {% else %}
+    <span  class="sentence" title="{{p.teller.user}}">{{ p.content }}</span>
+  {% endif %}
   {% if not forloop.last %}•{% endif %}
 {% endfor %}
 </p>

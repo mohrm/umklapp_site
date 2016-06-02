@@ -162,6 +162,7 @@ def show_story(request, story_id):
 
     context = {
         'story': s,
+        'anonymized' : request.user in s.tellers.all(),
     }
     return render(request, 'umklapp/show_story.html', context)
 
