@@ -25,4 +25,4 @@ update: # when requirements.txt changed
 	bash -c "source .env/bin/activate && pip install -r requirements.txt"
 
 test: # run test suite
-	bash -c "source .env/bin/activate && ./manage.py test -v2"
+	bash -c "source .env/bin/activate && coverage run --source='umklapp,umklapp_site' ./manage.py test -v2 && coverage report"
