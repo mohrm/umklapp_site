@@ -47,7 +47,11 @@ body {
    color: inherit;
 }
 
+/** Override some bootstrap CSS */
+.table { margin-left: -8px; }
 
+tr.waiting td { background-color: #bfb; }
+tr.waiting td.story-name { font-weight: bold; }
 
 {% block page-css %}{% endblock %}
 

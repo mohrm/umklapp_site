@@ -22,12 +22,12 @@
    </thead>
    <tbody>
     {% for s in running_stories %}
-     <tr {% if s.waiting_for = user %} class="success" {% endif %}>
+     <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
       {# dynamic width, but ellipsize the text: http://stackoverflow.com/a/20412246/946226  #}
-      <td style="max-width:1px;text-overflow:ellipsis; overflow:hidden; white-space:nowrap;width:100%">{{ s.title }}</td>
+      <td style="max-width:1px;text-overflow:ellipsis; overflow:hidden; white-space:nowrap;width:100%" class="story-name">{{ s.title }}</td>
       <td class="text-right hidden-xs">{{ s.parts.count }}</td>
       <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
-      <td class="text-right hidden-xs">{{ s.waiting_for }}</td>
+      <td class="text-left hidden-xs">{{ s.waiting_for }}</td>
       <td class="text-right" style="white-space: nowrap">
 
        {% if s.waiting_for = user %}
