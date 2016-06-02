@@ -82,8 +82,8 @@ class Story(models.Model):
         self.is_finished = True
         self.save()
 
-    def publish(self):
-        self.is_public = True
+    def public(self, state = True):
+        self.is_public = state
         self.save()
 
     def parts(self):

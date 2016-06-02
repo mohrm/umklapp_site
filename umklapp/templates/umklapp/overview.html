@@ -82,14 +82,17 @@
    </thead>
    <tbody>
     {% for s in finished_stories %}
-      <td>{{ s.title }}</td>
+      <td><a href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right hidden-xs">{{ s.parts.count }}</td>
       <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right" style="white-space: nowrap">
-        {% if not s.is_public and s.started_by = user %}
-        <a title="Geschichte veröffentlichen" class="btn btn-primary btn-sm" href="{% url 'publish_story' story_id=s.id %}"><span class="glyphicon glyphicon-send" aria-hidden="true" /></a>
+        {% if s.started_by = user %}
+          {% if not s.is_public %}
+            <a title="Erlaube allen die Geschichte zu sehen" class="btn btn-primary btn-sm" href="{% url 'publish_story' story_id=s.id %}"><span class="glyphicon glyphicon-sunglasses" aria-hidden="true" /></a>
+          {% else %}
+            <a title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-primary btn-sm" href="{% url 'unpublish_story' story_id=s.id %}"><span class="glyphicon glyphicon-lock" aria-hidden="true" /></a>
+          {% endif %}
         {% endif %}
-        <a title="Geschichte lesen" class="btn btn-primary btn-sm" href="{% url 'show_story' story_id=s.id %}"><span class="glyphicon glyphicon-book" aria-hidden="true"></span></a>
       </td>
      </tr>
    {% endfor %}
