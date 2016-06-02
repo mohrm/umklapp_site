@@ -18,7 +18,7 @@
   <table class="table">
    <thead>
     <tr>
-     <th style="width:99%">Titel</th>
+     <th class="expand">Titel</th>
      <th class="text-right">Sätze</th>
      <th class="text-right">Erzähler</th>
      <th class="text-right">Nächster</th>
@@ -28,8 +28,7 @@
    <tbody>
     {% for s in running_stories %}
      <tr {% if s.waiting_for = user %} class="success" {% endif %}>
-      {# dynamic width, but ellipsize the text: http://stackoverflow.com/a/20412246/946226  #}
-      <td style="max-width:1px;text-overflow:ellipsis; overflow:hidden; white-space:nowrap;width:100%">{{ s.title }}</td>
+      <td class="ellipsis">{{ s.title }}</td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right">{{ s.waiting_for }}</td>
@@ -70,18 +69,17 @@
 
   <!-- table for narrow screens -->
   <div class="visible-xs">
-  <table class="table" style="width:100%">
+  <table class="table">
    <tbody>
     {% for s in running_stories %}
      <tr {% if s.waiting_for = user %} class="success" {% endif %}>
-      {# dynamic width, but ellipsize the text: http://stackoverflow.com/a/20412246/946226  #}
-      <th colspan="4" style="max-width:1px;text-overflow:ellipsis; overflow:hidden; white-space:nowrap;width:100%">{{ s.title }}</th>
+      <th colspan="4" class="ellipsis">{{ s.title }}</th>
      </tr>
-     <tr class="text-small">
-      <td style="white-space:nowrap; border-top:0px">{{ s.waiting_for }} ist dran</td>
-      <td class="text-right" style="border-top:0px">{{ s.parts_count }}&nbsp;Sätze</td>
-      <td class="text-right" style="border-top:0px; width:99%">{{ s.numberOfActiveTellers }}&nbsp;Erzähler</td>
-      <td class="text-right" style="border-top:0px; white-space: nowrap">
+     <tr class="second-row">
+      <td style="white-space:nowrap">{{ s.waiting_for }} ist dran</td>
+      <td class="text-right">{{ s.parts_count }}&nbsp;Sätze</td>
+      <td class="text-right">{{ s.numberOfActiveTellers }}&nbsp;Erzähler</td>
+      <td class="text-right expand" style="white-space: nowrap">
 
        {% if s.waiting_for = user %}
         <a title="Geschichte fortsetzen" class="btn btn-primary btn-sm" href="{% url 'continue_story' story_id=s.id %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
@@ -128,7 +126,7 @@
   <table class="table">
    <thead class="hidden-xs">
     <tr>
-     <th style="width:99%">Titel</th>
+     <th class="expand">Titel</th>
      <th class="text-right hidden-xs">Sätze</th>
      <th class="text-right hidden-xs">Erzähler</th>
      <th class="text-right">Aktionen</th>
@@ -136,7 +134,7 @@
    </thead>
    <tbody>
     {% for s in finished_stories %}
-      <td>{{ s.title }}</td>
+      <td class="ellipsis">{{ s.title }}</td>
       <td class="text-right hidden-xs">{{ s.parts_count }}</td>
       <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
       <td class="text-right" style="white-space: nowrap">

@@ -45,7 +45,24 @@ body {
    color: inherit;
 }
 
+th.expand, td.expand {
+   width: 99%;
+}
 
+/* dynamic width, but ellipsize the text: http://stackoverflow.com/a/20412246/946226  */
+th.ellipsis, td.ellipsis {
+  max-width: 1px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 99%;
+  min-width: 10%;
+}
+
+tr.second-row td, tr.second-row tr {
+  font-size: 80%;
+  border-top:0px !important;
+}
 
 {% block page-css %}{% endblock %}
 
