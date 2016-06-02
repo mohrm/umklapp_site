@@ -192,11 +192,13 @@ def overview(request):
     all_running_stories = Story.objects \
             .filter(is_finished = False) \
             .annotate(parts_count = Count('tellers__storyparts')) \
+            .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
             .annotate(parts_count = Count('tellers__storyparts')) \
+            .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
     if request.user.is_staff:
