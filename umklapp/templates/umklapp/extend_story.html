@@ -13,7 +13,7 @@ Was bisher geschah:
 {{ story.latest_story_part.content }}
 </blockquote>
 
-<form method="post" action="">
+<form method="post" action="{% url 'continue_story' story_id=story.id %}">
   {% csrf_token %}
   {{ form|bootstrap }}
   <button type="submit" class="btn btn-primary">Geschichte weiterschreiben</button>

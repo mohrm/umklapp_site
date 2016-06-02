@@ -157,7 +157,7 @@ class ViewTests(UmklappTestCase):
         vals = list(v for (k,v) in r1.context['form'].fields["mitspieler"].choices)
         for i in range(uid+1,7):
             assert("user%d" % i in vals), i
-        r2 = c.post(reverse("new_story"),
+        r2 = c.post(reverse("create_new_story"),
             dict(title="test title", firstSentence="it begins", mitspieler=("user2", "user3")))
         self.assertEquals(r2.status_code, 200)
         self.assertTrue(r2.context['form'].is_valid)
