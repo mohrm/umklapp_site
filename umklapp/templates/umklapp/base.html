@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% load git_revision %}
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -148,9 +147,6 @@ a.tablelink:hover {
     </p>
     <p class="text-muted navbar-text">
      <a href="https://github.com/mohrm/umklapp_site/issues">Issues</a>
-    </p>
-    <p class="text-muted navbar-text">
-     <a href="https://github.com/mohrm/umklapp_site/commit/{% git_revision %}">{% git_revision %}</a>
     </p>
 
    {% if user.is_authenticated %}
