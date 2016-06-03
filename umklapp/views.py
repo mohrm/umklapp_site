@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Story
+from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -16,12 +16,14 @@ class NewStoryForm(Form):
     title = CharField(
         label = "Wie soll die Geschichte heißen?",
         required = True,
+        max_length = MAXLEN_STORY_TITLE,
         widget = TextInput(attrs={'placeholder': 'Das Märchen von der Fabel', 'autocomplete': 'off'}),
         help_text = "Der Titel ist immer sichtbar. Je besser der Titel einen Kontext vorgibt, desto eher bleibt eine Geschichte konsistent.",
         )
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
         required = True,
+        max_length = MAXLEN_SENTENCE,
         widget = TextInput(attrs={'placeholder': 'Es war einmal…', 'autocomplete': 'off'}),
         help_text = "Das ist der erste Satz der Geschichte. Baue Spannung auf!",
         )
@@ -80,6 +82,7 @@ class ExtendStoryForm(Form):
         label = "Wie soll die Geschichte weitergehen?",
         widget = TextInput(attrs={'placeholder': 'und dann...', 'autocomplete': 'off'}),
         required=False,
+        max_length = MAXLEN_SENTENCE,
         help_text = "Falls du die Geschichte beendest, musst du nicht unbedingt einen Satz eingaben."
         )
 

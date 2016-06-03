@@ -5,6 +5,9 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
+MAXLEN_STORY_TITLE = 200
+MAXLEN_SENTENCE = 2000
+
 class Teller(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     corresponding_story = models.ForeignKey('Story', on_delete=models.CASCADE,
@@ -15,7 +18,7 @@ class Teller(models.Model):
 class Story(models.Model):
     MINIMUM_NUMBER_OF_ACTIVE_TELLERS = 2
     started_by = models.ForeignKey(User, related_name="started_by", on_delete=models.CASCADE)
-    title = models.CharField(max_length=256)
+    title = models.CharField(max_length=MAXLEN_STORY_TITLE)
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
     is_public = models.BooleanField(default=False,blank=False)
@@ -113,7 +116,7 @@ class Story(models.Model):
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')
     position = models.IntegerField()
-    content = models.CharField(max_length=256)
+    content = models.CharField(max_length=MAXLEN_SENTENCE)
 
     class Meta:
         ordering = ['position']
