@@ -237,7 +237,7 @@ def overview(request):
             .prefetch_related('tellers__user')
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
-            .order_by('-finish_date') \
+            .order_by('-finish_date', 'id') \
             .annotate(parts_count = Count('tellers__storyparts')) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
