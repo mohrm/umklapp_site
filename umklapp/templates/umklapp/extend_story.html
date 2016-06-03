@@ -16,6 +16,7 @@ Was bisher geschah:
 {{ story.latest_story_part.content }}
 </blockquote>
 
+<div class="actions">
 <form style="display:inline" method="post" action="{% url 'continue_story' story_id=story.id %}">
   {% csrf_token %}
   {{ form|bootstrap }}
@@ -30,7 +31,7 @@ Was bisher geschah:
   {% csrf_token %}
   <button title="An dieser Geschichte nicht mehr mitschreiben" type="submit" class="btn btn-default">Nicht mehr mitschreiben</button>
 </form>
-
+</div>
 
 <h2>Tipps</h2>
 <ul>
@@ -47,6 +48,7 @@ Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong>
 </p>
 
 
+<div class="actions">
 {% if specialpowers %}
  <form  style="display:inline" method="post" action="{% url 'skip_story' story_id=story.id %}">
 	   {% csrf_token %}
@@ -58,7 +60,25 @@ Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong>
   <button title="Nicht mehr mitschreiben" type="submit" class="btn btn-default">Nicht mehr mitschreiben</button>
  </form>
 
+  {% if skipvotes_necessary > 0 %}
+    {% if has_voted_skip %}
+       <form style="display:inline" method="post" action="{% url 'story_unvote_skip' story_id=story.id %}">
+        {% csrf_token %}
+        <button title="Stimme nicht für Überspringen" class="btn btn-default">Nicht überspringen</button>
+       </form>
+    {% else %}
+     <form style="display:inline" method="post" action="{% url 'story_vote_skip' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Stimme dafür den aktuellen Schreiber zu überspringen" class="btn btn-default">Stimme für Überspringen</button>
+      </form>
+    {% endif %}
+  {% endif %}
+</div>
 {% endif %}
 
+{% if skipvote_count > 0 and skipvotes_necessary > 0 %}
+<p>Stimmen zum Überspringen: {{ skipvote_count }} von {{ skipvotes_necessary }}</p>
+{% endif %}
 </div>
+
 {% endblock %}
