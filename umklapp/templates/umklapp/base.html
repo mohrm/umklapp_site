@@ -61,6 +61,11 @@ th.ellipsis, td.ellipsis {
   width: 99%;
   min-width: 10%;
 }
+td.ellipsis a.tablelink {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 
 tr.second-row td, tr.second-row tr {
   font-size: 80%;
@@ -77,8 +82,10 @@ div.actions button { margin: 0 1em 1em 0; }
 
 p.meta { margin: 1em 0; }
 
+
 a.tablelink {
   display: block;
+  width:100%;
   text-decoration: none !important; /* important: Override bootstrap */
   color: rgb(51,51,51);
 }
