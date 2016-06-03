@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -17,6 +19,7 @@ class Story(models.Model):
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
     is_public = models.BooleanField(default=False,blank=False)
+    finish_date = models.DateTimeField(null=True)
 
     def __unicode__(self):
         return self.title
@@ -82,6 +85,7 @@ class Story(models.Model):
 
     def finish(self):
         self.is_finished = True
+        self.finish_date = datetime.now()
         self.save()
 
     def public(self, state = True):
