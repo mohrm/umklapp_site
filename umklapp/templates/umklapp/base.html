@@ -88,6 +88,25 @@ a.tablelink:hover {
 }
 
 
+/*
+ Button fixes: Make sure on small screens,
+ buttons take full width (forces page wrap)
+ Also add bottom margin.
+ */
+.btn {
+  margin-bottom: 3px;
+}
+@media only screen and (min-width : 600px) {
+	.btn {
+		min-width:280px;
+	}
+}
+@media only screen and (max-width : 600px) {
+	.btn {
+		width:100%
+	}
+}
+
 {% block page-css %}{% endblock %}
 
 </style>
