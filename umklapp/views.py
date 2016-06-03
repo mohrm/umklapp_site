@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE
+from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, necessary_skip_votes
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -202,7 +202,10 @@ def show_story(request, story_id):
         context = {
             'story': s,
             'part_number': s.latest_story_part().position + 1,
-            'form': form
+            'form': form,
+            'has_voted_skip' : s.has_voted_skip(request.user),
+            'skipvote_count' : s.skipvote_count(),
+            'skipvotes_necessary' : necessary_skip_votes(s.numberOfActiveTellers()),
         }
         return render(request, 'umklapp/extend_story.html', context)
 
@@ -228,6 +231,32 @@ def downvote_story(request, story_id):
         raise PermissionDenied
 
     s.downvote_story(request.user)
+
+    return redirect('show_story', story_id=s.id)
+
+@login_required
+@require_POST
+def story_vote_skip(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if s.is_finished:
+        raise PermissionDenied
+
+    success = s.vote_skip(request.user)
+    if success:
+        messages.success(request, u"Abstimmung zum Überspringen erfolgreich")
+
+    return redirect('show_story', story_id=s.id)
+
+@login_required
+@require_POST
+def story_unvote_skip(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if s.is_finished:
+        raise PermissionDenied
+
+    s.unvote_skip(request.user)
 
     return redirect('show_story', story_id=s.id)
 

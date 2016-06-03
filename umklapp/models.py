@@ -8,6 +8,21 @@ from django.contrib.auth.models import User
 MAXLEN_STORY_TITLE = 200
 MAXLEN_SENTENCE = 2000
 
+def necessary_skip_votes(total):
+    "Computes the number of skipvotes necessary from total number of tellers"
+    r = {
+      0: 0,
+      1: 0,
+      2: 0,
+      3: 2,
+      4: 3,
+      5: 3,
+      6: 4,
+    }.get(total, -1)
+    if r != -1:
+        return r
+    return int(total * 0.6)
+
 class Teller(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     corresponding_story = models.ForeignKey('Story', on_delete=models.CASCADE,
@@ -24,6 +39,7 @@ class Story(models.Model):
     is_public = models.BooleanField(default=False,blank=False)
     finish_date = models.DateTimeField(null=True)
     upvotes = models.ManyToManyField(User)
+    skipvote = models.ManyToManyField(User, related_name="skipvoted")
 
     def __unicode__(self):
         return self.title
@@ -65,6 +81,7 @@ class Story(models.Model):
         newPart = StoryPart(teller=self.waiting_for_teller(), content=text, position=nextPos)
         newPart.save()
         self.advance_teller()
+        self.skipvote.clear()
 
     def numberOfActiveTellers(self):
         # do not use filter and count here, as this will incur additional database
@@ -104,6 +121,7 @@ class Story(models.Model):
         while (not self.waiting_for().is_active or self.hasLeft(self.waiting_for())):
             self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
         self.save()
+        self.skipvote.clear()
 
     def hasLeft(self, user):
         return [t.hasLeft for t in list(self.tellers.all()) if t.user == user][0]
@@ -128,6 +146,27 @@ class Story(models.Model):
 
     def has_upvoted(self, user):
         return user in self.upvotes.all()
+
+    def vote_skip(self, user):
+        """Returns if vote succeeded"""
+        assert(not self.is_finished)
+        self.skipvote.add(user)
+        necessary = necessary_skip_votes(self.numberOfActiveTellers())
+        if self.skipvote_count() >= necessary and necessary > 0:
+            self.advance_teller()
+            return True
+        else: # not enough votes yet
+            return False
+
+    def unvote_skip(self, user):
+        assert(not self.is_finished)
+        self.skipvote.remove(user)
+
+    def skipvote_count(self):
+        return self.skipvote.count()
+
+    def has_voted_skip(self, user):
+        return user in self.skipvote.all()
 
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')

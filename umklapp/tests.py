@@ -7,6 +7,21 @@ from django.core.urlresolvers import reverse
 from umklapp.models import *
 from umklapp.templatetags import git_revision
 
+class SkipVoteTest(TestCase):
+    def testSingles(self):
+        self.assertEquals(necessary_skip_votes(2), 0)
+        self.assertEquals(necessary_skip_votes(3), 2)
+        self.assertEquals(necessary_skip_votes(4), 3)
+        self.assertEquals(necessary_skip_votes(5), 3)
+        self.assertEquals(necessary_skip_votes(6), 4)
+
+    def testMonotonous(self):
+        x = 0
+        for votes in range(0,100):
+            nec = necessary_skip_votes(votes)
+            assert (nec >= x)
+            x = nec
+
 class UmklappTestCase(TestCase):
     def addUsers(self):
         self.users = []
@@ -198,6 +213,11 @@ class ViewTests(UmklappTestCase):
         self.assertRedirects(r, reverse("overview"))
         r = c2.post(reverse("skip_story", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("overview"))
+
+        r = c1.post(reverse("story_vote_skip", kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+        r = c1.post(reverse("story_unvote_skip", kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
 
         r = c1.get(reverse("show_story", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 200)
