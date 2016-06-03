@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Story
+from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -16,12 +16,14 @@ class NewStoryForm(Form):
     title = CharField(
         label = "Wie soll die Geschichte heißen?",
         required = True,
+        max_length = MAXLEN_STORY_TITLE,
         widget = TextInput(attrs={'placeholder': 'Das Märchen von der Fabel', 'autocomplete': 'off'}),
         help_text = "Der Titel ist immer sichtbar. Je besser der Titel einen Kontext vorgibt, desto eher bleibt eine Geschichte konsistent.",
         )
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
         required = True,
+        max_length = MAXLEN_SENTENCE,
         widget = TextInput(attrs={'placeholder': 'Es war einmal…', 'autocomplete': 'off'}),
         help_text = "Das ist der erste Satz der Geschichte. Baue Spannung auf!",
         )
@@ -80,6 +82,7 @@ class ExtendStoryForm(Form):
         label = "Wie soll die Geschichte weitergehen?",
         widget = TextInput(attrs={'placeholder': 'und dann...', 'autocomplete': 'off'}),
         required=False,
+        max_length = MAXLEN_SENTENCE,
         help_text = "Falls du die Geschichte beendest, musst du nicht unbedingt einen Satz eingaben."
         )
 
@@ -176,6 +179,8 @@ def show_story(request, story_id):
         context = {
             'story': s,
             'anonymized' : anonym,
+            'has_upvoted' : s.has_upvoted(request.user),
+            'upvote_count' : s.upvote_count(),
         }
         return render(request, 'umklapp/show_story.html', context)
     else:
@@ -201,6 +206,30 @@ def show_story(request, story_id):
         }
         return render(request, 'umklapp/extend_story.html', context)
 
+
+@login_required
+@require_POST
+def upvote_story(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.is_finished:
+        raise PermissionDenied
+
+    s.upvote_story(request.user)
+
+    return redirect('show_story', story_id=s.id)
+
+@login_required
+@require_POST
+def downvote_story(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.is_finished:
+        raise PermissionDenied
+
+    s.downvote_story(request.user)
+
+    return redirect('show_story', story_id=s.id)
 
 @login_required
 @require_POST
@@ -231,12 +260,14 @@ def unpublish_story(request, story_id):
 def overview(request):
     all_running_stories = Story.objects \
             .filter(is_finished = False) \
+            .order_by('title', 'id') \
             .annotate(parts_count = Count('tellers__storyparts')) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
+            .order_by('-finish_date', '-id') \
             .annotate(parts_count = Count('tellers__storyparts')) \
             .select_related('started_by') \
             .prefetch_related('tellers') \

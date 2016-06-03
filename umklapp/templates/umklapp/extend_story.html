@@ -24,18 +24,18 @@ Was bisher geschah:
 </form>
 <form style="display:inline" method="post" action="{% url 'skip_story' story_id=story.id %}">
 	   {% csrf_token %}
-	   <button title="Überspringen" type="submit" class="btn btn-default">Mich einmal überpringen</button>
+	   <button title="Überspringen" type="submit" class="btn btn-default">Mich einmal überspringen</button>
 </form>
 <form style="display:inline" method="post" action="{% url 'leave_story' story_id=story.id %}">
   {% csrf_token %}
-  <button title="An dieser Geschichte nicht mehr weiterschreiben" type="submit" class="btn btn-default">Geschichte verlassen</button>
+  <button title="An dieser Geschichte nicht mehr mitschreiben" type="submit" class="btn btn-default">Nicht mehr mitschreiben</button>
 </form>
 
 
 <h2>Tipps</h2>
 <ul>
-<li>Der Spieler nach dir, sieht nur deinen Satz.
-	Überliefere Details was bisher geschah, damit sie nicht in Vergessenheit geraten.</li>
+<li>Der Spieler nach dir sieht nur deinen Satz.
+	Überliefere Details darüber, was bisher geschah, damit sie nicht in Vergessenheit geraten.</li>
 <li>Baue am Ende Spannung auf, die dein Nachfolger auflösen kann.</li>
 <li>Sehr abstrus oder surreal ist zwar einmal lustig, aber auf Dauer naja. Lieber selten einsetzen.</li>
 </ul>
@@ -50,12 +50,12 @@ Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong>
 {% if specialpowers %}
  <form  style="display:inline" method="post" action="{% url 'skip_story' story_id=story.id %}">
 	   {% csrf_token %}
-	   <button title="Überspringen" type="submit" class="btn btn-default">{{ story.waiting_for }} einmal überpringen</button>
+	   <button title="Überspringen" type="submit" class="btn btn-default">{{ story.waiting_for }} einmal überspringen</button>
  </form>
 {% endif %}
  <form style="display:inline" method="post" action="{% url 'leave_story' story_id=story.id %}">
   {% csrf_token %}
-  <button title="Geschichte verlassen" type="submit" class="btn btn-default">Geschichte verlassen</button>
+  <button title="Nicht mehr mitschreiben" type="submit" class="btn btn-default">Nicht mehr mitschreiben</button>
  </form>
 
 {% endif %}

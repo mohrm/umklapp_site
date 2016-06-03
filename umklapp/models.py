@@ -1,7 +1,12 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
+
+MAXLEN_STORY_TITLE = 200
+MAXLEN_SENTENCE = 2000
 
 class Teller(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -13,10 +18,12 @@ class Teller(models.Model):
 class Story(models.Model):
     MINIMUM_NUMBER_OF_ACTIVE_TELLERS = 2
     started_by = models.ForeignKey(User, related_name="started_by", on_delete=models.CASCADE)
-    title = models.CharField(max_length=256)
+    title = models.CharField(max_length=MAXLEN_STORY_TITLE)
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
     is_public = models.BooleanField(default=False,blank=False)
+    finish_date = models.DateTimeField(null=True)
+    upvotes = models.ManyToManyField(User)
 
     def __unicode__(self):
         return self.title
@@ -82,6 +89,7 @@ class Story(models.Model):
 
     def finish(self):
         self.is_finished = True
+        self.finish_date = datetime.now()
         self.save()
 
     def public(self, state = True):
@@ -106,10 +114,25 @@ class Story(models.Model):
     def participates_in(self, user):
         return bool([t for t in list(self.tellers.all()) if t.user == user])
 
+    def upvote_story(self, user):
+        assert(self.is_finished)
+        self.upvotes.add(user)
+
+    def downvote_story(self, user):
+        """Undo an upvote"""
+        assert(self.is_finished)
+        self.upvotes.remove(user)
+
+    def upvote_count(self):
+        return self.upvotes.count()
+
+    def has_upvoted(self, user):
+        return user in self.upvotes.all()
+
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')
     position = models.IntegerField()
-    content = models.CharField(max_length=256)
+    content = models.CharField(max_length=MAXLEN_SENTENCE)
 
     class Meta:
         ordering = ['position']

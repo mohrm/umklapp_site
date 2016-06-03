@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from django.test import TestCase, Client
 from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 
 from umklapp.models import *
+from umklapp.templatetags import git_revision
 
 class UmklappTestCase(TestCase):
     def addUsers(self):
@@ -54,6 +57,12 @@ class ContinueStoryTest(UmklappTestCase):
         s.continue_story("second")
         self.assertEquals(2, s.whose_turn)
         self.assertEquals(self.users[2], s.waiting_for())
+
+    def testContinueStory2(self):
+        s = self.stdStory()
+        s.continue_story(u"\U0001F303")
+        latest = s.latest_story_part()
+        self.assertEquals(latest.content, u"\U0001F303")
 
     def testLatestStoryPart1(self):
         s = self.stdStory()
@@ -206,6 +215,12 @@ class ViewTests(UmklappTestCase):
         r = c1.post(reverse("unpublish_story",  kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
 
+        r = c1.post(reverse("upvote_story",  kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+
+        r = c1.post(reverse("downvote_story",  kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+
     def testLeaveStory(self):
         c1 = Client()
         c2 = Client()
@@ -238,3 +253,9 @@ class ViewTests(UmklappTestCase):
         # (unfortunately, not easy to observe, as we do not see the message in the tests)
         r = c1.post(reverse("leave_story", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("overview"))
+
+class TemplateTagsTest(UmklappTestCase):
+
+    def test(self):
+        rev=git_revision.git_revision()
+        self.assertTrue(True)
