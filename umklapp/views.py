@@ -231,6 +231,7 @@ def unpublish_story(request, story_id):
 def overview(request):
     all_running_stories = Story.objects \
             .filter(is_finished = False) \
+            .order_by('title', 'id') \
             .annotate(parts_count = Count('tellers__storyparts')) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
