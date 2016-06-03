@@ -10,15 +10,14 @@
 <h2>Laufende Geschichten</h2>
 {% if running_stories %}
 
-<!-- table for wide screen -->
-  <div class="hidden-xs">
+  <div>
   <table class="table">
    <thead>
     <tr>
-     <th class="expand">Titel</th>
-     <th class="text-right">Sätze</th>
-     <th class="text-right">Erzähler</th>
-     <th class="text-right">Nächster</th>
+     <th class="expand"></th>
+     <th class="text-right"><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
+     <th class="text-right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+     <th class="text-left"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></th>
     </tr>
    </thead>
    <tbody>
@@ -27,34 +26,19 @@
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.numberOfActiveTellers }}</td>
-      <td class="text-right">{{ s.waiting_for }}</td>
+      <td class="text-left">{{ s.waiting_for }}</td>
      </tr>
    {% endfor %}
    </tbody>
   </table>
   </div>
 
-  <!-- table for narrow screens -->
-  <div class="visible-xs">
-  <table class="table">
-   <tbody>
-    {% for s in running_stories %}
-     <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
-      <td class="ellipsis" colspan="3"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
-     </tr>
-     <tr class="second-row">
-      <td class="text-right" style="white-space:nowrap">{{ s.parts_count }}&nbsp;<span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></td>
-      <td class="text-right" style="white-space:nowrap">{{ s.numberOfActiveTellers }}&nbsp;<span class="glyphicon glyphicon-user" aria-hidden="true"></span></td>
-      <td class="expand" style="white-space:nowrap"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{ s.waiting_for }}</td>
-     </tr>
-   {% endfor %}
-   </tbody>
-  </table>
-  </div>
 {% else %}
+
 <p>Es gibt gerade keine laufenden Geschichten.
 Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
 <a href="{% url 'new_story' %}">Klick hier</a>!</p>
+
 {% endif %}
 
 <h2>Willst Du eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>?</h2>
@@ -66,20 +50,20 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
 <h2>Beendete Geschichten </h2>
 {% if finished_stories %}
   <table class="table">
-   <thead class="hidden-xs">
+   <thead>
     <tr>
-     <th class="expand">Titel</th>
-     <th class="text-right hidden-xs">Sätze</th>
-     <th class="text-right hidden-xs">Erzähler</th>
-     <th class="text-right hidden-xs">Empfehlungen</th>
+     <th class="expand"></th>
+     <th class="text-right"><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
+     <th class="text-right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+     <th class="text-right"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></th>
     </tr>
    </thead>
    <tbody>
     {% for s in finished_stories %}
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
-      <td class="text-right hidden-xs">{{ s.parts_count }}</td>
-      <td class="text-right hidden-xs">{{ s.numberOfActiveTellers }}</td>
-      <td class="text-right hidden-xs">{{ s.upvote_count|default:"" }}</td>
+      <td class="text-right">{{ s.parts_count }}</td>
+      <td class="text-right">{{ s.numberOfActiveTellers }}</td>
+      <td class="text-right">{{ s.upvote_count|default:"" }}</td>
      </tr>
    {% endfor %}
    </tbody>
@@ -96,8 +80,8 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
  <thead>
   <tr>
    <th>#</th>
-   <th style="width:100%">Erzähler</th>
-   <th class="text-right">Sätze</th>
+   <th class="expand"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+   <th><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
   </tr>
  </thead>
  <tbody>
