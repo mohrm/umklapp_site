@@ -23,6 +23,7 @@ class Story(models.Model):
     is_finished = models.BooleanField()
     is_public = models.BooleanField(default=False,blank=False)
     finish_date = models.DateTimeField(null=True)
+    upvotes = models.ManyToManyField(User)
 
     def __unicode__(self):
         return self.title
@@ -112,6 +113,21 @@ class Story(models.Model):
 
     def participates_in(self, user):
         return bool([t for t in list(self.tellers.all()) if t.user == user])
+
+    def upvote_story(self, user):
+        assert(self.is_finished)
+        self.upvotes.add(user)
+
+    def downvote_story(self, user):
+        """Undo an upvote"""
+        assert(self.is_finished)
+        self.upvotes.remove(user)
+
+    def upvote_count(self):
+        return self.upvotes.count()
+
+    def has_upvoted(self, user):
+        return user in self.upvotes.all()
 
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')

@@ -12,18 +12,40 @@
   </p>
 {% endfor %}
 
-{% if story.started_by = user %}
-  {% if not story.is_public %}
-   <form style="display:inline" method="post" action="{% url 'publish_story' story_id=story.id %}">
-    {% csrf_token %}
-    <button title="Erlaube allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte öffentlich sichbar machen</a>
-   </form>
-  {% else %}
-   <form style="display:inline" method="post" action="{% url 'unpublish_story' story_id=story.id %}">
-    {% csrf_token %}
-    <button title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte nur den Erzählern sichbar machen</a>
-   </form>
+<div class="actions">
+  {% if story.started_by = user %}
+    {% if not story.is_public %}
+     <form style="display:inline" method="post" action="{% url 'publish_story' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Erlaube allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte öffentlich sichbar machen</button>
+     </form>
+    {% else %}
+     <form style="display:inline" method="post" action="{% url 'unpublish_story' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte nur den Erzählern sichbar machen</button>
+     </form>
+    {% endif %}
   {% endif %}
+
+  {% if story.is_finished %}
+    {% if has_upvoted %}
+       <form style="display:inline" method="post" action="{% url 'downvote_story' story_id=story.id %}">
+        {% csrf_token %}
+        <button title="Downvote / UnLike" class="btn btn-default btn-sm">Leseempfehlung zurücknehmen</button>
+       </form>
+    {% else %}
+     <form style="display:inline" method="post" action="{% url 'upvote_story' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Upvote / Like" class="btn btn-default btn-sm">Tolle Geschichte! Leseempfehlung!</button>
+      </form>
+    {% endif %}
+  {% endif %}
+
+</div>
+
+{% if upvote_count > 0 %}
+<p class="meta">Upvotes: {{upvote_count}}</p>
 {% endif %}
+
 </div>
 {% endblock %}

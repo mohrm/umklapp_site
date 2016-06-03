@@ -179,6 +179,8 @@ def show_story(request, story_id):
         context = {
             'story': s,
             'anonymized' : anonym,
+            'has_upvoted' : s.has_upvoted(request.user),
+            'upvote_count' : s.upvote_count(),
         }
         return render(request, 'umklapp/show_story.html', context)
     else:
@@ -204,6 +206,30 @@ def show_story(request, story_id):
         }
         return render(request, 'umklapp/extend_story.html', context)
 
+
+@login_required
+@require_POST
+def upvote_story(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.is_finished:
+        raise PermissionDenied
+
+    s.upvote_story(request.user)
+
+    return redirect('show_story', story_id=s.id)
+
+@login_required
+@require_POST
+def downvote_story(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+
+    if not s.is_finished:
+        raise PermissionDenied
+
+    s.downvote_story(request.user)
+
+    return redirect('show_story', story_id=s.id)
 
 @login_required
 @require_POST

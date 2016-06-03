@@ -215,6 +215,12 @@ class ViewTests(UmklappTestCase):
         r = c1.post(reverse("unpublish_story",  kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
 
+        r = c1.post(reverse("upvote_story",  kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+
+        r = c1.post(reverse("downvote_story",  kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+
     def testLeaveStory(self):
         c1 = Client()
         c2 = Client()
