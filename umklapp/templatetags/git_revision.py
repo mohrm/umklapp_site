@@ -9,7 +9,7 @@ if 'OPENSHIFT_APP_NAME' in os.environ:
     with open(os.path.join(OPENSHIFT_HOMEDIR, "git", OPENSHIFT_APP_NAME + ".git", "refs", "heads", "master")) as fh:
         GIT_REVISION = fh.read().decode("utf8") or "unknown"
 else:
-    with open(os.path.join(settings.OPENSHIFT_HOMEDIR, ".git", "refs", "heads", "master")) as fh:
+    with open(os.path.join(".git", "refs", "heads", "master")) as fh:
         GIT_REVISION = fh.read().decode("utf8") or "unknown"
 
 @register.simple_tag

@@ -5,6 +5,7 @@ from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 
 from umklapp.models import *
+from umklapp.templatetags import git_revision
 
 class UmklappTestCase(TestCase):
     def addUsers(self):
@@ -246,3 +247,9 @@ class ViewTests(UmklappTestCase):
         # (unfortunately, not easy to observe, as we do not see the message in the tests)
         r = c1.post(reverse("leave_story", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("overview"))
+
+class TemplateTagsTest(UmklappTestCase):
+
+    def test(self):
+        rev=git_revision.git_revision()
+        self.assertTrue(True)
