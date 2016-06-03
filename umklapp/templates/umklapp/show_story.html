@@ -39,12 +39,12 @@
     {% if not story.is_public %}
      <form style="display:inline" method="post" action="{% url 'publish_story' story_id=story.id %}">
       {% csrf_token %}
-      <button title="Erlaube allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte öffentlich sichbar machen</button>
+      <button title="Erlaube allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte öffentlich sichtbar machen</button>
      </form>
     {% else %}
      <form style="display:inline" method="post" action="{% url 'unpublish_story' story_id=story.id %}">
       {% csrf_token %}
-      <button title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte nur den Erzählern sichbar machen</button>
+      <button title="Erlaube doch NICHT allen die Geschichte zu sehen" class="btn btn-default btn-sm">Geschichte nur den Erzählern sichtbar machen</button>
      </form>
     {% endif %}
   {% endif %}
