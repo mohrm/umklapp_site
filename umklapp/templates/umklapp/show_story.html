@@ -8,9 +8,9 @@
   {{ story.title }}
 </h2>
 
-<p>von {{ story.started_by }} und {{ story.tellers.count|add:-1 }} weiteren Erzählern.
+<p>&mdash; von {{ story.started_by }} und {{ story.tellers.count|add:-1 }} weiteren Erzählern.
 {% if upvote_count %}
-<large>{{upvote_count}}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></large>
+{{upvote_count}}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
 {% endif %}
 </p>
 
