@@ -57,6 +57,12 @@ class ContinueStoryTest(UmklappTestCase):
         self.assertEquals(2, s.whose_turn)
         self.assertEquals(self.users[2], s.waiting_for())
 
+    def testContinueStory2(self):
+        s = self.stdStory()
+        s.continue_story(u"\U0001F303")
+        latest = s.latest_story_part()
+        self.assertEquals(latest.content, u"\U0001F303")
+
     def testLatestStoryPart1(self):
         s = self.stdStory()
         latest = s.latest_story_part()
