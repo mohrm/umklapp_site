@@ -300,6 +300,7 @@ def overview(request):
             .order_by('-finish_date', '-id') \
             .annotate(parts_count = Count('tellers__storyparts')) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
+            .annotate(upvote_count = Count('upvotes')) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
