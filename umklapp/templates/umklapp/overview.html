@@ -15,9 +15,12 @@
    <thead>
     <tr>
      <th class="expand"></th>
-     <th class="text-right"><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
-     <th class="text-right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
-     <th class="text-left"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></th>
+     <th class="text-right" title="Anzahl Sätze in der Geschichte">
+     <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
+     <th class="text-right" title="Anzahl Mitspieler">
+      <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+     <th class="text-left" title="Aktueller Spieler">
+      <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></th>
     </tr>
    </thead>
    <tbody>
@@ -53,9 +56,12 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
    <thead>
     <tr>
      <th class="expand"></th>
-     <th class="text-right"><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
-     <th class="text-right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
-     <th class="text-right"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></th>
+     <th class="text-right" title="Anzahl Sätze in der Geschichte">
+      <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
+     <th class="text-right" title="Anzahl Mitspieler">
+      <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+     <th class="text-right" title="Leseempfehlungen">
+      <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></th>
     </tr>
    </thead>
    <tbody>
@@ -79,9 +85,11 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
 <table class="table">
  <thead>
   <tr>
-   <th>#</th>
-   <th class="expand"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
-   <th><span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
+   <th title="Platzierung">#</th>
+   <th class="expand" title="Spielername">
+    <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+   <th title="Anzahl geschriebener Sätze">
+    <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
   </tr>
  </thead>
  <tbody>
