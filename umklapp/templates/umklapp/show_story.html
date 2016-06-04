@@ -35,7 +35,7 @@
     {% endif %}
   {% endif %}
 
-  {% if story.started_by = user %}
+  {% if story.started_by == user %}
     {% if not story.is_public %}
      <form style="display:inline" method="post" action="{% url 'publish_story' story_id=story.id %}">
       {% csrf_token %}
