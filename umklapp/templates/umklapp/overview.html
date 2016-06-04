@@ -28,7 +28,7 @@
      <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right">{{ s.parts_count }}</td>
-      <td class="text-right">{{ s.contrib_count }}</td>
+      <td class="text-right">{{ s.numberOfActiveTellers }}</td>
       <td class="text-left">{{ s.waiting_for }}</td>
      </tr>
    {% endfor %}

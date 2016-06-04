@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container">
 <h2>{{ story.title }} (Teil {{ part_number }})</h2>
-<p>(von {{ story.started_by }} und {{ story.numberOfContributors|add:-1 }} weiteren Erzählern)</p>
+<p>(von {{ story.started_by }} und {{ story.numberOfContributors|add:-1 }} weiteren Erzählern; momentan {{ story.numberOfActiveTellers }} Mitspieler)</p>
 
 {% if form %}
 <p>
