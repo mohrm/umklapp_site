@@ -290,7 +290,7 @@ def overview(request):
     all_running_stories = Story.objects \
             .filter(is_finished = False) \
             .order_by('title', 'id') \
-            .annotate(parts_count = Count('tellers__storyparts')) \
+            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
@@ -298,9 +298,9 @@ def overview(request):
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
             .order_by('-finish_date', '-id') \
-            .annotate(parts_count = Count('tellers__storyparts')) \
+            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
-            .annotate(upvote_count = Count('upvotes')) \
+            .annotate(upvote_count = Count('upvotes',distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
