@@ -181,6 +181,25 @@ class ViewTests(UmklappTestCase):
         self.addUsers()
         self.stdStory()
 
+    def testOverviewSQLQueries(self):
+        """ This test adds a large number of unfinished and finished stories,
+        with lots of text, and the makes sure that the number of SQL queries is
+        as expected."""
+        for i in range(20):
+            s =  Story.create_new_story(startUser=self.users[0],
+                                      participating_users=self.users[1:],
+                                      first_sentence="first",
+                                      title="foo")
+            for j in range(10):
+                s.continue_story("Text %d" % j)
+            if i >= 10:
+                s.finish()
+        c = Client()
+        r = c.post(reverse('django.contrib.auth.views.login'),
+            dict(username="user1", password="p455w0rd"), follow=True)
+        with self.assertNumQueries(19):
+            r = c.get(reverse("overview"))
+
     def testLogin(self):
         c = Client()
         r1 = c.get("/", follow=True)
