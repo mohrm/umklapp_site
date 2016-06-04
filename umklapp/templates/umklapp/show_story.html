@@ -15,8 +15,9 @@
 </p>
 
 {% for p in story.parts %}
-  <p class="sentence" {% if not anonymized %} title="{{p.teller.user}}" {% endif %}>
+  <p class="sentence" >
   {{ p.content }}
+{% if not anonymized %}<small class="text-muted">– {{p.teller.user}}</small>{% endif %}
   </p>
 {% endfor %}
 
