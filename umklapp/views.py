@@ -95,14 +95,10 @@ class ExtendStoryForm(Form):
         if not finishing and not nextSentence:
             self.add_error('nextSentence', 'Irgendwas muss doch passieren...')
 
-class NotYourTurnException(Exception):
-    pass
-
 @login_required
 @require_POST
 def continue_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
-    t = get_object_or_404(s.tellers, user=request.user)
 
     if s.is_finished:
         return HttpResponseBadRequest("Story already finished")
@@ -110,8 +106,10 @@ def continue_story(request, story_id):
     if not s.participates_in(request.user):
         raise PermissionDenied
 
+    t = get_object_or_404(s.tellers, user=request.user)
+
     if s.whose_turn != t.position:
-        raise NotYourTurnException
+        return HttpResponseBadRequest("Not your turn")
 
     finish = 'finish' in request.POST
     form = ExtendStoryForm(request.POST)
@@ -185,15 +183,13 @@ def show_story(request, story_id):
         return render(request, 'umklapp/show_story.html', context)
     else:
         # unfinished business
-        t = get_object_or_404(s.tellers, user=request.user)
-
-        if s.is_finished:
-            return HttpResponseBadRequest("Story already finished")
+        assert not s.is_finished
 
         if not s.participates_in(request.user):
             raise PermissionDenied
 
         form = None
+        t = get_object_or_404(s.tellers, user=request.user)
 
         if s.whose_turn == t.position:
             # only show form if its the user's turn

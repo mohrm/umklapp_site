@@ -244,6 +244,10 @@ class ViewTests(UmklappTestCase):
         r = c2.get(reverse("show_story", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 200)
         assert(r.context['form'].fields.has_key("nextSentence"))
+        # not your turn
+        r = c1.post(reverse("continue_story", kwargs={'story_id':story_id}),
+            dict(nextSentence="foo"))
+        self.assertEquals(r.status_code, 400)
         # invalid entry
         r = c2.post(reverse("continue_story", kwargs={'story_id':story_id}),
             dict(nextSentence=""))
@@ -263,6 +267,19 @@ class ViewTests(UmklappTestCase):
         r = c1.post(reverse("story_unvote_skip", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
 
+        # not possible before finished
+        r = c2.post(reverse("publish_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("publish_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("unpublish_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("upvote_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("downvote_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
+
+        # finish story
         r = c1.get(reverse("show_story", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 200)
         assert(r.context['form'].fields.has_key("nextSentence"))
@@ -284,6 +301,17 @@ class ViewTests(UmklappTestCase):
 
         r = c1.post(reverse("downvote_story",  kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
+
+        # not possible after finished:
+        r = c1.post(reverse("story_vote_skip", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("story_unvote_skip", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("continue_story", kwargs={'story_id':story_id}),
+            dict(nextSentence="it continues"))
+        self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("leave_story", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
 
     def testLeaveStory(self):
         c1 = Client()
@@ -317,6 +345,40 @@ class ViewTests(UmklappTestCase):
         # (unfortunately, not easy to observe, as we do not see the message in the tests)
         r = c1.post(reverse("leave_story", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("overview"))
+
+    def testNoPermission(self):
+        c1 = Client()
+        c1.login(username="user1", password="p455w0rd")
+        c5 = Client()
+        c5.login(username="user5", password="p455w0rd")
+
+        r = c1.post(reverse("create_new_story"),
+            dict(title="test title", firstSentence="it begins", mitspieler=[3,4]))
+        self.assertRedirects(r, reverse("overview"))
+
+        # check c5 cannot do anything
+        story_id = 2 # is it ok to hard-code the story_id here?
+        r = c5.post(reverse("leave_story", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
+        r = c5.post(reverse("continue_story", kwargs={'story_id':story_id}),
+            dict(nextSentence="it continues"))
+        self.assertEquals(r.status_code, 403)
+        r = c5.post(reverse("skip_story", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
+        r = c5.get(reverse("show_story", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
+
+        # quick hack to finish story
+        s = Story.objects.get(id=story_id)
+        s.finish()
+
+        # more checks c5 cannot do anything
+        r = c5.post(reverse("publish_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
+        r = c5.post(reverse("unpublish_story",  kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
+        r = c5.get(reverse("show_story", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
 
 class TemplateTagsTest(UmklappTestCase):
 
