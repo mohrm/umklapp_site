@@ -156,6 +156,26 @@ class ContinueStoryTest(UmklappTestCase):
         self.assertEquals(s.numberOfActiveTellers(), 2)
         self.assertRaises(NotEnoughActivePlayers, s.leave_story, self.users[5])
 
+    def testNumberOfContributors(self):
+        s = self.stdStory()
+        self.assertEquals(s.numberOfContributors, 1)
+        s.continue_story('test') #u1
+        self.assertEquals(s.numberOfContributors, 2)
+        s.continue_story('test') #u2
+        self.assertEquals(s.numberOfContributors, 3)
+        s.leave_story(self.users[0])
+        self.assertEquals(s.numberOfContributors, 3)
+        s.continue_story('test') #u3
+        self.assertEquals(s.numberOfContributors, 4)
+        s.continue_story('test') #u4
+        self.assertEquals(s.numberOfContributors, 5)
+        s.continue_story('test') #u5
+        self.assertEquals(s.numberOfContributors, 6)
+        s.continue_story('test') #u6
+        self.assertEquals(s.numberOfContributors, 7)
+        s.continue_story('test') #u1
+        self.assertEquals(s.numberOfContributors, 7)
+
 class ViewTests(UmklappTestCase):
     def setUp(self):
         self.addUsers()

@@ -88,6 +88,10 @@ class Story(models.Model):
         # queries, even if self.tellers is prefetched already
         return len([t for t in self.tellers.all() if t.user.is_active and not t.hasLeft])
 
+    def _numberOfContributors(self):
+        return len(set([p.teller.user for p in self.parts()]))
+    numberOfContributors = property(_numberOfContributors)
+
     def leave_story(self, user):
         # capture the case that the teller leaves behind only one active person
         if (self.numberOfActiveTellers() <= Story.MINIMUM_NUMBER_OF_ACTIVE_TELLERS):

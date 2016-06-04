@@ -28,7 +28,7 @@
      <tr {% if s.waiting_for = user %} class="waiting" {% endif %}>
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right">{{ s.parts_count }}</td>
-      <td class="text-right">{{ s.numberOfActiveTellers }}</td>
+      <td class="text-right">{{ s.numberOfContributors }}</td>
       <td class="text-left">{{ s.waiting_for }}</td>
      </tr>
    {% endfor %}
@@ -68,7 +68,7 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
     {% for s in finished_stories %}
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right">{{ s.parts_count }}</td>
-      <td class="text-right">{{ s.numberOfActiveTellers }}</td>
+      <td class="text-right">{{ s.numberOfContributors }}</td>
       <td class="text-right">{{ s.upvote_count|default:"" }}</td>
      </tr>
    {% endfor %}
