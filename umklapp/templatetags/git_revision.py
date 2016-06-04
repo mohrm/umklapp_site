@@ -14,4 +14,4 @@ else:
 
 @register.simple_tag
 def git_revision():
-    return GIT_REVISION
+    return GIT_REVISION[:7]
