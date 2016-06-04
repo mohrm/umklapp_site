@@ -21,7 +21,7 @@ def necessary_skip_votes(total):
     }.get(total, -1)
     if r != -1:
         return r
-    return int(total * 0.6)
+    return round(total * 0.6)
 
 class Teller(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

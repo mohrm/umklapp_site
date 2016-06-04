@@ -22,6 +22,11 @@ class SkipVoteTest(TestCase):
             assert (nec >= x)
             x = nec
 
+    def testSafeMajority(self):
+        for total in range(3,100):
+            necVote = necessary_skip_votes(total)
+            self.assertTrue(necVote > 0.5 * total, msg="failed with total=%d, necVote=%d" % (total, necVote))
+
 class UmklappTestCase(TestCase):
     def addUsers(self):
         self.users = []
