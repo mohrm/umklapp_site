@@ -39,7 +39,7 @@ if 'OPENSHIFT_APP_NAME' in os.environ:
     ALLOWED_HOSTS = [
         '.rhcloud.com'
     ]
-    EMAIL_BACKEND = 'django.core.mail.backends.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = os.getenv('SENDGRID_HOSTNAME')
     EMAIL_HOST_USER = os.getenv('SENDGRID_USERNAME')
     EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_PASSWORD')
