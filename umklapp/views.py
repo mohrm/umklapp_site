@@ -1,5 +1,5 @@
 # encoding: utf-8
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, necessary_skip_votes
 from django.contrib import messages
@@ -105,7 +105,7 @@ def continue_story(request, story_id):
     t = get_object_or_404(s.tellers, user=request.user)
 
     if s.is_finished:
-        raise PermissionDenied
+        return HttpResponseBadRequest("Story already finished")
 
     if not s.participates_in(request.user):
         raise PermissionDenied
@@ -141,7 +141,7 @@ def leave_story(request, story_id):
     u = request.user
 
     if s.is_finished:
-        raise PermissionDenied
+        return HttpResponseBadRequest("Story already finished")
     if not s.participates_in(u):
         raise PermissionDenied
 
@@ -188,7 +188,7 @@ def show_story(request, story_id):
         t = get_object_or_404(s.tellers, user=request.user)
 
         if s.is_finished:
-            raise PermissionDenied
+            return HttpResponseBadRequest("Story already finished")
 
         if not s.participates_in(request.user):
             raise PermissionDenied
@@ -216,7 +216,7 @@ def upvote_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
     if not s.is_finished:
-        raise PermissionDenied
+        return HttpResponseBadRequest("Story not finished yet")
 
     s.upvote_story(request.user)
 
@@ -228,7 +228,7 @@ def downvote_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
     if not s.is_finished:
-        raise PermissionDenied
+        return HttpResponseBadRequest("Story not finished yet")
 
     s.downvote_story(request.user)
 
@@ -240,7 +240,7 @@ def story_vote_skip(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
     if s.is_finished:
-        raise PermissionDenied
+        return HttpResponseBadRequest("Story already finished")
 
     success = s.vote_skip(request.user)
     if success:
@@ -254,7 +254,7 @@ def story_unvote_skip(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
     if s.is_finished:
-        raise PermissionDenied
+        return HttpResponseBadRequest("Story already finished")
 
     s.unvote_skip(request.user)
 
@@ -265,7 +265,9 @@ def story_unvote_skip(request, story_id):
 def publish_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
-    if not s.is_finished or not s.started_by == request.user:
+    if not s.is_finished:
+        return HttpResponseBadRequest("Story not finished yet")
+    if not s.started_by == request.user:
         raise PermissionDenied
 
     s.public(True)
@@ -277,7 +279,9 @@ def publish_story(request, story_id):
 def unpublish_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
-    if not s.is_finished or not s.started_by == request.user:
+    if not s.is_finished:
+        return HttpResponseBadRequest("Story not finished yet")
+    if not s.started_by == request.user:
         raise PermissionDenied
 
     s.public(False)
