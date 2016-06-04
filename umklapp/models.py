@@ -88,6 +88,7 @@ class Story(models.Model):
         # queries, even if self.tellers is prefetched already
         return len([t for t in self.tellers.all() if t.user.is_active and not t.hasLeft])
 
+    # the view actually uses a Count aggreagation for performance.
     def _numberOfContributors(self):
         return len(set([p.teller.user for p in self.parts()]))
     numberOfContributors = property(_numberOfContributors)

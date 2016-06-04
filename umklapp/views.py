@@ -291,6 +291,7 @@ def overview(request):
             .filter(is_finished = False) \
             .order_by('title', 'id') \
             .annotate(parts_count = Count('tellers__storyparts')) \
+            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
@@ -298,6 +299,7 @@ def overview(request):
             .filter(is_finished = True) \
             .order_by('-finish_date', '-id') \
             .annotate(parts_count = Count('tellers__storyparts')) \
+            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
