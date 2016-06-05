@@ -25,14 +25,14 @@ class SkipVoteTest(TestCase):
     def testSafeMajority(self):
         for total in range(3,100):
             necVote = necessary_skip_votes(total)
-            self.assertTrue(necVote > 0.5 * total, msg="failed with total=%d, necVote=%d" % (total, necVote))
+            self.assertTrue(necVote > 0.5 * total, msg="failed with total={0:d}, necVote={1:d}".format(total, necVote))
 
 class UmklappTestCase(TestCase):
     def addUsers(self):
         self.users = []
         for i in range(0,7):
             u = User.objects.create_user(
-                "user%d" % i,
+                "user{0:d}".format(i),
                 "test@example.com",
                 "p455w0rd"
             )
@@ -191,7 +191,7 @@ class ViewTests(UmklappTestCase):
                                       first_sentence="first",
                                       title="foo")
             for j in range(3):
-                s.continue_story("Text %d" % j)
+                s.continue_story("Text {0:d}".format(j))
             if i >= 3:
                 s.finish()
         c = Client()
@@ -226,7 +226,7 @@ class ViewTests(UmklappTestCase):
         assert(r1.context['form'].fields.has_key("mitspieler"))
         vals = list(v for (k,v) in r1.context['form'].fields["mitspieler"].choices)
         for i in range(2,7):
-            assert("user%d" % i in vals), i
+            assert("user{0:d}".format(i) in vals), i
 
         # invalid post
         r2 = c1.post(reverse("create_new_story"),
@@ -326,7 +326,7 @@ class ViewTests(UmklappTestCase):
         assert(r.context['form'].fields.has_key("mitspieler"))
         vals = list(v for (k,v) in r.context['form'].fields["mitspieler"].choices)
         for i in range(2,7):
-            assert("user%d" % i in vals), i
+            assert("user{0:d}".format(i) in vals), i
 
         # invalid post
         r = c1.post(reverse("create_new_story"),

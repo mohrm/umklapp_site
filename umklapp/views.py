@@ -69,7 +69,7 @@ def create_new_story(request):
             first_sentence = form.cleaned_data['firstSentence'],
             participating_users = users
             )
-        messages.success(request, u"Geschichte „%s“ gestartet" % s.title)
+        messages.success(request, u"Geschichte „{0!s}“ gestartet".format(s.title))
         return redirect('overview')
     else:
         context = {
@@ -118,11 +118,11 @@ def continue_story(request, story_id):
             if form.cleaned_data['nextSentence']:
                 s.continue_story(form.cleaned_data['nextSentence'])
             s.finish()
-            messages.success(request, u"Geschichte „%s“ beendet" % s.title)
+            messages.success(request, u"Geschichte „{0!s}“ beendet".format(s.title))
             return redirect('overview')
         else:
             s.continue_story(form.cleaned_data['nextSentence'])
-            messages.success(request, u"Geschichte „%s“ weitergeführt" % s.title)
+            messages.success(request, u"Geschichte „{0!s}“ weitergeführt".format(s.title))
             return redirect('overview')
     else:
         context = {
@@ -144,10 +144,10 @@ def leave_story(request, story_id):
         raise PermissionDenied
 
     if (s.numberOfActiveTellers() >= Story.MINIMUM_NUMBER_OF_ACTIVE_TELLERS + 1):
-        messages.success(request, u"Du hast „%s“ verlassen." % s.title)
+        messages.success(request, u"Du hast „{0!s}“ verlassen.".format(s.title))
         s.leave_story(u)
     else:
-        messages.warning(request, u"Du kannst „%s“ nicht verlassen, da sonst zu wenige Erzähler übrig blieben." % s.title)
+        messages.warning(request, u"Du kannst „{0!s}“ nicht verlassen, da sonst zu wenige Erzähler übrig blieben.".format(s.title))
     return redirect('overview')
 
 @login_required
@@ -163,9 +163,9 @@ def skip_always(request, story_id):
 
     try:
         s.set_always_skip(u)
-        messages.success(request, u"Du wirst nun automatisch übersprungen bei „%s“." % s.title)
+        messages.success(request, u"Du wirst nun automatisch übersprungen bei „{0!s}“.".format(s.title))
     except NotEnoughActivePlayers as e:
-        messages.success(request, u"Zuwenig aktive Spieler, als dass du überspringen kannst bei „%s“." % s.title)
+        messages.success(request, u"Zuwenig aktive Spieler, als dass du überspringen kannst bei „{0!s}“.".format(s.title))
     return redirect('overview')
 
 @login_required
@@ -179,7 +179,7 @@ def unskip_always(request, story_id):
     if not s.participates_in(u):
         raise PermissionDenied
 
-    messages.success(request, u"Du schreibst wieder aktiv mit bei „%s“." % s.title)
+    messages.success(request, u"Du schreibst wieder aktiv mit bei „{0!s}“.".format(s.title))
     s.unset_always_skip(u)
     return redirect('overview')
 
