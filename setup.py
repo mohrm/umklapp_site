@@ -11,9 +11,9 @@ setup(name='Umklapp',
       packages=find_packages(),
       include_package_data=True,
       description='A Story-Continuation Game',
-      install_requires=open('%s/requirements.txt' %
+      install_requires=open('{0!s}/requirements.txt'.format(
                             os.environ.get('OPENSHIFT_REPO_DIR',
                                            PROJECT_ROOT
-                                          )
+                                          ))
                            ).readlines(),
      )
