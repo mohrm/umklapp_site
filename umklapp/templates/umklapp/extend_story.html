@@ -17,16 +17,31 @@ Was bisher geschah:
 </blockquote>
 
 <div class="actions">
-<form style="display:inline" method="post" action="{% url 'continue_story' story_id=story.id %}">
-  {% csrf_token %}
-  {{ form|bootstrap }}
-  <button type="submit" class="btn btn-primary">Geschichte weiterschreiben</button>
-  <button type="submit" name="finish" class="btn btn-default">Geschichte beenden</button>
-</form>
-<form style="display:inline" method="post" action="{% url 'skip_story' story_id=story.id %}">
+
+  <form style="display:inline" method="post" action="{% url 'continue_story' story_id=story.id %}">
+    {% csrf_token %}
+    {{ form|bootstrap }}
+    <button type="submit" class="btn btn-primary">Geschichte weiterschreiben</button>
+    <button type="submit" name="finish" class="btn btn-default">Geschichte beenden</button>
+  </form>
+
+  <form style="display:inline" method="post" action="{% url 'skip_story' story_id=story.id %}">
 	   {% csrf_token %}
 	   <button title="Überspringen" type="submit" class="btn btn-default">Mich einmal überspringen</button>
-</form>
+  </form>
+
+  {# This is duplicated below #}
+  {% if always_skip %}
+    <form style="display:inline" method="post" action="{% url 'unskip_always' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Urlaubsmodus ausschalten" type="submit" class="btn btn-default">Mich nicht mehr überspringen</button>
+    </form>
+  {% else %}
+    <form style="display:inline" method="post" action="{% url 'skip_always' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Urlaubsmodus" type="submit" class="btn btn-default">Mich immer überspringen</button>
+    </form>
+  {% endif %}
 </div>
 
 <h2>Tipps</h2>
@@ -52,6 +67,7 @@ Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong>
  </form>
 {% endif %}
 
+  {# This is duplicated above #}
   {% if always_skip %}
     <form style="display:inline" method="post" action="{% url 'unskip_always' story_id=story.id %}">
       {% csrf_token %}
