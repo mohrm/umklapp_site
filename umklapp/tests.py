@@ -312,6 +312,8 @@ class ViewTests(UmklappTestCase):
         self.assertEquals(r.status_code, 400)
         r = c1.post(reverse("skip_always", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 400)
+        r = c1.post(reverse("unskip_always", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 400)
 
     def testLeaveStory(self):
         c1 = Client()
@@ -346,6 +348,10 @@ class ViewTests(UmklappTestCase):
         r = c1.post(reverse("skip_always", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("overview"))
 
+        # player 2 joins again
+        r = c2.post(reverse("unskip_always", kwargs={'story_id':story_id}))
+        self.assertRedirects(r, reverse("overview"))
+
     def testNoPermission(self):
         c1 = Client()
         c1.login(username="user1", password="p455w0rd")
@@ -367,6 +373,8 @@ class ViewTests(UmklappTestCase):
         self.assertEquals(r.status_code, 403)
         r = c5.get(reverse("show_story", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 403)
+        r = c5.post(reverse("unskip_always", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403)
 
         # quick hack to finish story
         s = Story.objects.get(id=story_id)
@@ -379,6 +387,8 @@ class ViewTests(UmklappTestCase):
         self.assertEquals(r.status_code, 403)
         r = c5.get(reverse("show_story", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 403)
+        r = c5.post(reverse("unskip_always", kwargs={'story_id':story_id}))
+        self.assertEquals(r.status_code, 403) # 400 would reveal information
 
 class TemplateTagsTest(UmklappTestCase):
 

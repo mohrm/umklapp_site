@@ -156,10 +156,10 @@ def unskip_always(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
     u = request.user
 
-    if s.is_finished:
-        return HttpResponseBadRequest("Story already finished")
     if not s.participates_in(u):
         raise PermissionDenied
+    if s.is_finished:
+        return HttpResponseBadRequest("Story already finished")
 
     messages.success(request, u"Du schreibst wieder aktiv mit bei „%s“." % s.title)
     s.unset_always_skip(u)
