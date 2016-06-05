@@ -27,10 +27,6 @@ Was bisher geschah:
 	   {% csrf_token %}
 	   <button title="Überspringen" type="submit" class="btn btn-default">Mich einmal überspringen</button>
 </form>
-<form style="display:inline" method="post" action="{% url 'leave_story' story_id=story.id %}">
-  {% csrf_token %}
-  <button title="An dieser Geschichte nicht mehr mitschreiben" type="submit" class="btn btn-default">Nicht mehr mitschreiben</button>
-</form>
 </div>
 
 <h2>Tipps</h2>
@@ -55,10 +51,6 @@ Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong>
 	   <button title="Überspringen" type="submit" class="btn btn-default">{{ story.waiting_for }} einmal überspringen</button>
  </form>
 {% endif %}
- <form style="display:inline" method="post" action="{% url 'leave_story' story_id=story.id %}">
-  {% csrf_token %}
-  <button title="Nicht mehr mitschreiben" type="submit" class="btn btn-default">Nicht mehr mitschreiben</button>
- </form>
 
   {% if always_skip %}
     <form style="display:inline" method="post" action="{% url 'unskip_always' story_id=story.id %}">

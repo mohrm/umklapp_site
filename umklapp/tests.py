@@ -119,7 +119,7 @@ class ContinueStoryTest(UmklappTestCase):
     def testLeaveStory1(self):
         s = self.stdStory()
         self.assertEquals(s.numberOfActiveTellers(), 7)
-        s.leave_story(self.users[1])
+        s.set_always_skip(self.users[1])
         self.assertEquals(s.numberOfActiveTellers(), 6)
 
     # B.) The current teller leaves
@@ -128,7 +128,7 @@ class ContinueStoryTest(UmklappTestCase):
         self.assertEquals(s.numberOfActiveTellers(), 7)
         s.advance_teller() # 1
         self.assertEquals(s.waiting_for(), self.users[2])
-        s.leave_story(self.users[2])
+        s.set_always_skip(self.users[2])
         self.assertEquals(s.waiting_for(), self.users[3])
         self.assertEquals(s.numberOfActiveTellers(), 6)
 
@@ -136,25 +136,25 @@ class ContinueStoryTest(UmklappTestCase):
     def testLeaveStory3(self):
         s = self.stdStory()
         self.assertEquals(s.numberOfActiveTellers(), 7)
-        s.leave_story(self.users[2])
-        s.leave_story(self.users[2])
+        s.set_always_skip(self.users[2])
+        s.set_always_skip(self.users[2])
         self.assertEquals(s.numberOfActiveTellers(), 6)
 
     # D.) Too many tellers leave
     def testLeaveStory4(self):
         s = self.stdStory()
         self.assertEquals(s.numberOfActiveTellers(), 7)
-        s.leave_story(self.users[0])
+        s.set_always_skip(self.users[0])
         self.assertEquals(s.numberOfActiveTellers(), 6)
-        s.leave_story(self.users[1])
+        s.set_always_skip(self.users[1])
         self.assertEquals(s.numberOfActiveTellers(), 5)
-        s.leave_story(self.users[2])
+        s.set_always_skip(self.users[2])
         self.assertEquals(s.numberOfActiveTellers(), 4)
-        s.leave_story(self.users[3])
+        s.set_always_skip(self.users[3])
         self.assertEquals(s.numberOfActiveTellers(), 3)
-        s.leave_story(self.users[4])
+        s.set_always_skip(self.users[4])
         self.assertEquals(s.numberOfActiveTellers(), 2)
-        self.assertRaises(NotEnoughActivePlayers, s.leave_story, self.users[5])
+        self.assertRaises(NotEnoughActivePlayers, s.set_always_skip, self.users[5])
 
     def testNumberOfContributors(self):
         s = self.stdStory()
@@ -163,7 +163,7 @@ class ContinueStoryTest(UmklappTestCase):
         self.assertEquals(s.numberOfContributors, 2)
         s.continue_story('test') #u2
         self.assertEquals(s.numberOfContributors, 3)
-        s.leave_story(self.users[0])
+        s.set_always_skip(self.users[0])
         self.assertEquals(s.numberOfContributors, 3)
         s.continue_story('test') #u3
         self.assertEquals(s.numberOfContributors, 4)
@@ -197,7 +197,7 @@ class ViewTests(UmklappTestCase):
         c = Client()
         r = c.post(reverse('django.contrib.auth.views.login'),
             dict(username="user1", password="p455w0rd"), follow=True)
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(17):
             r = c.get(reverse("overview"))
 
     def testLogin(self):
@@ -310,7 +310,7 @@ class ViewTests(UmklappTestCase):
         r = c1.post(reverse("continue_story", kwargs={'story_id':story_id}),
             dict(nextSentence="it continues"))
         self.assertEquals(r.status_code, 400)
-        r = c1.post(reverse("leave_story", kwargs={'story_id':story_id}))
+        r = c1.post(reverse("skip_always", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 400)
 
     def testLeaveStory(self):
@@ -337,13 +337,13 @@ class ViewTests(UmklappTestCase):
         story_id = 2
 
         # player 2 can leave
-        r = c2.post(reverse("leave_story", kwargs={'story_id':story_id}))
+        r = c2.post(reverse("skip_always", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("overview"))
         r = c2.get(reverse("overview"))
 
         # player 1 now cannot leave
         # (unfortunately, not easy to observe, as we do not see the message in the tests)
-        r = c1.post(reverse("leave_story", kwargs={'story_id':story_id}))
+        r = c1.post(reverse("skip_always", kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("overview"))
 
     def testNoPermission(self):
@@ -358,7 +358,7 @@ class ViewTests(UmklappTestCase):
 
         # check c5 cannot do anything
         story_id = 2 # is it ok to hard-code the story_id here?
-        r = c5.post(reverse("leave_story", kwargs={'story_id':story_id}))
+        r = c5.post(reverse("skip_always", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 403)
         r = c5.post(reverse("continue_story", kwargs={'story_id':story_id}),
             dict(nextSentence="it continues"))

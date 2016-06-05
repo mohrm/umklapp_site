@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, necessary_skip_votes
+from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, necessary_skip_votes, NotEnoughActivePlayers
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -158,13 +158,14 @@ def skip_always(request, story_id):
 
     if s.is_finished:
         return HttpResponseBadRequest("Story already finished")
-    if s.count_skippers() + 2 >= s.numberOfActiveTellers():
-        return HttpResponseBadRequest("Last two tellers cannot always skip")
     if not s.participates_in(u):
         raise PermissionDenied
 
-    messages.success(request, u"Du wirst nun automatisch übersprungen bei „%s“." % s.title)
-    s.set_always_skip(u)
+    try:
+        s.set_always_skip(u)
+        messages.success(request, u"Du wirst nun automatisch übersprungen bei „%s“." % s.title)
+    except NotEnoughActivePlayers as e:
+        messages.success(request, u"Zuwenig aktive Spieler, als dass du überspringen kannst bei „%s“." % s.title)
     return redirect('overview')
 
 @login_required
@@ -341,7 +342,7 @@ def overview(request):
         finished_stories = all_finished_stories
     else:
         running_stories = filter(lambda (s): s.participates_in(request.user) and
-                                 not s.hasLeft(request.user),
+                                 not s.does_always_skip(request.user),
                              all_running_stories)
         finished_stories = filter(lambda (s): s.participates_in(request.user) or s.is_public,
                                       all_finished_stories)

@@ -28,7 +28,6 @@ class Teller(models.Model):
     corresponding_story = models.ForeignKey('Story', on_delete=models.CASCADE,
                                             related_name="tellers")
     position = models.IntegerField()
-    hasLeft = models.BooleanField()
 
 class Story(models.Model):
     MINIMUM_NUMBER_OF_ACTIVE_TELLERS = 2
@@ -49,15 +48,14 @@ class Story(models.Model):
     def create_new_story(startUser, participating_users, title, first_sentence):
         s = Story(started_by=startUser, is_finished=False, title=title, whose_turn=1)
         s.save()
-        t0 = Teller(user=startUser, corresponding_story=s, position=0,
-                    hasLeft=False)
+        t0 = Teller(user=startUser, corresponding_story=s, position=0)
         t0.save()
         firstPart = StoryPart(teller=t0, position=0, content=first_sentence)
         firstPart.save()
 
         positions = range(1, len(participating_users)+1)
         for (u,p) in zip(participating_users, positions):
-            t = Teller(user=u, corresponding_story=s, position=p, hasLeft=False)
+            t = Teller(user=u, corresponding_story=s, position=p)
             t.save()
         return s
 
@@ -85,30 +83,15 @@ class Story(models.Model):
         self.skipvote.clear()
 
     def numberOfActiveTellers(self):
+        skippers = self.always_skip.all()
         # do not use filter and count here, as this will incur additional database
         # queries, even if self.tellers is prefetched already
-        return len([t for t in self.tellers.all() if t.user.is_active and not t.hasLeft])
+        return len([t for t in self.tellers.all() if t.user.is_active and not t.user in skippers])
 
     # the view actually uses a Count aggreagation for performance.
     def _numberOfContributors(self):
         return len(set([p.teller.user for p in self.parts()]))
     numberOfContributors = property(_numberOfContributors)
-
-    def leave_story(self, user):
-        # capture the case that the teller leaves behind only one active person
-        if (self.numberOfActiveTellers() <= Story.MINIMUM_NUMBER_OF_ACTIVE_TELLERS):
-            raise NotEnoughActivePlayers
-
-        # mark corresponding teller as 'has left'
-        t0 = Teller.objects.get(corresponding_story=self, user=user)
-        t0.hasLeft = True
-        t0.save()
-
-        # if it was the leaving teller's turn, fast forward to the next active
-        # teller - note that there are at least two active tellers, so that
-        # advance_teller will terminate
-        if self.waiting_for() == user:
-            self.advance_teller()
 
     def finish(self):
         self.is_finished = True
@@ -128,17 +111,12 @@ class Story(models.Model):
             self.whose_turn = (self.whose_turn + 1) % cnt
             if not self.waiting_for().is_active:
                 continue
-            if self.hasLeft(self.waiting_for()):
-                continue
             if self.does_always_skip(self.waiting_for()):
                 continue
             break
         assert i != cnt - 1
         self.save()
         self.skipvote.clear()
-
-    def hasLeft(self, user):
-        return [t.hasLeft for t in list(self.tellers.all()) if t.user == user][0]
 
     def latest_story_part(self):
         return self.parts().last()
@@ -183,8 +161,11 @@ class Story(models.Model):
         return user in self.skipvote.all()
 
     def set_always_skip(self, user):
-        assert self.count_skippers() + 2 < self.numberOfActiveTellers()
+        if self.numberOfActiveTellers() <= 2:
+            raise NotEnoughActivePlayers()
         self.always_skip.add(user)
+        if user == self.waiting_for():
+            self.advance_teller()
 
     def unset_always_skip(self, user):
         self.always_skip.remove(user)
