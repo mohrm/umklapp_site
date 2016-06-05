@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^story/(?P<story_id>[0-9]+)/downvote$', views.downvote_story, name='downvote_story'),
     url(r'^story/(?P<story_id>[0-9]+)/voteskip$', views.story_vote_skip, name='story_vote_skip'),
     url(r'^story/(?P<story_id>[0-9]+)/unvoteskip$', views.story_unvote_skip, name='story_unvote_skip'),
+    url(r'^story/(?P<story_id>[0-9]+)/set_skip$', views.skip_always, name='skip_always'),
+    url(r'^story/(?P<story_id>[0-9]+)/unset_skip$', views.unskip_always, name='unskip_always'),
     url(r'^story/(?P<story_id>[0-9]+)/skip$', views.skip_story, name='skip_story'),
     url(r'^story/(?P<story_id>[0-9]+)/leave$', views.leave_story, name='leave_story'),
 ]

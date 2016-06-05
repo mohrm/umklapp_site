@@ -60,6 +60,18 @@ Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong>
   <button title="Nicht mehr mitschreiben" type="submit" class="btn btn-default">Nicht mehr mitschreiben</button>
  </form>
 
+  {% if always_skip %}
+    <form style="display:inline" method="post" action="{% url 'unskip_always' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Urlaubsmodus ausschalten" type="submit" class="btn btn-default">Mich nicht mehr überspringen</button>
+    </form>
+  {% else %}
+    <form style="display:inline" method="post" action="{% url 'skip_always' story_id=story.id %}">
+      {% csrf_token %}
+      <button title="Urlaubsmodus" type="submit" class="btn btn-default">Mich immer überspringen</button>
+    </form>
+  {% endif %}
+
   {% if skipvotes_necessary > 0 %}
     {% if has_voted_skip %}
        <form style="display:inline" method="post" action="{% url 'story_unvote_skip' story_id=story.id %}">

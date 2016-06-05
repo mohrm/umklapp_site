@@ -150,6 +150,37 @@ def leave_story(request, story_id):
         messages.warning(request, u"Du kannst „%s“ nicht verlassen, da sonst zu wenige Erzähler übrig blieben." % s.title)
     return redirect('overview')
 
+@login_required
+@require_POST
+def skip_always(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+    u = request.user
+
+    if s.is_finished:
+        return HttpResponseBadRequest("Story already finished")
+    if s.count_skippers() + 2 >= s.numberOfActiveTellers():
+        return HttpResponseBadRequest("Last two tellers cannot always skip")
+    if not s.participates_in(u):
+        raise PermissionDenied
+
+    messages.success(request, u"Du wirst nun automatisch übersprungen bei „%s“." % s.title)
+    s.set_always_skip(u)
+    return redirect('overview')
+
+@login_required
+@require_POST
+def unskip_always(request, story_id):
+    s = get_object_or_404(Story.objects, id=story_id)
+    u = request.user
+
+    if s.is_finished:
+        return HttpResponseBadRequest("Story already finished")
+    if not s.participates_in(u):
+        raise PermissionDenied
+
+    messages.success(request, u"Du schreibst wieder aktiv mit bei „%s“." % s.title)
+    s.unset_always_skip(u)
+    return redirect('overview')
 
 @login_required
 @require_POST
@@ -200,6 +231,7 @@ def show_story(request, story_id):
             'part_number': s.latest_story_part().position + 1,
             'form': form,
             'has_voted_skip' : s.has_voted_skip(request.user),
+            'always_skip' : s.does_always_skip(request.user),
             'skipvote_count' : s.skipvote_count(),
             'skipvotes_necessary' : necessary_skip_votes(s.numberOfActiveTellers()),
         }

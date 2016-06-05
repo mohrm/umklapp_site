@@ -40,6 +40,7 @@ class Story(models.Model):
     finish_date = models.DateTimeField(null=True)
     upvotes = models.ManyToManyField(User)
     skipvote = models.ManyToManyField(User, related_name="skipvoted")
+    always_skip = models.ManyToManyField(User, related_name="skippers")
 
     def __unicode__(self):
         return self.title
@@ -122,9 +123,17 @@ class Story(models.Model):
         return StoryPart.objects.filter(teller__corresponding_story=self)
 
     def advance_teller(self):
-        self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
-        while (not self.waiting_for().is_active or self.hasLeft(self.waiting_for())):
-            self.whose_turn = (self.whose_turn + 1) % self.tellers.count()
+        cnt = self.tellers.count()
+        for i in range(cnt):
+            self.whose_turn = (self.whose_turn + 1) % cnt
+            if not self.waiting_for().is_active:
+                continue
+            if self.hasLeft(self.waiting_for()):
+                continue
+            if self.does_always_skip(self.waiting_for()):
+                continue
+            break
+        assert i != cnt - 1
         self.save()
         self.skipvote.clear()
 
@@ -172,6 +181,19 @@ class Story(models.Model):
 
     def has_voted_skip(self, user):
         return user in self.skipvote.all()
+
+    def set_always_skip(self, user):
+        assert self.count_skippers() + 2 < self.numberOfActiveTellers()
+        self.always_skip.add(user)
+
+    def unset_always_skip(self, user):
+        self.always_skip.remove(user)
+
+    def count_skippers(self):
+        return self.always_skip.count()
+
+    def does_always_skip(self, user):
+        return user in self.always_skip.all()
 
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')
