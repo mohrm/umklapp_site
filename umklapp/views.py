@@ -325,7 +325,7 @@ def overview(request):
             .order_by('title', 'id') \
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
-            .annotate(active_count = Count('always_skip', distinct=True)) \
+            .annotate(active_count = Count('tellers', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('always_skip') \
