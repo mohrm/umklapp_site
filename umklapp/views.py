@@ -325,8 +325,10 @@ def overview(request):
             .order_by('title', 'id') \
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
+            .annotate(active_count = Count('always_skip', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('tellers') \
+            .prefetch_related('always_skip') \
             .prefetch_related('tellers__user')
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
