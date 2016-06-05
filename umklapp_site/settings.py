@@ -45,7 +45,10 @@ if 'OPENSHIFT_APP_NAME' in os.environ:
     EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_PASSWORD')
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    os.environ['wsgi.url_scheme'] = 'https'
+    #SESSION_EXPIRE_AT_BROWSER_CLOSE = True -- Do we want this? Maybe later...
 elif TESTING:
     DEBUG = False
     TEMPLATE_DEBUG = False
