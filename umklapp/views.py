@@ -134,24 +134,6 @@ def continue_story(request, story_id):
 
 @login_required
 @require_POST
-def leave_story(request, story_id):
-    s = get_object_or_404(Story.objects, id=story_id)
-    u = request.user
-
-    if s.is_finished:
-        return HttpResponseBadRequest("Story already finished")
-    if not s.participates_in(u):
-        raise PermissionDenied
-
-    if (s.numberOfActiveTellers() >= Story.MINIMUM_NUMBER_OF_ACTIVE_TELLERS + 1):
-        messages.success(request, u"Du hast „%s“ verlassen." % s.title)
-        s.leave_story(u)
-    else:
-        messages.warning(request, u"Du kannst „%s“ nicht verlassen, da sonst zu wenige Erzähler übrig blieben." % s.title)
-    return redirect('overview')
-
-@login_required
-@require_POST
 def skip_always(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
     u = request.user
