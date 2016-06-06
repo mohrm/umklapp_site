@@ -21,11 +21,11 @@ class NewStoryForm(Form):
         help_text = "Der Titel ist immer sichtbar. Je besser der Titel einen Kontext vorgibt, desto eher bleibt eine Geschichte konsistent.",
         )
     rules = CharField(
-        label = "Gegebenenfalls: Was für zusätzliche Einschränkungen sollen für die Geschichte gelten?",
+            label = "Bei Bedarf: Besondere Regeln",
         required = False,
         max_length = MAXLEN_SENTENCE,
         widget = TextInput(attrs={'placeholder': '', 'autocomplete': 'off'}),
-        help_text = "Falls zusätzliche Einschränkungen für die Geschichte gelten sollen, kommen diese hier hin.",
+        help_text = "Du kannst zusätzliche Regeln für die Geschichte definieren, z.B. „Nur Sätze mit drei Worten“ oder „Bitte nur Reinform“. Diese Regeln werden den Erzählern dann angezeigt – überprüft werden sie allerdings nicht automatisch!",
         )
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
@@ -338,8 +338,7 @@ def overview(request):
         finished_stories = all_finished_stories
     else:
         user_tellers = request.user.teller_set.all()
-        running_stories = all_running_stories.filter(tellers__in=user_tellers) \
-                .exclude(always_skip__in=[request.user])
+        running_stories = all_running_stories.filter(tellers__in=user_tellers)
         finished_stories = all_finished_stories.filter( \
                 Q(tellers__in=user_tellers) \
                 | Q(is_public=True))
