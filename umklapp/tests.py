@@ -53,6 +53,26 @@ class NewStoryTest(UmklappTestCase):
     def testNewStory(self):
         self.stdStory()
 
+    def testStoryCreation(self):
+        s = Story.create_new_story(startUser=self.users[0],
+                                      participating_users=self.users[1:3],
+                                      first_sentence="first",
+                                      rules="",
+                                      title="foo")
+        self.assertEquals("first", list(s.parts())[0].content)
+        self.assertEquals("", s.rules)
+        self.assertEquals("foo", s.title)
+
+    def testStoryCreationWithRules(self):
+        s = Story.create_new_story(startUser=self.users[0],
+                                      participating_users=self.users[1:3],
+                                      first_sentence="first",
+                                      rules="rule",
+                                      title="foo")
+        self.assertEquals("first", s.latest_story_part().content)
+        self.assertEquals("rule", s.rules)
+        self.assertEquals("foo", s.title)
+
     def testParticipating(self):
         s = Story.create_new_story(startUser=self.users[0],
                                       participating_users=self.users[1:3],
@@ -225,6 +245,7 @@ class ViewTests(UmklappTestCase):
         r1 = c1.get(reverse("new_story"))
         self.assertEquals(r1.status_code, 200)
         assert(r1.context['form'].fields.has_key("title"))
+        assert(r1.context['form'].fields.has_key("rules"))
         assert(r1.context['form'].fields.has_key("firstSentence"))
         assert(r1.context['form'].fields.has_key("mitspieler"))
         vals = list(v for (k,v) in r1.context['form'].fields["mitspieler"].choices)
@@ -327,6 +348,7 @@ class ViewTests(UmklappTestCase):
         r = c1.get(reverse("new_story"))
         self.assertEquals(r.status_code, 200)
         assert(r.context['form'].fields.has_key("title"))
+        assert(r.context['form'].fields.has_key("rules"))
         assert(r.context['form'].fields.has_key("firstSentence"))
         assert(r.context['form'].fields.has_key("mitspieler"))
         vals = list(v for (k,v) in r.context['form'].fields["mitspieler"].choices)
