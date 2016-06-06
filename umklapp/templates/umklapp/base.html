@@ -78,8 +78,6 @@ tr.second-row td, tr.second-row tr {
 tr.waiting td { background-color: #bfb; }
 tr.waiting td.story-name { font-weight: bold; }
 
-div.actions button { margin: 0 1em 1em 0; }
-
 p.meta { margin: 1em 0; }
 
 
@@ -101,17 +99,19 @@ a.tablelink:hover {
  Also add bottom margin.
  */
 .btn {
-  margin-bottom: 3px;
+  margin-bottom: 1em;
+  margin-right: 10px;
 }
-@media only screen and (min-width : 600px) {
-	.btn {
-		min-width:280px;
-	}
+
+.btn { min-width:100% } /* default (narrow screens) */
+@media only screen and (min-width : 768px) {
+	.btn { min-width:348px; } /* Two buttons */
 }
-@media only screen and (max-width : 600px) {
-	.btn {
-		width:100%
-	}
+@media only screen and (min-width : 992px) {
+	.btn { min-width:300px; } /* Three buttons */
+}
+@media only screen and (min-width : 1200px) {
+	.btn { min-width:270px; } /* Four buttons */
 }
 
 {% block page-css %}{% endblock %}
