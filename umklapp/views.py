@@ -333,9 +333,8 @@ def overview(request):
         running_stories = all_running_stories
         finished_stories = all_finished_stories
     else:
-        running_stories = filter(lambda (s): s.participates_in(request.user) and
-                                 not s.does_always_skip(request.user),
-                             all_running_stories)
+        # Cannot use .filter here, as it would clash with above .annotate() calls :-(
+        running_stories = filter(lambda (s): s.participates_in(request.user), all_running_stories)
         finished_stories = filter(lambda (s): s.participates_in(request.user) or s.is_public,
                                       all_finished_stories)
     user_activity = User.objects \
