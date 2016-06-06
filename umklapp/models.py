@@ -123,7 +123,7 @@ class Story(models.Model):
         return self.parts().last()
 
     def participates_in(self, user):
-        return bool([t for t in list(self.tellers.all()) if t.user == user])
+        return self.tellers.filter(user=user).count() > 0
 
     def upvote_story(self, user):
         assert(self.is_finished)

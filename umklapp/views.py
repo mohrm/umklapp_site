@@ -9,7 +9,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.forms import Form, CharField, TextInput, MultipleChoiceField
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count
+from django.db.models import Count, Q
 from random import shuffle
 
 class NewStoryForm(Form):
@@ -329,15 +329,18 @@ def overview(request):
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
+
     if request.user.is_staff:
         running_stories = all_running_stories
         finished_stories = all_finished_stories
     else:
-        running_stories = filter(lambda (s): s.participates_in(request.user) and
-                                 not s.does_always_skip(request.user),
-                             all_running_stories)
-        finished_stories = filter(lambda (s): s.participates_in(request.user) or s.is_public,
-                                      all_finished_stories)
+        user_tellers = request.user.teller_set.all()
+        running_stories = all_running_stories.filter(tellers__in=user_tellers) \
+                .exclude(always_skip__in=[request.user])
+        finished_stories = all_finished_stories.filter( \
+                Q(tellers__in=user_tellers) \
+                | Q(is_public=True))
+
     user_activity = User.objects \
             .filter(is_staff=False) \
             .annotate(parts_written=Count('teller__storyparts')) \
