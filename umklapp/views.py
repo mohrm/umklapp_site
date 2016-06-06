@@ -20,6 +20,13 @@ class NewStoryForm(Form):
         widget = TextInput(attrs={'placeholder': 'Das Märchen von der Fabel', 'autocomplete': 'off'}),
         help_text = "Der Titel ist immer sichtbar. Je besser der Titel einen Kontext vorgibt, desto eher bleibt eine Geschichte konsistent.",
         )
+    rules = CharField(
+        label = "Gegebenenfalls: Was für zusätzliche Einschränkungen sollen für die Geschichte gelten?",
+        required = False,
+        max_length = MAXLEN_SENTENCE,
+        widget = TextInput(attrs={'placeholder': '', 'autocomplete': 'off'}),
+        help_text = "Falls zusätzliche Einschränkungen für die Geschichte gelten sollen, kommen diese hier hin.",
+        )
     firstSentence = CharField(
         label = "Wie soll die Geschichte losgehen?",
         required = True,
@@ -65,6 +72,7 @@ def create_new_story(request):
         shuffle(users)
         s = Story.create_new_story(
             title = form.cleaned_data['title'],
+            rules = form.cleaned_data['rules'],
             startUser = request.user,
             first_sentence = form.cleaned_data['firstSentence'],
             participating_users = users

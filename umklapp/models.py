@@ -33,6 +33,7 @@ class Story(models.Model):
     MINIMUM_NUMBER_OF_ACTIVE_TELLERS = 2
     started_by = models.ForeignKey(User, related_name="started_by", on_delete=models.CASCADE)
     title = models.CharField(max_length=MAXLEN_STORY_TITLE)
+    rules = models.CharField(max_length=MAXLEN_SENTENCE,null=True)
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
     is_public = models.BooleanField(default=False,blank=False)
@@ -45,8 +46,8 @@ class Story(models.Model):
         return self.title
 
     @staticmethod
-    def create_new_story(startUser, participating_users, title, first_sentence):
-        s = Story(started_by=startUser, is_finished=False, title=title, whose_turn=1)
+    def create_new_story(startUser, participating_users, title, rules, first_sentence):
+        s = Story(started_by=startUser, is_finished=False, title=title, rules=rules, whose_turn=1)
         s.save()
         t0 = Teller(user=startUser, corresponding_story=s, position=0)
         t0.save()

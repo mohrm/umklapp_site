@@ -7,6 +7,9 @@
 <h2>
   {{ story.title }}
 </h2>
+{% if story.rules %}
+<p>(Zusätzliche Regeln: {{ story.rules }})</p>
+{% endif %}
 
 <p>&mdash; von {{ story.started_by }} und {{ story.numberOfContributors|add:-1 }} weiteren Erzählern.
 {% if upvote_count %}
