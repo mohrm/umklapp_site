@@ -42,6 +42,7 @@ class UmklappTestCase(TestCase):
         return Story.create_new_story(startUser=self.users[0],
                                       participating_users=self.users[1:],
                                       first_sentence="first",
+                                      rules="",
                                       title="foo")
 
 
@@ -56,6 +57,7 @@ class NewStoryTest(UmklappTestCase):
         s = Story.create_new_story(startUser=self.users[0],
                                       participating_users=self.users[1:3],
                                       first_sentence="first",
+                                      rules="",
                                       title="foo")
         self.assertTrue(s.participates_in(self.users[0]))
         self.assertTrue(s.participates_in(self.users[1]))
@@ -189,6 +191,7 @@ class ViewTests(UmklappTestCase):
             s =  Story.create_new_story(startUser=self.users[0],
                                       participating_users=self.users[1:],
                                       first_sentence="first",
+                                      rules="",
                                       title="foo")
             for j in range(3):
                 s.continue_story("Text %d" % j)
