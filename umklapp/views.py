@@ -196,6 +196,9 @@ def show_story(request, story_id):
             if t.user == request.user:
                 anonym = False
 
+	s.read_by.add(request.user)
+        s.save()
+
         context = {
             'story': s,
             'anonymized' : anonym,
@@ -347,6 +350,8 @@ def overview(request):
             .order_by('-parts_written', 'username')[:10]
     action_count = len([s for s in running_stories if s.waiting_for() == request.user])
 
+    new_stories = finished_stories.exclude(read_by=request.user)
+
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
@@ -354,6 +359,7 @@ def overview(request):
         'finished_stories': finished_stories,
 	'user_activity': user_activity,
         'action_count': action_count,
+        'new_stories': new_stories,
     }
     return render(request, 'umklapp/overview.html', context)
 

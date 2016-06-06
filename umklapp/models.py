@@ -41,6 +41,7 @@ class Story(models.Model):
     upvotes = models.ManyToManyField(User)
     skipvote = models.ManyToManyField(User, related_name="skipvoted")
     always_skip = models.ManyToManyField(User, related_name="skippers")
+    read_by = models.ManyToManyField(User, related_name="stories_read")
 
     def __unicode__(self):
         return self.title
