@@ -332,14 +332,21 @@ def overview(request):
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
+    all_new_stories = Story.objects \
+            .filter(is_finished = True) \
+            .exclude(read_by=request.user)
 
     if request.user.is_staff:
         running_stories = all_running_stories
         finished_stories = all_finished_stories
+        new_stories = all_new_stories
     else:
         user_tellers = request.user.teller_set.all()
         running_stories = all_running_stories.filter(tellers__in=user_tellers)
         finished_stories = all_finished_stories.filter( \
+                Q(tellers__in=user_tellers) \
+                | Q(is_public=True))
+        new_stories = all_new_stories.filter( \
                 Q(tellers__in=user_tellers) \
                 | Q(is_public=True))
 
@@ -349,7 +356,6 @@ def overview(request):
             .order_by('-parts_written', 'username')[:10]
     action_count = len([s for s in running_stories if s.waiting_for() == request.user])
 
-    new_stories = finished_stories.exclude(read_by=request.user)
 
     context = {
         'username': request.user.username,

@@ -220,7 +220,7 @@ class ViewTests(UmklappTestCase):
         c = Client()
         r = c.post(reverse('django.contrib.auth.views.login'),
             dict(username="user1", password="p455w0rd"), follow=True)
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(11):
             r = c.get(reverse("overview"))
 
     def testLogin(self):
