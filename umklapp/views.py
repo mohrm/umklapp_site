@@ -334,7 +334,8 @@ def overview(request):
             .prefetch_related('tellers__user')
     all_new_stories = Story.objects \
             .filter(is_finished = True) \
-            .exclude(read_by=request.user)
+            .exclude(read_by=request.user) \
+            .only('id')
 
     if request.user.is_staff:
         running_stories = all_running_stories
