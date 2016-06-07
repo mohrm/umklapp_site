@@ -56,6 +56,7 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
    <thead>
     <tr>
      <th class="expand"></th>
+     <th></th>
      <th class="text-right" title="Anzahl Sätze in der Geschichte">
       <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
      <th class="text-right" title="Anzahl Mitspieler">
@@ -67,12 +68,18 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
    <tbody>
     {% for s in finished_stories %}
     <tr {% if s in new_stories %} class="actionable" {% endif %}>
-      <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">
+      <td class="ellipsis">
+        <a class="tablelink" href="{% url 'show_story' story_id=s.id %}">
+          {{ s.title }}
+	</a>
+     </td>
+     <td>
           {% if s.is_public %}
             <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
           {% else %}
             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-          {% endif %} {{ s.title }}</a></td>
+          {% endif %} 
+      </td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.contrib_count}}</td>
       <td class="text-right">{{ s.upvote_count|default:"" }}</td>
