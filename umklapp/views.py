@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.http import require_GET, require_POST
 from django.forms import Form, CharField, TextInput, MultipleChoiceField
+from django.forms.widgets import SelectMultiple
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
@@ -37,6 +38,7 @@ class NewStoryForm(Form):
     mitspieler = MultipleChoiceField(
         label = "Wer soll alles noch mitspielen?",
         help_text = "Wähle deine Freunde aus oder füge auch ein paar Unbekannte hinzu.",
+        widget = SelectMultiple(attrs = {"id": "user-select"}),
         )
 
     def set_choices(self,user):

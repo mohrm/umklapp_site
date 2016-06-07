@@ -2,12 +2,29 @@
 {% load bootstrap %}
 {% block title %}Neue Geschichte starten{% endblock %}
 
+{% block page-header %}
+<link rel="stylesheet" href="https://rawgit.com/pbauerochse/searchable-option-list/master/sol.css">
+<script type="text/javascript" src="https://rawgit.com/pbauerochse/searchable-option-list/master/sol.js"></script>
+<style>
+.sol-container {
+   height: inherit;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
 <form method="post" action="{% url 'create_new_story' %}">
   {% csrf_token %}
   {{ form|bootstrap }}
   <button type="submit" class="btn btn-default">Geschichte starten</button>
+
+  <script type="text/javascript">
+    $(function() {
+        // initialize sol
+        $('#user-select').searchableOptionList();
+    });
+  </script>
 </form>
 </div>
 {% endblock %}
