@@ -139,7 +139,7 @@ class Story(models.Model):
         return self.upvotes.count()
 
     def has_upvoted(self, user):
-        return user in self.upvotes.all()
+        return self.upvotes.filter(id=user.id).exists()
 
     def vote_skip(self, user):
         """Returns if vote succeeded"""
