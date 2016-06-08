@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.http import require_GET, require_POST
-from django.forms import Form, CharField, TextInput, MultipleChoiceField
+from django.forms import Form, ModelForm, CharField, TextInput, MultipleChoiceField
 from django.forms.widgets import SelectMultiple
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -232,6 +232,28 @@ def show_story(request, story_id):
             'skipvotes_necessary' : necessary_skip_votes(s.numberOfActiveTellers()),
         }
         return render(request, 'umklapp/extend_story.html', context)
+
+class UserUpdateForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email',]
+
+@login_required
+@require_GET
+def user_profile(request):
+    form = UserUpdateForm(instance=request.user)
+    return render(request, 'umklapp/profile.html', {'form': form})
+
+@login_required
+@require_POST
+def update_profile(request):
+    form = UserUpdateForm(request.POST, instance=request.user)
+    if form.is_valid():
+        form.save()
+        messages.success(request, u"Daten gespeichert")
+        return redirect('user_profile')
+    else:
+        return render(request, 'umklapp/profile.html', {'form': form})
 
 
 @login_required

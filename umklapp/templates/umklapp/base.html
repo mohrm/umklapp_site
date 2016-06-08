@@ -158,7 +158,7 @@ a.tablelink:hover {
    {% if user.is_authenticated %}
     <ul class="nav navbar-nav navbar-right">
      <li>
-      <span class="navbar-text">Hallo {{user}}</span>
+      <a href="{% url 'user_profile' %}" class="navbar-right btn navbar-btn">Hallo {{user}}</a>
      </li>
      <li>
       <a href="{% url 'auth_logout' %}" class="navbar-right btn navbar-btn">Abmelden</a>

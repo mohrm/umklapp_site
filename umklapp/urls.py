@@ -7,9 +7,11 @@ urlpatterns = [
     url(r'^(?:ajax)?$', views.overview, name='overview'),
     url(r'^story/(?P<story_id>[0-9]+)$', views.show_story, name='show_story'),
     url(r'^new_story$', views.new_story, name='new_story'),
+    url(r'^profile$', views.user_profile, name='user_profile'),
 
     # POST URLs (something happens, always ends with a redirect)
     url(r'^new_story/create$', views.create_new_story, name='create_new_story'),
+    url(r'^update_profile$', views.update_profile, name='update_profile'),
     url(r'^story/(?P<story_id>[0-9]+)/continue$', views.continue_story, name='continue_story'),
     url(r'^story/(?P<story_id>[0-9]+)/publish$', views.publish_story, name='publish_story'),
     url(r'^story/(?P<story_id>[0-9]+)/unpublish$', views.unpublish_story, name='unpublish_story'),
