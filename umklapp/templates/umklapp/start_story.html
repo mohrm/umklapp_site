@@ -2,6 +2,19 @@
 {% load bootstrap %}
 {% block title %}Neue Geschichte starten{% endblock %}
 
+{% block page-js %}
+// Prevents submitting the form by pressing 'Enter'
+// see http://stackoverflow.com/questions/895171/prevent-users-from-submitting-form-by-hitting-enter
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+{% endblock %}
+
 {% block page-header %}
 <link rel="stylesheet" href="https://rawgit.com/pbauerochse/searchable-option-list/master/sol.css">
 <script type="text/javascript" src="https://rawgit.com/pbauerochse/searchable-option-list/master/sol.js"></script>

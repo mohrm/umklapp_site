@@ -2,6 +2,18 @@
 {% load bootstrap %}
 {% block title %}Geschichte weiterschreiben{% endblock %}
 
+{% block page-js %}
+// Prevents submitting the form by pressing 'Enter'
+// see http://stackoverflow.com/questions/895171/prevent-users-from-submitting-form-by-hitting-enter
+$(document).ready(function() {
+  $(window).keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+});
+{% endblock %}
 
 {% block content %}
 <div class="container">
