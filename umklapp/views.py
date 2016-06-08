@@ -45,10 +45,10 @@ class NewStoryForm(Form):
         """ Sets the mitspieler choices to all other non-admin users"""
         choices = []
         initial = []
-        for u in User.objects.all():
-            if u != user and not u.is_superuser and u.is_active:
-                initial.append(u.pk)
-                choices.append((u.pk, str(u)))
+        for u in User.objects.filter(is_superuser=False, is_active=True).exclude(id=user.id).all():
+            assert u != user and not u.is_superuser and u.is_active
+            initial.append(u.pk)
+            choices.append((u.pk, str(u)))
         self.fields['mitspieler'].choices = choices
         self.fields['mitspieler'].initial = []
 
