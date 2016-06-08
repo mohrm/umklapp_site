@@ -18,10 +18,19 @@ $(document).ready(function() {
 {% block content %}
 <div class="container">
 <h2>{{ story.title }} (Teil {{ part_number }})</h2>
-{% if story.rules %}
-<p>(Zusätzliche Regeln: {{ story.rules }})</p>
-{% endif %}
+
 <p>(von {{ story.started_by }} und {{ story.numberOfContributors|add:-1 }} weiteren Erzählern; momentan {{ story.numberOfActiveTellers }} Mitspieler)</p>
+
+{% if story.rules %}
+<div class="panel panel-info" role="alert">
+ <div class="panel-heading">
+  <h3 class="panel-title">Zusätzliche Regeln für diese Geschichte</h3>
+ </div>
+ <div class="panel-body">
+  {{ story.rules }}
+ </div>
+</div>
+{% endif %}
 
 {% if form %}
 <p>
