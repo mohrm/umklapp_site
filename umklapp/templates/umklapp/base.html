@@ -158,11 +158,8 @@ a.tablelink:hover {
    {% if user.is_authenticated %}
     <ul class="nav navbar-nav navbar-right">
      <li>
-      <a href="{% url 'user_profile' %}" class="navbar-right btn navbar-btn">Hallo {{user}}</a>
+      <a href="{% url 'user_profile' %}" class="navbar-right btn navbar-btn">{{user}}</a>
      </li>
-     <li>
-      <a href="{% url 'auth_logout' %}" class="navbar-right btn navbar-btn">Abmelden</a>
-    </ul>
    {% else %}
     <ul class="nav navbar-nav navbar-right">
      <li><a href="{% url 'registration_register' %}" class="navbar-right btn navbar-btn">Registrieren</a></li>
