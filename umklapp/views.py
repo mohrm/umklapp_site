@@ -361,10 +361,10 @@ def overview(request):
             .prefetch_related('tellers__user')
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
-            .order_by('-finish_date', '-id') \
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .annotate(upvote_count = Count('upvotes',distinct=True)) \
+            .order_by('-upvote_count', '-finish_date', '-id') \
             .select_related('started_by') \
             .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
