@@ -19,6 +19,24 @@
   <p><a href="{% url 'password_change' %}" class="btn btn-default">Passwort ändern</a></li></p>
 </div>
 
+<h2>Statistiken</h2>
+
+<table class="table">
+ <tbody>
+  <tr>
+   <th class="text-left">Sätze geschrieben</th>
+   <td>{{ sentences_written }}</td>
+  </tr>
+  <tr>
+   <th class="text-left">Geschichten miterzählt</th>
+   <td>{{ participated_in }}</td>
+  </tr>
+  <tr>
+   <th class="text-left">Geschichten gestartet</th>
+   <td>{{ stories_started }}</td>
+  </tr>
+ </tbody>
+</table>
 </div>
 
 {% endblock %}

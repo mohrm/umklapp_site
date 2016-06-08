@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Story, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, necessary_skip_votes, NotEnoughActivePlayers
+from .models import Story, StoryPart, Teller, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, necessary_skip_votes, NotEnoughActivePlayers
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -242,7 +242,13 @@ class UserUpdateForm(ModelForm):
 @require_GET
 def user_profile(request):
     form = UserUpdateForm(instance=request.user)
-    return render(request, 'umklapp/profile.html', {'form': form})
+    context = {
+        'form': form,
+        'sentences_written': StoryPart.objects.filter(teller__user=request.user).count(),
+        'participated_in': Teller.objects.filter(user=request.user).count(),
+        'stories_started': Story.objects.filter(started_by=request.user).count(),
+    }
+    return render(request, 'umklapp/profile.html', context)
 
 @login_required
 @require_POST
@@ -253,7 +259,13 @@ def update_profile(request):
         messages.success(request, u"Daten gespeichert")
         return redirect('user_profile')
     else:
-        return render(request, 'umklapp/profile.html', {'form': form})
+        context = {
+            'form': form,
+            'sentences_written': StoryPart.objects.filter(teller__user=request.user).count(),
+            'participated_in': Teller.objects.filter(user=request.user).count(),
+            'stories_started': Story.objects.filter(started_by=request.user).count(),
+        }
+        return render(request, 'umklapp/profile.html', context)
 
 
 @login_required
