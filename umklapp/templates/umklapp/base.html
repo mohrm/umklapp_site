@@ -98,20 +98,20 @@ a.tablelink:hover {
  buttons take full width (forces page wrap)
  Also add bottom margin.
  */
-#content .btn {
+#content .btn:not(.no-expand) {
   margin-bottom: 1em;
   margin-right: 10px;
 }
 
-#content .btn { min-width:100% } /* default (narrow screens) */
+#content .btn:not(.no-expand) { min-width:100% } /* default (narrow screens) */
 @media only screen and (min-width : 768px) {
-	#content .btn { min-width:348px; } /* Two buttons */
+	#content .btn:not(.no-expand) { min-width:348px; } /* Two buttons */
 }
 @media only screen and (min-width : 992px) {
-	#content .btn { min-width:300px; } /* Three buttons */
+	#content .btn:not(.no-expand) { min-width:300px; } /* Three buttons */
 }
 @media only screen and (min-width : 1200px) {
-	#content .btn { min-width:270px; } /* Four buttons */
+	#content .btn:not(.no-expand) { min-width:270px; } /* Four buttons */
 }
 
 {% block page-css %}{% endblock %}

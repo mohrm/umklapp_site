@@ -11,19 +11,24 @@
 <p>(Zusätzliche Regeln: {{ story.rules }})</p>
 {% endif %}
 
-<p>&mdash; von {{ story.started_by }} und {{ story.numberOfContributors|add:-1 }} weiteren Erzählern.
+<div>
+  &mdash; von {{ story.started_by }} und {{ story.numberOfContributors|add:-1 }} weiteren Erzählern.
   {% if has_upvoted %}
     <form style="display:inline" method="post" action="{% url 'downvote_story' story_id=story.id %}">
-    {% csrf_token %}
-    <button title="Downvote / UnLike" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>&nbsp;Du und {{ upvote_count|add:-1 }} Andere{% if upvote_count|add:-1 == 1 %}r findet{% else %} finden{% endif %} diese Geschichte toll.</button>
-    </form>
+     {% csrf_token %}
+     <button title="Downvote / UnLike" class="no-expand btn btn-default btn-xs btn-success">
+      {{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+     </button>
+     </form>
   {% else %}
     <form style="display:inline" method="post" action="{% url 'upvote_story' story_id=story.id %}">
-    {% csrf_token %}
-    <button title="Upvote / Like" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>&nbsp;{{ upvote_count }} Andere{% if upvote_count == 1%}r findet{% else %} finden{% endif %} diese Geschichte toll.</button>
-    </form>
+     {% csrf_token %}
+     <button title="Upvote / Like" class="no-expand btn btn-default btn-xs">
+      {{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+     </button>
+     </form>
   {% endif %}
-</p>
+</div>
 
 {% for p in story.parts %}
   <p class="sentence" >
