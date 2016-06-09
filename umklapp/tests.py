@@ -415,6 +415,17 @@ class ViewTests(UmklappTestCase):
         r = c5.post(reverse("unskip_always", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 403) # 400 would reveal information
 
+    def testSeparateLists(self):
+        c1 = Client()
+        c1.login(username="user1", password="p455w0rd")
+
+        r = c1.get(reverse("finished"))
+        self.assertEquals(r.status_code, 200)
+
+        r = c1.get(reverse("running"))
+        self.assertEquals(r.status_code, 200)
+
+
 class TemplateTagsTest(UmklappTestCase):
 
     def test(self):

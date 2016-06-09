@@ -1,0 +1,67 @@
+{% extends request.is_ajax|yesno:"umklapp/base_ajax.html,umklapp/base.html"%}
+{% load bootstrap %}
+{% block title %}Das Umklappspiel{% endblock %}
+
+{% block pretitle %}{% if action_count %}({{action_count}}) {% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+<h2>Laufende Geschichten</h2>
+{% if running_stories %}
+
+  <div>
+  <table class="table">
+   <thead>
+    <tr>
+     <th class="expand"></th>
+     <th class="text-right" title="Anzahl Sätze in der Geschichte">
+     <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
+     <th class="text-right" title="Anzahl Mitspieler">
+      <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+     <th class="text-left" title="Aktueller Spieler">
+      <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></th>
+    </tr>
+   </thead>
+   <tbody>
+    {% for s in running_stories %}
+     <tr {% if s.waiting_for = user %} class="actionable" {% endif %}>
+      <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
+      <td class="text-right">{{ s.parts_count }}</td>
+      <td class="text-right">{{ s.active_count }}</td>
+      <td class="text-left">{{ s.waiting_for }}</td>
+     </tr>
+   {% endfor %}
+   </tbody>
+  </table>
+  </div>
+
+{% else %}
+
+<p>Es gibt gerade keine laufenden Geschichten.
+Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
+<a href="{% url 'new_story' %}">Klick hier</a>!</p>
+
+{% endif %}
+
+{% endblock %}
+
+{% block pageend %}
+<script>
+/*  http://stackoverflow.com/a/13324909/946226 */
+$(function() {
+    setInterval(startRefresh,20*1000);
+});
+
+function startRefresh() {
+    $.get('/running_ajax', function(data) {
+        $('#content').html(data);
+    if ($('#settitle')) {
+        $('title').text($('#settitle').text());
+        $('#settitle').remove();
+    }
+    });
+}
+</script>
+{% endblock %}
+

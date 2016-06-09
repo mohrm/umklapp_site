@@ -408,3 +408,80 @@ def overview(request):
     return render(request, 'umklapp/overview.html', context)
 
 
+@login_required
+@require_GET
+def running_stories(request):
+    all_running_stories = Story.objects \
+            .filter(is_finished = False) \
+            .order_by('title', 'id') \
+            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
+            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
+            .annotate(active_count = Count('tellers', distinct=True)) \
+            .select_related('started_by') \
+            .prefetch_related('tellers') \
+            .prefetch_related('always_skip') \
+            .prefetch_related('tellers__user')
+
+    if request.user.is_staff:
+        running_stories = all_running_stories
+    else:
+        user_tellers = request.user.teller_set.all()
+        running_stories = all_running_stories.filter(tellers__in=user_tellers)
+
+    user_activity = User.objects \
+            .filter(is_staff=False) \
+            .annotate(parts_written=Count('teller__storyparts')) \
+            .order_by('-parts_written', 'username')[:10]
+
+    context = {
+        'username': request.user.username,
+        'specialpowers': request.user.is_staff,
+        'running_stories': running_stories,
+        'finished_stories': finished_stories,
+        'user_activity': user_activity,
+    }
+    return render(request, 'umklapp/running.html', context)
+
+@login_required
+@require_GET
+def finished_stories(request):
+    all_finished_stories = Story.objects \
+            .filter(is_finished = True) \
+            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
+            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
+            .annotate(upvote_count = Count('upvotes',distinct=True)) \
+            .order_by('-upvote_count', '-finish_date', '-id') \
+            .select_related('started_by') \
+            .prefetch_related('tellers') \
+            .prefetch_related('tellers__user')
+    all_new_stories = Story.objects \
+            .filter(is_finished = True) \
+            .exclude(read_by=request.user) \
+            .only('id')
+
+    if request.user.is_staff:
+        finished_stories = all_finished_stories
+        new_stories = all_new_stories
+    else:
+        user_tellers = request.user.teller_set.all()
+        finished_stories = all_finished_stories.filter( \
+                Q(tellers__in=user_tellers) \
+                | Q(is_public=True))
+        new_stories = all_new_stories.filter( \
+                Q(tellers__in=user_tellers) \
+                | Q(is_public=True))
+
+    user_activity = User.objects \
+            .filter(is_staff=False) \
+            .annotate(parts_written=Count('teller__storyparts')) \
+            .order_by('-parts_written', 'username')[:10]
+
+    context = {
+        'username': request.user.username,
+        'specialpowers': request.user.is_staff,
+        'finished_stories': finished_stories,
+        'user_activity': user_activity,
+        'new_stories': new_stories,
+    }
+    return render(request, 'umklapp/finished.html', context)
+

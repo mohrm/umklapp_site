@@ -1,0 +1,74 @@
+{% extends request.is_ajax|yesno:"umklapp/base_ajax.html,umklapp/base.html"%}
+{% load bootstrap %}
+{% block title %}Das Umklappspiel{% endblock %}
+
+{% block pretitle %}{% if action_count %}({{action_count}}) {% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+<h2>Beendete Geschichten </h2>
+{% if finished_stories %}
+  <table class="table">
+   <thead>
+    <tr>
+     <th class="expand"></th>
+     <th></th>
+     <th class="text-right" title="Anzahl Sätze in der Geschichte">
+      <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
+     <th class="text-right" title="Anzahl Mitspieler">
+      <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+     <th class="text-right" title="Leseempfehlungen">
+      <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></th>
+    </tr>
+   </thead>
+   <tbody>
+    {% for s in finished_stories %}
+    <tr {% if s in new_stories %} class="actionable" {% endif %}>
+      <td class="ellipsis">
+        <a class="tablelink" href="{% url 'show_story' story_id=s.id %}">
+          {{ s.title }}
+	</a>
+     </td>
+     <td>
+          {% if s.is_public %}
+            <span title="für jedermann lesbar" class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+          {% else %}
+            {% if s.started_by == user %}
+              <span title="nur für Autoren lesbar" class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+            {% else %}
+              <span title="nur für Autoren lesbar"></span>
+            {% endif %}
+          {% endif %}
+      </td>
+      <td class="text-right">{{ s.parts_count }}</td>
+      <td class="text-right">{{ s.contrib_count}}</td>
+      <td class="text-right">{{ s.upvote_count|default:"" }}</td>
+     </tr>
+   {% endfor %}
+   </tbody>
+  </table>
+{% else %}
+<p>Es gibt gerade keine fertigen Geschichten.</p>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block pageend %}
+<script>
+/*  http://stackoverflow.com/a/13324909/946226 */
+$(function() {
+    setInterval(startRefresh,20*1000);
+});
+
+function startRefresh() {
+    $.get('/finished_ajax', function(data) {
+        $('#content').html(data);
+    if ($('#settitle')) {
+        $('title').text($('#settitle').text());
+        $('#settitle').remove();
+    }
+    });
+}
+</script>
+{% endblock %}
+

@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^story/(?P<story_id>[0-9]+)$', views.show_story, name='show_story'),
     url(r'^new_story$', views.new_story, name='new_story'),
     url(r'^profile$', views.user_profile, name='user_profile'),
+    url(r'^running(?:_ajax)?$', views.running_stories, name='running'),
+    url(r'^finished(?:_ajax)?$', views.finished_stories, name='finished'),
 
     # POST URLs (something happens, always ends with a redirect)
     url(r'^new_story/create$', views.create_new_story, name='create_new_story'),
