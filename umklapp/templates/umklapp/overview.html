@@ -38,9 +38,9 @@
 
 {% else %}
 
-<p>Es gibt gerade keine laufenden Geschichten.
-Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
-<a href="{% url 'new_story' %}">Klick hier</a>!</p>
+<p>Du kannst momentan keine Geschichte weiterschreiben.
+Du kannst deine <a href="{% url 'running' %}">laufenden Geschichten anschauen</a>, oder
+Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>!</p>
 
 {% endif %}
 

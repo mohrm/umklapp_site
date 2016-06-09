@@ -10,7 +10,7 @@ from django.forms import Form, ModelForm, CharField, TextInput, Textarea, Multip
 from django.forms.widgets import SelectMultiple
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, Q
+from django.db.models import Count, F, Q
 from random import shuffle
 
 class NewStoryForm(Form):
@@ -351,16 +351,6 @@ def unpublish_story(request, story_id):
 @login_required
 @require_GET
 def overview(request):
-    all_running_stories = Story.objects \
-            .filter(is_finished = False) \
-            .order_by('title', 'id') \
-            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
-            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
-            .annotate(active_count = Count('tellers', distinct=True)) \
-            .select_related('started_by') \
-            .prefetch_related('tellers') \
-            .prefetch_related('always_skip') \
-            .prefetch_related('tellers__user')
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
             .exclude(read_by = request.user) \
@@ -377,24 +367,36 @@ def overview(request):
             .only('id')
 
     if request.user.is_staff:
-        running_stories = all_running_stories
+        running_stories = Story.objects \
+            .filter(is_finished = False) \
+            .order_by('title', 'id') \
+            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
+            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
+            .annotate(active_count = Count('tellers', distinct=True)) \
+            .select_related('started_by') \
+            .prefetch_related('tellers') \
+            .prefetch_related('always_skip') \
+            .prefetch_related('tellers__user')
         finished_stories = all_finished_stories
         new_stories = all_new_stories
     else:
-        user_tellers = request.user.teller_set.all()
-        running_stories = all_running_stories.filter(tellers__in=user_tellers)
+        user_tellers = request.user.teller_set
+        running_stories = [t.corresponding_story for t in user_tellers \
+                .filter(corresponding_story__whose_turn=F('position') \
+                    ,corresponding_story__is_finished=False) \
+                .prefetch_related('corresponding_story__tellers__user')]
         finished_stories = all_finished_stories.filter( \
-                Q(tellers__in=user_tellers) \
+                Q(tellers__in=user_tellers.all()) \
                 | Q(is_public=True))
         new_stories = all_new_stories.filter( \
-                Q(tellers__in=user_tellers) \
+                Q(tellers__in=user_tellers.all()) \
                 | Q(is_public=True))
 
     user_activity = User.objects \
             .filter(is_staff=False) \
             .annotate(parts_written=Count('teller__storyparts')) \
             .order_by('-parts_written', 'username')[:10]
-    action_count = len([s for s in running_stories if s.waiting_for() == request.user])
+    action_count = len(running_stories)
 
 
     context = {
