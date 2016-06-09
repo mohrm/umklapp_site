@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.http import require_GET, require_POST
-from django.forms import Form, ModelForm, CharField, TextInput, MultipleChoiceField
+from django.forms import Form, ModelForm, CharField, TextInput, Textarea, MultipleChoiceField
 from django.forms.widgets import SelectMultiple
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -90,7 +90,10 @@ def create_new_story(request):
 class ExtendStoryForm(Form):
     nextSentence = CharField(
         label = "Wie soll die Geschichte weitergehen?",
-        widget = TextInput(attrs={'placeholder': 'und dann...', 'autocomplete': 'off'}),
+        widget = Textarea(attrs={
+                'placeholder': 'und dann...', 'autocomplete': 'off',
+                'rows': 2
+            }),
         required=False,
         max_length = MAXLEN_SENTENCE,
         help_text = "Falls du die Geschichte beendest, musst du nicht unbedingt einen Satz eingaben."
