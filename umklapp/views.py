@@ -363,6 +363,7 @@ def overview(request):
             .prefetch_related('tellers__user')
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
+            .exclude(read_by = request.user) \
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .annotate(upvote_count = Count('upvotes',distinct=True)) \
