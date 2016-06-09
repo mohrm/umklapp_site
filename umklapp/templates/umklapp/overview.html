@@ -77,8 +77,12 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>.
           {% if s.is_public %}
             <span title="für jedermann lesbar" class="glyphicon glyphicon-globe" aria-hidden="true"></span>
           {% else %}
-            <span title="nur für Autoren lesbar" class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-          {% endif %} 
+            {% if s.started_by == user %}
+              <span title="nur für Autoren lesbar" class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+            {% else %}
+              <span title="nur für Autoren lesbar"></span>
+            {% endif %}
+          {% endif %}
       </td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.contrib_count}}</td>
