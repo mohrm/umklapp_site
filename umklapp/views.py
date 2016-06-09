@@ -131,8 +131,7 @@ def continue_story(request, story_id):
             if form.cleaned_data['nextSentence']:
                 s.continue_story(form.cleaned_data['nextSentence'])
             s.finish()
-            messages.success(request, u"Geschichte „%s“ beendet" % s.title)
-            return redirect('overview')
+            return redirect('show_story', story_id=s.id)
         else:
             s.continue_story(form.cleaned_data['nextSentence'])
             messages.success(request, u"Geschichte „%s“ weitergeführt" % s.title)
