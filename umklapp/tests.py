@@ -309,7 +309,7 @@ class ViewTests(UmklappTestCase):
         assert(r.context['form'].fields.has_key("nextSentence"))
         r = c1.post(reverse("continue_story", kwargs={'story_id':story_id}),
             dict(nextSentence="it ends", finish="finish"))
-        self.assertRedirects(r, reverse("overview"))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
 
         r = c2.post(reverse("publish_story",  kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 403)
