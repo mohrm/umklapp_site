@@ -139,7 +139,6 @@ def continue_story(request, story_id):
     else:
         context = {
             'story': s,
-            'part_number': s.latest_story_part().position + 1,
             'form': form
         }
         return render(request, 'umklapp/extend_story.html', context)
@@ -226,7 +225,6 @@ def show_story(request, story_id):
 
         context = {
             'story': s,
-            'part_number': s.latest_story_part().position + 1,
             'form': form,
             'has_voted_skip' : s.has_voted_skip(request.user),
             'always_skip' : s.does_always_skip(request.user),
