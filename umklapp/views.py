@@ -382,7 +382,6 @@ def overview(request):
         finished_stories = all_finished_stories
         new_stories = all_new_stories
     else:
-        user_tellers = request.user.teller_set
         running_stories = all_running_stories.filter(tellers__user=request.user, \
                 tellers__position=F('whose_turn'))
         finished_stories = all_finished_stories.filter( \
