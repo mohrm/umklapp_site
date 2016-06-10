@@ -358,7 +358,6 @@ def overview(request):
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .annotate(active_count = Count('tellers', distinct=True)) \
             .select_related('started_by') \
-            .prefetch_related('tellers') \
             .prefetch_related('always_skip') \
             .prefetch_related('tellers__user')
 
@@ -370,7 +369,6 @@ def overview(request):
             .annotate(upvote_count = Count('upvotes',distinct=True)) \
             .order_by('-upvote_count', '-finish_date', '-id') \
             .select_related('started_by') \
-            .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
     all_new_stories = Story.objects \
             .filter(is_finished = True) \
@@ -420,7 +418,6 @@ def running_stories(request):
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .annotate(active_count = Count('tellers', distinct=True)) \
             .select_related('started_by') \
-            .prefetch_related('tellers') \
             .prefetch_related('always_skip') \
             .prefetch_related('tellers__user')
 
@@ -453,7 +450,6 @@ def finished_stories(request):
             .annotate(upvote_count = Count('upvotes',distinct=True)) \
             .order_by('-upvote_count', '-finish_date', '-id') \
             .select_related('started_by') \
-            .prefetch_related('tellers') \
             .prefetch_related('tellers__user')
     all_new_stories = Story.objects \
             .filter(is_finished = True) \
