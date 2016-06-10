@@ -351,6 +351,17 @@ def unpublish_story(request, story_id):
 @login_required
 @require_GET
 def overview(request):
+    all_running_stories = Story.objects \
+            .filter(is_finished = False) \
+            .order_by('title', 'id') \
+            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
+            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
+            .annotate(active_count = Count('tellers', distinct=True)) \
+            .select_related('started_by') \
+            .prefetch_related('tellers') \
+            .prefetch_related('always_skip') \
+            .prefetch_related('tellers__user')
+
     all_finished_stories = Story.objects \
             .filter(is_finished = True) \
             .exclude(read_by = request.user) \
@@ -367,29 +378,18 @@ def overview(request):
             .only('id')
 
     if request.user.is_staff:
-        running_stories = Story.objects \
-            .filter(is_finished = False) \
-            .order_by('title', 'id') \
-            .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
-            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
-            .annotate(active_count = Count('tellers', distinct=True)) \
-            .select_related('started_by') \
-            .prefetch_related('tellers') \
-            .prefetch_related('always_skip') \
-            .prefetch_related('tellers__user')
+        running_stories = all_running_stories
         finished_stories = all_finished_stories
         new_stories = all_new_stories
     else:
         user_tellers = request.user.teller_set
-        running_stories = [t.corresponding_story for t in user_tellers \
-                .filter(corresponding_story__whose_turn=F('position') \
-                    ,corresponding_story__is_finished=False) \
-                .prefetch_related('corresponding_story__tellers__user')]
+        running_stories = all_running_stories.filter(tellers__user=request.user, \
+                tellers__position=F('whose_turn'))
         finished_stories = all_finished_stories.filter( \
-                Q(tellers__in=user_tellers.all()) \
+                Q(tellers__user=request.user) \
                 | Q(is_public=True))
         new_stories = all_new_stories.filter( \
-                Q(tellers__in=user_tellers.all()) \
+                Q(tellers__user=request.user) \
                 | Q(is_public=True))
 
     user_activity = User.objects \
@@ -428,8 +428,7 @@ def running_stories(request):
     if request.user.is_staff:
         running_stories = all_running_stories
     else:
-        user_tellers = request.user.teller_set.all()
-        running_stories = all_running_stories.filter(tellers__in=user_tellers)
+        running_stories = all_running_stories.filter(tellers__user=request.user)
 
     user_activity = User.objects \
             .filter(is_staff=False) \
@@ -466,12 +465,11 @@ def finished_stories(request):
         finished_stories = all_finished_stories
         new_stories = all_new_stories
     else:
-        user_tellers = request.user.teller_set.all()
         finished_stories = all_finished_stories.filter( \
-                Q(tellers__in=user_tellers) \
+                Q(tellers__user=request.user) \
                 | Q(is_public=True))
         new_stories = all_new_stories.filter( \
-                Q(tellers__in=user_tellers) \
+                Q(tellers__user=request.user) \
                 | Q(is_public=True))
 
     user_activity = User.objects \
