@@ -393,6 +393,13 @@ def overview(request):
             .order_by('-parts_written', 'username')[:10]
     action_count = len(running_stories)
 
+    user_waiting = User.objects \
+            .filter(is_staff=False) \
+            .filter(teller__corresponding_story__is_finished = False,
+                    teller__corresponding_story__whose_turn = F('teller__position')) \
+            .annotate(waiting_stories=Count('teller')) \
+            .order_by('-waiting_stories', 'username')[:10]
+
 
     context = {
         'username': request.user.username,
@@ -400,6 +407,7 @@ def overview(request):
         'running_stories': running_stories,
         'finished_stories': finished_stories,
 	'user_activity': user_activity,
+	'user_waiting': user_waiting,
         'action_count': action_count,
         'new_stories': new_stories,
     }
