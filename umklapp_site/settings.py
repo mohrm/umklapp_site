@@ -30,7 +30,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=2ihc^r%kso(_q*+=chno5t$=(+7*tu!r2w+o5tup9r%+4c0q3'
+if 'OPENSHIFT_APP_NAME' in os.environ:
+    # We are in production
+    key_filename = os.path.join(os.environ.get('OPENSHIFT_DATA_DIR', BASE_DIR), 'secret.key')
+    if not os.path.isfile(key_filename):
+        from django.utils.crypto import get_random_string
+        chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+        secret_key = get_random_string(50, chars)
+        with open(key_filename, 'w') as key_file:
+            key_file.write(secret_key)
+    with open(key_filename, 'r') as key_file:
+        SECRET_KEY = key_file.read()
+else:
+    SECRET_KEY = '=2ihc^r%kso(_q*+=chno5t$=(+7*tu!r2w+o5tup9r%+4c0q3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
