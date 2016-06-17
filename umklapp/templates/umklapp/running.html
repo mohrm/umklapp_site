@@ -32,7 +32,8 @@
       <td class="text-left" style="white-space: nowrap">
         {{ s.waiting_for }}
         {% if s.skipvote_count > 0 %}
-	 <small class="text-muted" title="{{ s.skipvote_count }} von {{ s.necessary_skip_votes }} nötigen Stimmen bis {{ s.waiting_for }} übersprungen wird">
+	 {% if s in stories_skip_vote %}<small class="text-muted" title="{{ s.skipvote_count }} von {{ s.necessary_skip_votes }} nötigen Stimmen bis {{ s.waiting_for }} übersprungen wird">{% else %}
+	 <small class="text" title="{{ s.skipvote_count }} von {{ s.necessary_skip_votes }} nötigen Stimmen bis {{ s.waiting_for }} übersprungen wird">{% endif %}
 	 ({{ s.skipvote_count }}/{{ s.necessary_skip_votes }})
 	 </small>
 	{% endif %}

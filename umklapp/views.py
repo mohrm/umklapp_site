@@ -409,6 +409,8 @@ def running_stories(request):
     else:
         running_stories = all_running_stories.filter(tellers__user=request.user)
 
+    stories_skip_vote = filter(lambda s : s.has_voted_skip(request.user), running_stories)
+
     user_activity = User.objects \
             .filter(is_staff=False) \
             .annotate(parts_written=Count('teller__storyparts')) \
@@ -420,6 +422,7 @@ def running_stories(request):
         'running_stories': running_stories,
         'finished_stories': finished_stories,
         'user_activity': user_activity,
+        'stories_skip_vote' : stories_skip_vote,
     }
     return render(request, 'umklapp/running.html', context)
 
