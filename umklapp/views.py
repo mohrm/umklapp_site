@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Story, StoryPart, Teller, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, necessary_skip_votes, NotEnoughActivePlayers
+from .models import Story, StoryPart, Teller, MAXLEN_STORY_TITLE, MAXLEN_SENTENCE, NotEnoughActivePlayers
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -228,8 +228,6 @@ def show_story(request, story_id):
             'form': form,
             'has_voted_skip' : s.has_voted_skip(request.user),
             'always_skip' : s.does_always_skip(request.user),
-            'skipvote_count' : s.skipvote_count(),
-            'skipvotes_necessary' : necessary_skip_votes(s.numberOfActiveTellers()),
         }
         return render(request, 'umklapp/extend_story.html', context)
 
@@ -401,6 +399,7 @@ def running_stories(request):
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .annotate(active_count = Count('tellers', distinct=True)) \
+            .annotate(skipvote_count = Count('skipvote', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('always_skip') \
             .prefetch_related('tellers__user')

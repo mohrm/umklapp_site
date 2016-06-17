@@ -4,6 +4,7 @@ from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.functional import cached_property
 
 MAXLEN_STORY_TITLE = 200
 MAXLEN_SENTENCE = 2000
@@ -145,8 +146,7 @@ class Story(models.Model):
         """Returns if vote succeeded"""
         assert(not self.is_finished)
         self.skipvote.add(user)
-        necessary = necessary_skip_votes(self.numberOfActiveTellers())
-        if self.skipvote_count() >= necessary and necessary > 0:
+        if self.skipvote_count >= self.necessary_skip_votes and self.necessary_skip_votes > 0:
             self.advance_teller()
             return True
         else: # not enough votes yet
@@ -156,6 +156,11 @@ class Story(models.Model):
         assert(not self.is_finished)
         self.skipvote.remove(user)
 
+    @cached_property
+    def necessary_skip_votes(self):
+        return necessary_skip_votes(self.numberOfActiveTellers())
+
+    @cached_property
     def skipvote_count(self):
         return self.skipvote.count()
 
