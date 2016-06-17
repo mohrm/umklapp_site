@@ -220,7 +220,7 @@ class ViewTests(UmklappTestCase):
         c = Client()
         r = c.post(reverse('django.contrib.auth.views.login'),
             dict(username="user1", password="p455w0rd"), follow=True)
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(5):
             r = c.get(reverse("overview"))
 
     def testLogin(self):
@@ -232,8 +232,8 @@ class ViewTests(UmklappTestCase):
         r2 = c.post(reverse('django.contrib.auth.views.login'),
             dict(username="user1", password="p455w0rd"), follow=True)
         self.assertEquals(r2.status_code, 200)
-        assert("finished_stories" in r2.context.keys())
-        assert("running_stories" in r2.context.keys())
+        assert("my_new_finished_stories" in r2.context.keys())
+        assert("my_running_stories" in r2.context.keys())
         # Login successful
 
     def testFullCycle(self):

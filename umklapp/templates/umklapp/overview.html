@@ -7,8 +7,8 @@
 {% block content %}
 <div class="container">
 
-<h2>Laufende Geschichten</h2>
-{% if running_stories %}
+<h2>Geschichten, die auf dich warten</h2>
+{% if my_running_stories %}
 
   <div>
   <table class="table">
@@ -19,17 +19,14 @@
      <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span></th>
      <th class="text-right" title="Anzahl Mitspieler">
       <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
-     <th class="text-left" title="Aktueller Spieler">
-      <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></th>
     </tr>
    </thead>
    <tbody>
-    {% for s in running_stories %}
-     <tr {% if s.waiting_for = user %} class="actionable" {% endif %}>
+    {% for s in my_running_stories %}
+     <tr>
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.active_count }}</td>
-      <td class="text-left">{{ s.waiting_for }}</td>
      </tr>
    {% endfor %}
    </tbody>
@@ -52,7 +49,7 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>!</
 <div class="row">
 <div class="col-md-6">
 <h2>Frisch-beendete Geschichten </h2>
-{% if finished_stories %}
+{% if my_new_finished_stories %}
   <table class="table">
    <thead>
     <tr>
@@ -67,8 +64,8 @@ Du könntest eine <a href="{% url 'new_story' %}">neue Geschichte starten</a>!</
     </tr>
    </thead>
    <tbody>
-    {% for s in finished_stories %}
-    <tr {% if s in new_stories %} class="actionable" {% endif %}>
+    {% for s in my_new_finished_stories %}
+    <tr>
       <td class="ellipsis">
         <a class="tablelink" href="{% url 'show_story' story_id=s.id %}">
           {{ s.title }}

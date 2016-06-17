@@ -349,17 +349,14 @@ def unpublish_story(request, story_id):
 @login_required
 @require_GET
 def overview(request):
-    all_running_stories = Story.objects \
+    my_running_stories = Story.objects \
             .filter(is_finished = False) \
             .order_by('title', 'id') \
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
-            .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .annotate(active_count = Count('tellers', distinct=True)) \
-            .select_related('started_by') \
-            .prefetch_related('always_skip') \
-            .prefetch_related('tellers__user')
+            .filter(tellers__user=request.user, tellers__position=F('whose_turn'))
 
-    all_finished_stories = Story.objects \
+    my_new_finished_stories = Story.objects \
             .filter(is_finished = True) \
             .exclude(read_by = request.user) \
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
@@ -367,31 +364,13 @@ def overview(request):
             .annotate(upvote_count = Count('upvotes',distinct=True)) \
             .order_by('-upvote_count', '-finish_date', '-id') \
             .select_related('started_by') \
-            .prefetch_related('tellers__user')
-    all_new_stories = Story.objects \
-            .filter(is_finished = True) \
-            .exclude(read_by=request.user) \
-            .only('id')
-
-    if request.user.is_staff:
-        running_stories = all_running_stories
-        finished_stories = all_finished_stories
-        new_stories = all_new_stories
-    else:
-        running_stories = all_running_stories.filter(tellers__user=request.user, \
-                tellers__position=F('whose_turn'))
-        finished_stories = all_finished_stories.filter( \
-                Q(tellers__user=request.user) \
-                | Q(is_public=True))
-        new_stories = all_new_stories.filter( \
-                Q(tellers__user=request.user) \
-                | Q(is_public=True))
+            .filter(Q(tellers__user=request.user) | Q(is_public=True)) 
 
     user_activity = User.objects \
             .filter(is_staff=False) \
             .annotate(parts_written=Count('teller__storyparts')) \
             .order_by('-parts_written', 'username')[:10]
-    action_count = len(running_stories)
+    action_count = len(my_running_stories)
 
     user_waiting = User.objects \
             .filter(is_staff=False) \
@@ -404,12 +383,11 @@ def overview(request):
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
-        'running_stories': running_stories,
-        'finished_stories': finished_stories,
+        'my_running_stories': my_running_stories,
+        'my_new_finished_stories': finished_stories,
 	'user_activity': user_activity,
 	'user_waiting': user_waiting,
         'action_count': action_count,
-        'new_stories': new_stories,
     }
     return render(request, 'umklapp/overview.html', context)
 
