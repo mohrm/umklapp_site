@@ -29,7 +29,14 @@
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{{ s.title }}</a></td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.active_count }}</td>
-      <td class="text-left">{{ s.waiting_for }}</td>
+      <td class="text-left" style="white-space: nowrap">
+        {{ s.waiting_for }}
+        {% if s.skipvote_count > 0 %}
+	 <small class="text-muted" title="{{ s.skipvote_count }} von {{ s.necessary_skip_votes }} nötigen Stimmen bis {{ s.waiting_for }} übersprungen wird">
+	 ({{ s.skipvote_count }}/{{ s.necessary_skip_votes }})
+	 </small>
+	{% endif %}
+      </td>
      </tr>
    {% endfor %}
    </tbody>
