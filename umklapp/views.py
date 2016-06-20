@@ -382,7 +382,7 @@ def overview(request):
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
         'my_running_stories': my_running_stories,
-        'my_new_finished_stories': finished_stories,
+        'my_new_finished_stories': my_new_finished_stories,
 	'user_activity': user_activity,
 	'user_waiting': user_waiting,
         'action_count': action_count,
