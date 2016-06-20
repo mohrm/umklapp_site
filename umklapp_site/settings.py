@@ -14,6 +14,7 @@ import os
 import urlparse
 import sys
 import logging
+import datetime
 
 TESTING = "test" in sys.argv
 
@@ -186,3 +187,5 @@ STATICFILES_DIRS = (
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
+
+AUTOSKIP = datetime.timedelta(days=1)

@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 
-from datetime import datetime
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.functional import cached_property
+from django.conf import settings
 import django.utils.timezone
+
 
 MAXLEN_STORY_TITLE = 200
 MAXLEN_SENTENCE = 2000
@@ -35,15 +35,15 @@ class Story(models.Model):
     MINIMUM_NUMBER_OF_ACTIVE_TELLERS = 2
     started_by = models.ForeignKey(User, related_name="started_by", on_delete=models.CASCADE)
     title = models.CharField(max_length=MAXLEN_STORY_TITLE)
-    rules = models.CharField(max_length=MAXLEN_SENTENCE,null=True)
+    rules = models.CharField(max_length=MAXLEN_SENTENCE,null=True, blank=True)
     whose_turn = models.IntegerField()
     is_finished = models.BooleanField()
     is_public = models.BooleanField(default=False,blank=False)
-    finish_date = models.DateTimeField(null=True)
-    upvotes = models.ManyToManyField(User)
-    skipvote = models.ManyToManyField(User, related_name="skipvoted")
-    always_skip = models.ManyToManyField(User, related_name="skippers")
-    read_by = models.ManyToManyField(User, related_name="stories_read")
+    finish_date = models.DateTimeField(null=True, blank=True)
+    upvotes = models.ManyToManyField(User, blank=True)
+    skipvote = models.ManyToManyField(User, related_name="skipvoted", blank=True)
+    always_skip = models.ManyToManyField(User, related_name="skippers", blank=True)
+    read_by = models.ManyToManyField(User, related_name="stories_read", blank=True)
     last_action = models.DateTimeField(default=django.utils.timezone.now)
 
     def __unicode__(self):
@@ -92,7 +92,6 @@ class Story(models.Model):
         newPart = StoryPart(teller=self.waiting_for_teller(), content=text, position=nextPos)
         newPart.save()
         self.advance_teller()
-        self.skipvote.clear()
 
     def numberOfActiveTellers(self):
         skippers = self.always_skip.all()
@@ -193,6 +192,15 @@ class Story(models.Model):
 
     def does_always_skip(self, user):
         return user in self.always_skip.all()
+
+    def try_autoskip(self):
+        """ This method checks whether we need to autoskip this story, and does so. """
+        if settings.AUTOSKIP and django.utils.timezone.now() - self.last_action > settings.AUTOSKIP:
+            self.advance_teller()
+            return True
+        else:
+            return False
+
 
 class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')
