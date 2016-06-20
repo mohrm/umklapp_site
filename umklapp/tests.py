@@ -130,6 +130,25 @@ class ContinueStoryTest(UmklappTestCase):
         latest = s.latest_story_part()
         self.assertEquals(self.users[1], latest.teller.user)
 
+    def testVoteSkip(self):
+        s = self.stdStory()
+        for i in range(0,3):
+            s.vote_skip(self.users[i])
+            self.assertEquals(s.waiting_for(), self.users[1])
+        s.vote_skip(self.users[3])
+        self.assertEquals(s.waiting_for(), self.users[2])
+
+    def testAutoSkip(self):
+        s = self.stdStory()
+        self.assertFalse(s.try_autoskip())
+        self.assertEquals(s.waiting_for(), self.users[1])
+
+        s.last_action = django.utils.timezone.now() - 2 * settings.AUTOSKIP
+        s.save()
+
+        self.assertTrue(s.try_autoskip())
+        self.assertEquals(s.waiting_for(), self.users[2])
+
     def testWaitingFor(self):
         s = self.stdStory()
         self.assertEquals(s.waiting_for(), self.users[1])

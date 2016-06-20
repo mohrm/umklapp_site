@@ -156,7 +156,7 @@ class Story(models.Model):
         """Returns if vote succeeded"""
         assert(not self.is_finished)
         self.skipvote.add(user)
-        if self.skipvote_count >= self.necessary_skip_votes and self.necessary_skip_votes > 0:
+        if self.get_skipvote_count() >= self.necessary_skip_votes and self.necessary_skip_votes > 0:
             self.advance_teller()
             return True
         else: # not enough votes yet
@@ -170,9 +170,9 @@ class Story(models.Model):
     def necessary_skip_votes(self):
         return necessary_skip_votes(self.numberOfActiveTellers())
 
-    @cached_property
-    def skipvote_count(self):
+    def get_skipvote_count(self):
         return self.skipvote.count()
+    skipvote_count= cached_property(get_skipvote_count, name='skipvote_count')
 
     def has_voted_skip(self, user):
         return user in self.skipvote.all()
@@ -186,9 +186,6 @@ class Story(models.Model):
 
     def unset_always_skip(self, user):
         self.always_skip.remove(user)
-
-    def count_skippers(self):
-        return self.always_skip.count()
 
     def does_always_skip(self, user):
         return user in self.always_skip.all()
