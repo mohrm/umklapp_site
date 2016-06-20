@@ -106,6 +106,13 @@ class ContinueStoryTest(UmklappTestCase):
         latest = s.latest_story_part()
         self.assertEquals(latest.content, u"\U0001F303")
 
+    def testContinueStory2(self):
+        s = self.stdStory()
+        then = s.last_action
+        s.continue_story(u"\U0001F303")
+        now = s.last_action
+        self.assertNotEqual(then,now)
+
     def testLatestStoryPart1(self):
         s = self.stdStory()
         latest = s.latest_story_part()

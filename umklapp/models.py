@@ -5,6 +5,7 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.functional import cached_property
+import django.utils.timezone
 
 MAXLEN_STORY_TITLE = 200
 MAXLEN_SENTENCE = 2000
@@ -43,13 +44,21 @@ class Story(models.Model):
     skipvote = models.ManyToManyField(User, related_name="skipvoted")
     always_skip = models.ManyToManyField(User, related_name="skippers")
     read_by = models.ManyToManyField(User, related_name="stories_read")
+    last_action = models.DateTimeField(default=django.utils.timezone.now)
 
     def __unicode__(self):
         return self.title
 
     @staticmethod
     def create_new_story(startUser, participating_users, title, rules, first_sentence):
-        s = Story(started_by=startUser, is_finished=False, title=title, rules=rules, whose_turn=1)
+        s = Story(
+            started_by=startUser,
+            is_finished=False,
+            title=title,
+            rules=rules,
+            whose_turn=1,
+            last_action = django.utils.timezone.now(),
+            )
         s.save()
         t0 = Teller(user=startUser, corresponding_story=s, position=0)
         t0.save()
@@ -98,7 +107,8 @@ class Story(models.Model):
 
     def finish(self):
         self.is_finished = True
-        self.finish_date = datetime.now()
+        self.finish_date = django.utils.timezone.now()
+        self.last_action = django.utils.timezone.now()
         self.save()
 
     def public(self, state = True):
@@ -118,6 +128,7 @@ class Story(models.Model):
                 continue
             break
         assert i != cnt - 1
+        self.last_action = django.utils.timezone.now()
         self.save()
         self.skipvote.clear()
 
