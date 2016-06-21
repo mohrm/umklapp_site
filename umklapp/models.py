@@ -203,9 +203,18 @@ class StoryPart(models.Model):
     teller = models.ForeignKey('Teller', on_delete=models.CASCADE, related_name = 'storyparts')
     position = models.IntegerField()
     content = models.CharField(max_length=MAXLEN_SENTENCE)
+    upvotes = models.ManyToManyField(User, related_name='favorite_storyparts', blank=True)
 
     class Meta:
         ordering = ['position']
+
+    def upvote(self, user):
+        if user != self.teller.user:
+            self.upvotes.add(user)
+
+    def downvote(self, user):
+        """Undo an upvote"""
+        self.upvotes.remove(user)
 
 
 class NotEnoughActivePlayers(Exception):

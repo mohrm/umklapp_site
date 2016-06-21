@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^story/(?P<story_id>[0-9]+)/set_skip$', views.skip_always, name='skip_always'),
     url(r'^story/(?P<story_id>[0-9]+)/unset_skip$', views.unskip_always, name='unskip_always'),
     url(r'^story/(?P<story_id>[0-9]+)/skip$', views.skip_story, name='skip_story'),
+    url(r'^storypart/(?P<storypart_id>[0-9]+)/upvote$', views.upvote_storypart, name='upvote_storypart'),
+    url(r'^storypart/(?P<storypart_id>[0-9]+)/downvote$', views.downvote_storypart, name='downvote_storypart'),
 ]
 

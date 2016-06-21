@@ -31,10 +31,26 @@
 </div>
 
 {% for p in story.parts %}
-  <p class="sentence" >
-  {{ p.content }}
-{% if not anonymized %}<small class="text-muted">– {{p.teller.user}}</small>{% endif %}
-  </p>
+  <form style="display:inline" method="post" action="{% spaceless %}
+    {% if user in p.upvotes.all %}
+      {% url 'downvote_storypart' storypart_id=p.id %}
+    {% else %}
+      {% url 'upvote_storypart' storypart_id=p.id %}
+    {% endif %}
+  {% endspaceless %}">
+    <p class="sentence" >
+      {{ p.content }}
+      <small class="text-muted">–
+        {% csrf_token %}
+        <button title="Upvote / Like" class="no-expand btn btn-default btn-xs {% spaceless %}
+          {% if user in p.upvotes.all %}btn-success{% endif %}
+        {% endspaceless %}">
+          {{ p.upvotes.count }}&nbsp;😂
+        </button>
+        {% if not anonymized %}&nbsp;{{p.teller.user}}{% endif %}
+      </small>
+    </p>
+  </form>
 {% endfor %}
 
 <div class="actions">

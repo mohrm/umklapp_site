@@ -292,6 +292,28 @@ def downvote_story(request, story_id):
 
 @login_required
 @require_POST
+def upvote_storypart(request, storypart_id):
+    s = get_object_or_404(StoryPart.objects, id=storypart_id)
+
+    if request.user == s.teller.user:
+        messages.warning(request, u"Du kannst deine eigenen Beiträge nicht upvoten.")
+        return redirect('show_story', story_id=s.teller.corresponding_story.id)
+
+    s.upvote(request.user)
+
+    return redirect('show_story', story_id=s.teller.corresponding_story.id)
+
+@login_required
+@require_POST
+def downvote_storypart(request, storypart_id):
+    s = get_object_or_404(StoryPart.objects, id=storypart_id)
+
+    s.downvote(request.user)
+
+    return redirect('show_story', story_id=s.teller.corresponding_story.id)
+
+@login_required
+@require_POST
 def story_vote_skip(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
