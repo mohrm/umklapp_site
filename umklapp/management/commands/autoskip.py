@@ -13,6 +13,6 @@ class Command(BaseCommand):
 
         # pre-filter stories, although try_autoskip repeats the check, for
         # efficiency.
-        for s in Story.objects.filter(last_action__lt = django.utils.timezone.now() - settings.AUTOSKIP):
+        for s in Story.objects.filter(is_finished=True, last_action__lt = django.utils.timezone.now() - settings.AUTOSKIP):
             if s.try_autoskip():
                 self.stdout.write(self.style.SUCCESS('Auto-skipping %s' % s))
