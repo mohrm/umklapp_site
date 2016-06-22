@@ -15,4 +15,4 @@ class Command(BaseCommand):
         # efficiency.
         for s in Story.objects.filter(is_finished=False, last_action__lt = django.utils.timezone.now() - settings.AUTOSKIP):
             if s.try_autoskip():
-                self.stdout.write(self.style.SUCCESS('Auto-skipping %s' % s))
+                self.stdout.write(self.style.SUCCESS('Auto-skipping %d' % s.id))
