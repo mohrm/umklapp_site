@@ -352,6 +352,15 @@ class ViewTests(UmklappTestCase):
         r = c1.post(reverse("downvote_story",  kwargs={'story_id':story_id}))
         self.assertRedirects(r, reverse("show_story", kwargs={'story_id':story_id}))
 
+        r = c1.post(reverse("upvote_storypart", kwargs={'storypart_id': 2}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id': story_id}))
+
+        r = c2.post(reverse("upvote_storypart", kwargs={'storypart_id': 2}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id': story_id}))
+
+        r = c2.post(reverse("downvote_storypart", kwargs={'storypart_id': 2}))
+        self.assertRedirects(r, reverse("show_story", kwargs={'story_id': story_id}))
+
         # not possible after finished:
         r = c1.post(reverse("story_vote_skip", kwargs={'story_id':story_id}))
         self.assertEquals(r.status_code, 400)
