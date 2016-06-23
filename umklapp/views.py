@@ -194,13 +194,11 @@ def show_story(request, story_id):
         if not s.participates_in(request.user) and not s.is_public:
             raise PermissionDenied
 
-        anonym = True
-        for t in s.tellers.all():
-            if t.user == request.user:
-                anonym = False
+        anonym = not s.tellers.filter(user=request.user).exists()
 
-	s.read_by.add(request.user)
-        s.save()
+	if not request.user in s.read_by.all():
+            s.read_by.add(request.user)
+            s.save()
 
         context = {
             'story': s,
