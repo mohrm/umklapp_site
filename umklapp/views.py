@@ -397,6 +397,11 @@ def overview(request):
             .annotate(waiting_stories=Count('teller')) \
             .order_by('-waiting_stories', 'username')[:10]
 
+    funny_users = User.objects \
+            .filter(is_staff=False) \
+            .annotate(funny_parts=Count('teller__storyparts__upvotes')) \
+            .filter(funny_parts__gt=0) \
+            .order_by('-funny_parts', 'username')[:10]
 
     context = {
         'username': request.user.username,
@@ -405,6 +410,7 @@ def overview(request):
         'my_new_finished_stories': my_new_finished_stories,
 	'user_activity': user_activity,
 	'user_waiting': user_waiting,
+        'funny_users': funny_users,
         'action_count': action_count,
     }
     return render(request, 'umklapp/overview.html', context)

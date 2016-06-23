@@ -145,6 +145,32 @@ Alte Geschichten findest du unter <a href="{% url 'finished' %}">alle fertigen G
 </table>
 {% endif %}
 </div>
+
+<div class="col-md-6">
+{% if funny_users %}
+<h2>Die lustigsten Erzähler</h2>
+<table class="table">
+ <thead>
+  <tr>
+   <th title="Platzierung">#</th>
+   <th class="expand" title="Spielername">
+    <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+   <th title="Summe Upvotes aller Sätze">😂</th>
+  </tr>
+ </thead>
+ <tbody>
+  {% for u in funny_users %}
+   <tr>
+    <td>{% ifchanged u.funny_parts %}{{ forloop.counter }}{% endifchanged %}</td>
+    <td>{{ u.username }}</td>
+    <td class="text-right">{{ u.funny_parts }}</td>
+   </tr>
+  {% endfor %}
+ </tbody>
+</table>
+{% endif %}
+</div>
+
 </div>
 </div>
 {% endblock %}
