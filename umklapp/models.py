@@ -101,7 +101,8 @@ class Story(models.Model):
 
     # the view actually uses a Count aggreagation for performance.
     def _numberOfContributors(self):
-        return len(set([p.teller.user for p in self.parts()]))
+        return User.objects.filter(teller__storyparts__teller__corresponding_story=self) \
+                .distinct().count()
     numberOfContributors = property(_numberOfContributors)
 
     def finish(self):
@@ -115,7 +116,9 @@ class Story(models.Model):
         self.save()
 
     def parts(self):
-        return StoryPart.objects.filter(teller__corresponding_story=self)
+        return StoryPart.objects.filter(teller__corresponding_story=self) \
+                .select_related('teller__user') \
+                .prefetch_related('upvotes')
 
     def advance_teller(self):
         cnt = self.tellers.count()
