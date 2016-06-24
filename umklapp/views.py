@@ -389,13 +389,6 @@ def overview(request):
             .order_by('-parts_written', 'username')[:10]
     action_count = len(my_running_stories)
 
-    user_waiting = User.objects \
-            .filter(is_staff=False) \
-            .filter(teller__corresponding_story__is_finished = False,
-                    teller__corresponding_story__whose_turn = F('teller__position')) \
-            .annotate(waiting_stories=Count('teller')) \
-            .order_by('-waiting_stories', 'username')[:10]
-
     funny_users = User.objects \
             .filter(is_staff=False) \
             .annotate(funny_parts=Count('teller__storyparts__upvotes')) \
@@ -408,7 +401,6 @@ def overview(request):
         'my_running_stories': my_running_stories,
         'my_new_finished_stories': my_new_finished_stories,
 	'user_activity': user_activity,
-	'user_waiting': user_waiting,
         'funny_users': funny_users,
         'action_count': action_count,
     }
