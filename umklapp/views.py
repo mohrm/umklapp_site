@@ -198,7 +198,6 @@ def show_story(request, story_id):
 
 	if not request.user in s.read_by.all():
             s.read_by.add(request.user)
-            s.save()
 
         context = {
             'story': s,
