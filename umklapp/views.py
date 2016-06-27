@@ -419,7 +419,8 @@ def running_stories(request):
             .annotate(skipvote_count = Count('skipvote', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('always_skip') \
-            .prefetch_related('tellers__user')
+            .prefetch_related('tellers__user') \
+            .prefetch_related('skipvote')
 
     if request.user.is_staff:
         running_stories = all_running_stories
