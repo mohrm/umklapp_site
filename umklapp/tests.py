@@ -229,7 +229,7 @@ class ViewTests(UmklappTestCase):
         self.addUsers()
         self.stdStory()
 
-    def testOverviewSQLQueries(self):
+    def testSQLQueries(self):
         """ This test adds a large number of unfinished and finished stories,
         with lots of text, and the makes sure that the number of SQL queries is
         as expected."""
@@ -248,6 +248,12 @@ class ViewTests(UmklappTestCase):
             dict(username="user1", password="p455w0rd"), follow=True)
         with self.assertNumQueries(6):
             r = c.get(reverse("overview"))
+        with self.assertNumQueries(7):
+            r = c.get(reverse("running"))
+        with self.assertNumQueries(6):
+            r = c.get(reverse("finished"))
+        with self.assertNumQueries(3):
+            r = c.get(reverse("new_story"))
 
     def testLogin(self):
         c = Client()
