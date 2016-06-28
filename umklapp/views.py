@@ -247,7 +247,7 @@ def user_profile(request):
                 .filter(teller__user=request.user) \
                 .annotate(Count('upvotes')) \
                 .filter(upvotes__count__gt=0) \
-                .order_by('-upvotes__count')
+                .order_by('-upvotes__count','-teller__corresponding_story__id')
     }
     return render(request, 'umklapp/profile.html', context)
 
