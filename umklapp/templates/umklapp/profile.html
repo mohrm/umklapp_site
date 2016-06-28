@@ -28,7 +28,7 @@
 <h2>Meine lustigsten Sätze</h2>
 
 {% for sp in funny_parts %}
-<span>{{ sp.content }} − {{ sp.upvotes__count }} 😂  in <a href="{% url 'show_story' story_id=sp.teller.corresponding_story.id %}">{{ sp.teller.corresponding_story.title }}</a></span><br>
+<p class="funny">{{ sp.content }} <span class="meta">{{ sp.upvotes__count }} 😂  in <a href="{% url 'show_story' story_id=sp.teller.corresponding_story.id %}">{{ sp.teller.corresponding_story.title }}</a></span></p>
 {% empty %}
 Du hast noch keine Upvotes für deine Sätze bekommen.
 {% endfor %}
