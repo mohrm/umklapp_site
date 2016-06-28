@@ -25,6 +25,14 @@
  </tbody>
 </table>
 
+<h2>Meine lustigsten Sätze</h2>
+
+{% for sp in funny_parts %}
+<span>{{ sp.content }} − {{ sp.upvotes__count }} 😂  in <a href="{% url 'show_story' story_id=sp.teller.corresponding_story.id %}">{{ sp.teller.corresponding_story.title }}</a></span><br>
+{% empty %}
+Du hast noch keine Upvotes für deine Sätze bekommen.
+{% endfor %}
+
 <h2>Persönliche Daten</h2>
 
 <div class="actions">

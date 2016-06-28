@@ -242,6 +242,12 @@ def user_profile(request):
         'sentences_written': StoryPart.objects.filter(teller__user=request.user).count(),
         'participated_in': Teller.objects.filter(user=request.user).count(),
         'stories_started': Story.objects.filter(started_by=request.user).count(),
+        'funny_parts': StoryPart.objects.select_related('teller__user') \
+                .select_related('teller__corresponding_story') \
+                .filter(teller__user=request.user) \
+                .annotate(Count('upvotes')) \
+                .filter(upvotes__count__gt=0) \
+                .order_by('-upvotes__count')
     }
     return render(request, 'umklapp/profile.html', context)
 
