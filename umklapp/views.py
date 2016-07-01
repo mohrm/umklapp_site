@@ -10,7 +10,7 @@ from django.forms import Form, ModelForm, CharField, TextInput, Textarea, Multip
 from django.forms.widgets import SelectMultiple
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, Q
+from django.db.models import Count, F, Q, Max
 from random import shuffle
 
 class NewStoryForm(Form):
@@ -45,10 +45,18 @@ class NewStoryForm(Form):
         """ Sets the mitspieler choices to all other non-admin users"""
         choices = []
         initial = []
-        for u in User.objects.filter(is_superuser=False, is_active=True).exclude(id=user.id).all():
+        users = User.objects\
+            .annotate(lastpart=Max('teller__storyparts__creation'))\
+            .filter(is_superuser=False, is_active=True)\
+            .exclude(id=user.id).all()
+        for u in users:
+            if u.lastpart:
+                last_storypart_date = u.lastpart.strftime("%Y-%m-%d")
+            else:
+                last_storypart_date = "never"
             assert u != user and not u.is_superuser and u.is_active
             initial.append(u.pk)
-            choices.append((u.pk, str(u)))
+            choices.append((u.pk, "%s   (last active: %s)" % (str(u), last_storypart_date)))
         self.fields['mitspieler'].choices = choices
         self.fields['mitspieler'].initial = []
 

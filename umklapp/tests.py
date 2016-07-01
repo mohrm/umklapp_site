@@ -252,7 +252,7 @@ class ViewTests(UmklappTestCase):
         assert(r1.context['form'].fields.has_key("rules"))
         assert(r1.context['form'].fields.has_key("firstSentence"))
         assert(r1.context['form'].fields.has_key("mitspieler"))
-        vals = list(v for (k,v) in r1.context['form'].fields["mitspieler"].choices)
+        vals = list(v.split()[0] for (k,v) in r1.context['form'].fields["mitspieler"].choices)
         for i in range(2,7):
             assert("user%d" % i in vals), i
 
@@ -355,7 +355,7 @@ class ViewTests(UmklappTestCase):
         assert(r.context['form'].fields.has_key("rules"))
         assert(r.context['form'].fields.has_key("firstSentence"))
         assert(r.context['form'].fields.has_key("mitspieler"))
-        vals = list(v for (k,v) in r.context['form'].fields["mitspieler"].choices)
+        vals = list(v.split()[0] for (k,v) in r.context['form'].fields["mitspieler"].choices)
         for i in range(2,7):
             assert("user%d" % i in vals), i
 
