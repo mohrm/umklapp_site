@@ -96,7 +96,7 @@ class ExtendStoryForm(Form):
             }),
         required=False,
         max_length = MAXLEN_SENTENCE,
-        help_text = "Falls du die Geschichte beendest, musst du nicht unbedingt einen Satz eingaben."
+        help_text = "Falls du die Geschichte beendest, musst du nicht unbedingt einen Satz eingeben."
         )
 
     def clean(self):
