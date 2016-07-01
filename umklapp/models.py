@@ -207,6 +207,7 @@ class StoryPart(models.Model):
     position = models.IntegerField()
     content = models.CharField(max_length=MAXLEN_SENTENCE)
     upvotes = models.ManyToManyField(User, related_name='favorite_storyparts', blank=True)
+    creation = models.DateTimeField(default=django.utils.timezone.now)
 
     class Meta:
         ordering = ['position']
