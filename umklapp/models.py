@@ -10,21 +10,6 @@ import django.utils.timezone
 MAXLEN_STORY_TITLE = 200
 MAXLEN_SENTENCE = 2000
 
-def necessary_skip_votes(total):
-    "Computes the number of skipvotes necessary from total number of tellers"
-    r = {
-      0: 0,
-      1: 0,
-      2: 0,
-      3: 2,
-      4: 3,
-      5: 3,
-      6: 4,
-    }.get(total, -1)
-    if r != -1:
-        return r
-    return int(round(total * 0.6))
-
 class Teller(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     corresponding_story = models.ForeignKey('Story', on_delete=models.CASCADE,
@@ -41,7 +26,6 @@ class Story(models.Model):
     is_public = models.BooleanField(default=False,blank=False)
     finish_date = models.DateTimeField(null=True, blank=True)
     upvotes = models.ManyToManyField(User, blank=True)
-    skipvote = models.ManyToManyField(User, related_name="skipvoted", blank=True)
     always_skip = models.ManyToManyField(User, related_name="skippers", blank=True)
     read_by = models.ManyToManyField(User, related_name="stories_read", blank=True)
     last_action = models.DateTimeField(default=django.utils.timezone.now)
@@ -132,7 +116,6 @@ class Story(models.Model):
         assert i != cnt - 1
         self.last_action = django.utils.timezone.now()
         self.save()
-        self.skipvote.clear()
 
     def latest_story_part(self):
         return self.parts().last()
@@ -154,31 +137,6 @@ class Story(models.Model):
 
     def has_upvoted(self, user):
         return self.upvotes.filter(id=user.id).exists()
-
-    def vote_skip(self, user):
-        """Returns if vote succeeded"""
-        assert(not self.is_finished)
-        self.skipvote.add(user)
-        if self.get_skipvote_count() >= self.necessary_skip_votes and self.necessary_skip_votes > 0:
-            self.advance_teller()
-            return True
-        else: # not enough votes yet
-            return False
-
-    def unvote_skip(self, user):
-        assert(not self.is_finished)
-        self.skipvote.remove(user)
-
-    @cached_property
-    def necessary_skip_votes(self):
-        return necessary_skip_votes(self.numberOfActiveTellers())
-
-    def get_skipvote_count(self):
-        return self.skipvote.count()
-    skipvote_count= cached_property(get_skipvote_count, name='skipvote_count')
-
-    def has_voted_skip(self, user):
-        return user in self.skipvote.all()
 
     def set_always_skip(self, user):
         if self.numberOfActiveTellers() <= 2:

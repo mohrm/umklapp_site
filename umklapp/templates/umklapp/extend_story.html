@@ -104,24 +104,7 @@ Diese Geschichte wird als nächstes von <strong>{{ story.waiting_for }}</strong>
     </form>
   {% endif %}
 
-  {% if story.necessary_skip_votes > 0 %}
-    {% if has_voted_skip %}
-       <form style="display:inline" method="post" action="{% url 'story_unvote_skip' story_id=story.id %}">
-        {% csrf_token %}
-        <button title="Stimme nicht für Überspringen" class="btn btn-default">{{story.waiting_for}} nicht überspringen</button>
-       </form>
-    {% else %}
-     <form style="display:inline" method="post" action="{% url 'story_vote_skip' story_id=story.id %}">
-      {% csrf_token %}
-      <button title="Stimme dafür den aktuellen Schreiber zu überspringen" class="btn btn-default">{{story.waiting_for}} überspringen</button>
-      </form>
-    {% endif %}
-  {% endif %}
 </div>
-{% endif %}
-
-{% if story.skipvote_count > 0 and story.necessary_skip_votes > 0 %}
-<p>Stimmen dafür {{story.waiting_for}} zu Überspringen: {{ story.skipvote_count }} von {{ story.necessary_skip_votes }}</p>
 {% endif %}
 </div>
 

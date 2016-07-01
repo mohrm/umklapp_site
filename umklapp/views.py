@@ -223,7 +223,6 @@ def show_story(request, story_id):
         context = {
             'story': s,
             'form': form,
-            'has_voted_skip' : s.has_voted_skip(request.user),
             'always_skip' : s.does_always_skip(request.user),
         }
         return render(request, 'umklapp/extend_story.html', context)
@@ -318,32 +317,6 @@ def downvote_storypart(request, storypart_id):
 
 @login_required
 @require_POST
-def story_vote_skip(request, story_id):
-    s = get_object_or_404(Story.objects, id=story_id)
-
-    if s.is_finished:
-        return HttpResponseBadRequest("Story already finished")
-
-    success = s.vote_skip(request.user)
-    if success:
-        messages.success(request, u"Abstimmung zum Überspringen erfolgreich")
-
-    return redirect('show_story', story_id=s.id)
-
-@login_required
-@require_POST
-def story_unvote_skip(request, story_id):
-    s = get_object_or_404(Story.objects, id=story_id)
-
-    if s.is_finished:
-        return HttpResponseBadRequest("Story already finished")
-
-    s.unvote_skip(request.user)
-
-    return redirect('show_story', story_id=s.id)
-
-@login_required
-@require_POST
 def publish_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
 
@@ -423,18 +396,14 @@ def running_stories(request):
             .annotate(parts_count = Count('tellers__storyparts',distinct=True)) \
             .annotate(contrib_count = Count('tellers__storyparts__teller', distinct=True)) \
             .annotate(active_count = Count('tellers', distinct=True)) \
-            .annotate(skipvote_count = Count('skipvote', distinct=True)) \
             .select_related('started_by') \
             .prefetch_related('always_skip') \
             .prefetch_related('tellers__user') \
-            .prefetch_related('skipvote')
 
     if request.user.is_staff:
         running_stories = all_running_stories
     else:
         running_stories = all_running_stories.filter(tellers__user=request.user)
-
-    stories_skip_vote = filter(lambda s : s.has_voted_skip(request.user), running_stories)
 
     user_activity = User.objects \
             .filter(is_staff=False) \
@@ -447,7 +416,6 @@ def running_stories(request):
         'running_stories': running_stories,
         'finished_stories': finished_stories,
         'user_activity': user_activity,
-        'stories_skip_vote' : stories_skip_vote,
     }
     return render(request, 'umklapp/running.html', context)
 
