@@ -1,4 +1,4 @@
-{% extends "umklapp/base.html" %}
+{% extends request.is_ajax|yesno:"umklapp/base_ajax.html,umklapp/base.html" %}
 {% load bootstrap %}
 {% block title %}Story anschauen{% endblock %}
 
@@ -31,26 +31,19 @@
 </div>
 
 {% for p in story.parts %}
-  <form style="display:inline" method="post" action="{% spaceless %}
-    {% if user in p.upvotes.all %}
-      {% url 'downvote_storypart' storypart_id=p.id %}
-    {% else %}
-      {% url 'upvote_storypart' storypart_id=p.id %}
-    {% endif %}
-  {% endspaceless %}">
-    <p class="sentence" >
-      {{ p.content }}
-      <small class="text-muted">–
-        {% csrf_token %}
-        <button title="Upvote / Like" class="no-expand btn btn-default btn-xs {% spaceless %}
-          {% if user in p.upvotes.all %}btn-success{% endif %}
-        {% endspaceless %}">
-          {{ p.upvotes.count }}&nbsp;😂
-        </button>
-        {% if not anonymized %}&nbsp;{{p.teller.user}}{% endif %}
-      </small>
-    </p>
-  </form>
+  <p class="sentence" >
+    {{ p.content }}
+    <small class="text-muted">–
+      {% if user in p.upvotes.all %}
+        <button title="Downvote / Unlike" class="no-expand btn btn-default btn-xs btn-success" onclick="$.post('{% url 'downvote_storypart' storypart_id=p.id %}', { csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data) { $('#content').html(data); if ($('#settitle')) { $('#settitle').remove(); } });">
+      {% else %}
+        <button title="Upvote / Like" class="no-expand btn btn-default btn-xs" onclick="$.post('{% url 'upvote_storypart' storypart_id=p.id %}', { csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data) { $('#content').html(data); if ($('#settitle')) { $('#settitle').remove(); } });">
+      {% endif %}
+        {{ p.upvotes.count }}&nbsp;😂
+      </button>
+      {% if not anonymized %}&nbsp;{{p.teller.user}}{% endif %}
+    </small>
+  </p>
 {% endfor %}
 
 <div class="actions">
