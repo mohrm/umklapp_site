@@ -144,6 +144,34 @@ Alte Geschichten findest du unter <a href="{% url 'finished' %}">alle fertigen G
 </table>
 {% endif %}
 </div>
+</div>
+
+<div class="row">
+<div class="col-md-6">
+{% if story_starters %}
+<h2>Die fleißigsten Geschichten-Ersteller</h2>
+<table class="table">
+ <thead>
+  <tr>
+   <th title="Platzierung">#</th>
+   <th class="expand" title="Spielername">
+    <span class="glyphicon glyphicon-user" aria-hidden="true"></span></th>
+   <th title="Anzahl erstellter Geschichten">
+    <span class="glyphicon glyphicon-notes" aria-hidden="true"></span></th>
+  </tr>
+ </thead>
+ <tbody>
+  {% for u in story_starters %}
+   <tr>
+    <td>{% ifchanged u.stories_started %}{{ forloop.counter }}{% endifchanged %}</td>
+    <td>{{ u.username }}</td>
+    <td class="text-right">{{ u.stories_started }}</td>
+   </tr>
+  {% endfor %}
+ </tbody>
+</table>
+{% endif %}
+</div>
 
 </div>
 </div>

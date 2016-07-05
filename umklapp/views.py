@@ -383,6 +383,13 @@ def overview(request):
             .filter(funny_parts__gt=0) \
             .order_by('-funny_parts', 'username')[:10]
 
+    story_starters = User.objects \
+            .filter(is_staff=False) \
+            .annotate(stories_started=Count('started_by')) \
+            .order_by('-stories_started', 'username')[:10]
+            
+    action_count = len(my_running_stories)
+
     context = {
         'username': request.user.username,
         'specialpowers': request.user.is_staff,
@@ -390,6 +397,7 @@ def overview(request):
         'my_new_finished_stories': my_new_finished_stories,
 	'user_activity': user_activity,
         'funny_users': funny_users,
+        'story_starters': story_starters,
         'action_count': action_count,
     }
     return render(request, 'umklapp/overview.html', context)
