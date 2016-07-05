@@ -385,7 +385,7 @@ def overview(request):
 
     story_starters = User.objects \
             .filter(is_staff=False) \
-            .annotate(stories_started=Count('started_by')) \
+            .annotate(stories_started=Count('stories_created')) \
             .order_by('-stories_started', 'username')[:10]
             
     action_count = len(my_running_stories)

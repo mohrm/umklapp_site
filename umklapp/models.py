@@ -18,7 +18,7 @@ class Teller(models.Model):
 
 class Story(models.Model):
     MINIMUM_NUMBER_OF_ACTIVE_TELLERS = 2
-    started_by = models.ForeignKey(User, related_name="started_by", on_delete=models.CASCADE)
+    started_by = models.ForeignKey(User, related_name="stories_created", on_delete=models.CASCADE)
     title = models.CharField(max_length=MAXLEN_STORY_TITLE)
     rules = models.CharField(max_length=MAXLEN_SENTENCE,null=True, blank=True)
     whose_turn = models.IntegerField()
