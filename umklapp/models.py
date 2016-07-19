@@ -121,7 +121,10 @@ class Story(models.Model):
         return self.parts().last()
 
     def participates_in(self, user):
-        return self.tellers.filter(user=user).count() > 0
+        if user.is_authenticated():
+            return self.tellers.filter(user=user).count() > 0
+        else:
+            return False
 
     def upvote_story(self, user):
         assert(self.is_finished)
@@ -136,7 +139,10 @@ class Story(models.Model):
         return self.upvotes.count()
 
     def has_upvoted(self, user):
-        return self.upvotes.filter(id=user.id).exists()
+        if user.is_authenticated():
+            return self.upvotes.filter(id=user.id).exists()
+        else:
+            return False
 
     def set_always_skip(self, user):
         if self.numberOfActiveTellers() <= 2:

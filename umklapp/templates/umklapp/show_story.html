@@ -13,20 +13,24 @@
 
 <div>
   &mdash; von {{ story.started_by }} und {{ story.numberOfContributors|add:-1 }} weiteren Erzählern.
-  {% if has_upvoted %}
-    <form style="display:inline" method="post" action="{% url 'downvote_story' story_id=story.id %}">
-     {% csrf_token %}
-     <button title="Downvote / UnLike" class="no-expand btn btn-default btn-xs btn-success">
-      {{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-     </button>
-     </form>
+  {% if user.is_authenticated %}
+    {% if has_upvoted %}
+      <form style="display:inline" method="post" action="{% url 'downvote_story' story_id=story.id %}">
+       {% csrf_token %}
+       <button title="Downvote / UnLike" class="no-expand btn btn-default btn-xs btn-success">
+        {{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+       </button>
+       </form>
+    {% else %}
+      <form style="display:inline" method="post" action="{% url 'upvote_story' story_id=story.id %}">
+       {% csrf_token %}
+       <button title="Upvote / Like" class="no-expand btn btn-default btn-xs">
+        {{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+       </button>
+       </form>
+    {% endif %}
   {% else %}
-    <form style="display:inline" method="post" action="{% url 'upvote_story' story_id=story.id %}">
-     {% csrf_token %}
-     <button title="Upvote / Like" class="no-expand btn btn-default btn-xs">
-      {{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-     </button>
-     </form>
+       <span title="Zum Abstimmen bitte einloggen!">{{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></span>
   {% endif %}
 </div>
 
@@ -34,13 +38,17 @@
   <p class="sentence" >
     {{ p.content }}
     <small class="text-muted">–
-      {% if user in p.upvotes.all %}
-        <button title="Downvote / Unlike" class="no-expand btn btn-default btn-xs btn-success" onclick="$.post('{% url 'downvote_storypart' storypart_id=p.id %}', { csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data) { $('#content').html(data); if ($('#settitle')) { $('#settitle').remove(); } });">
-      {% else %}
-        <button title="Upvote / Like" class="no-expand btn btn-default btn-xs" onclick="$.post('{% url 'upvote_storypart' storypart_id=p.id %}', { csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data) { $('#content').html(data); if ($('#settitle')) { $('#settitle').remove(); } });">
-      {% endif %}
-        {{ p.upvotes.count }}&nbsp;😂
-      </button>
+	  {% if user.is_authenticated %}
+         {% if user in p.upvotes.all %}
+           <button title="Downvote / Unlike" class="no-expand btn btn-default btn-xs btn-success" onclick="$.post('{% url 'downvote_storypart' storypart_id=p.id %}', { csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data) { $('#content').html(data); if ($('#settitle')) { $('#settitle').remove(); } });">
+         {% else %}
+           <button title="Upvote / Like" class="no-expand btn btn-default btn-xs" onclick="$.post('{% url 'upvote_storypart' storypart_id=p.id %}', { csrfmiddlewaretoken: '{{ csrf_token }}' }, function(data) { $('#content').html(data); if ($('#settitle')) { $('#settitle').remove(); } });">
+         {% endif %}
+           {{ p.upvotes.count }}&nbsp;😂
+         </button>
+	  {% else %}
+           <span title="Zum Abstimmen bitte einloggen!">{{ p.upvotes.count }}&nbsp;😂</span>
+	  {% endif %}
       {% if not anonymized %}&nbsp;{{p.teller.user}}{% endif %}
     </small>
   </p>

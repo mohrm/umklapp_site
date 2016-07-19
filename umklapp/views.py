@@ -193,7 +193,7 @@ def skip_story(request, story_id):
     s.advance_teller()
     return redirect('overview')
 
-@login_required
+# Nota bene: This view is available without logging in!
 @require_GET
 def show_story(request, story_id):
     s = get_object_or_404(Story.objects, id=story_id)
@@ -202,9 +202,9 @@ def show_story(request, story_id):
         if not s.participates_in(request.user) and not s.is_public:
             raise PermissionDenied
 
-        anonym = not s.tellers.filter(user=request.user).exists()
+        anonym = not s.participates_in(request.user)
 
-	if not request.user in s.read_by.all():
+        if request.user.is_authenticated() and not request.user in s.read_by.all():
             s.read_by.add(request.user)
 
         context = {
