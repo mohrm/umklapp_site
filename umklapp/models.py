@@ -122,7 +122,7 @@ class Story(models.Model):
 
     def participates_in(self, user):
         if user.is_authenticated():
-            return self.tellers.filter(user=user).count() > 0
+            return self.tellers.filter(user=user).exists()
         else:
             return False
 
