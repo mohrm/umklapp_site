@@ -32,6 +32,12 @@
   {% else %}
        <span title="Zum Abstimmen bitte einloggen!">{{ upvote_count }}&nbsp;<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></span>
   {% endif %}
+  {% if story.is_public %}
+    Auf
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{request.build_absolute_uri|urlencode}}">Facebook</a>
+    oder
+    <a href="https://twitter.com/share?url={{request.build_absolute_uri|urlencode}}&text=Coole Umklappspielgeschichte „{{story.title|urlencode}}“">Twitter</a> teilen.
+  {% endif %}
 </div>
 
 {% for p in story.parts %}
