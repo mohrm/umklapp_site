@@ -4,19 +4,19 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import RedirectView, TemplateView
-from registration.backends.simple.views import RegistrationView
+from django_registration.backends.one_step.views import RegistrationView
 
 admin.autodiscover()
 
 urlpatterns = [
 # http://www.voidynullness.net/blog/2014/01/15/raiders-of-the-lost-django-registration-templates/
     url(r'^accounts/login/$',
-                    auth_views.login,
-                    {'template_name': 'umklapp/login.html'},
+                    auth_views.LoginView.as_view(
+                    template_name = 'umklapp/login.html'),
                     name='auth_login'),
     url(r'^accounts/logout/$',
-                    auth_views.logout,
-                    {'template_name': 'umklapp/logout.html'},
+                    auth_views.LogoutView.as_view(
+                    template_name = 'umklapp/logout.html'),
                     name='auth_logout'),
     url(r'^accounts/password/change/$',
                     auth_views.password_change,

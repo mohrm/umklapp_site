@@ -76,7 +76,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrapform',
-    'registration',
+    'django_registration',
     'debug_toolbar'
 ]
 
