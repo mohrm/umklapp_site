@@ -15,7 +15,7 @@
 {% endif %}
 
 <div class="container">
- <form class="form-inline" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+ <form class="form-inline" method="post" action="{% url 'auth_login' %}">
  {% csrf_token %}
   <div class="form-group">
     <label class="sr-only" for="id_username">Benutzername</label>
