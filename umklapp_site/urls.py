@@ -10,6 +10,7 @@ admin.autodiscover()
 
 urlpatterns = [
 # http://www.voidynullness.net/blog/2014/01/15/raiders-of-the-lost-django-registration-templates/
+    url(r'^accounts/', include('django_registration.backends.one_step.urls')),
     url(r'^accounts/login/$',
                     auth_views.LoginView.as_view(
                     template_name = 'umklapp/login.html'),
@@ -39,15 +40,6 @@ urlpatterns = [
     url(r'^accounts/password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$',
                     auth_views.password_reset_confirm,
                     name='password_reset_confirm'),
-
-    #url(r'^accounts/', include('registration.backends.simple.urls')),
-    url(r'^accounts/register/$',
-                    RegistrationView.as_view(template_name='umklapp/registration_form.html'),
-                    name='registration_register'),
-    url(r'^accounts/register/closed/$',
-                    TemplateView.as_view(template_name='umklapp/registration_closed.html'),
-                    name='registration_disallowed'),
-
     url(r'^admin/', include(admin.site.urls)),
     url(r'', include('umklapp.urls')),
 ]
