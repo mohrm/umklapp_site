@@ -186,6 +186,9 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_URL = '/accounts/login/'
+
 LOGIN_REDIRECT_URL = '/'
 
 AUTOSKIP = datetime.timedelta(days=1)
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
