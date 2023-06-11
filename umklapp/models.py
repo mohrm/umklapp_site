@@ -121,7 +121,7 @@ class Story(models.Model):
         return self.parts().last()
 
     def participates_in(self, user):
-        if user.is_authenticated():
+        if user.is_authenticated:
             return self.tellers.filter(user=user).exists()
         else:
             return False
@@ -139,7 +139,7 @@ class Story(models.Model):
         return self.upvotes.count()
 
     def has_upvoted(self, user):
-        if user.is_authenticated():
+        if user.is_authenticated:
             return self.upvotes.filter(id=user.id).exists()
         else:
             return False

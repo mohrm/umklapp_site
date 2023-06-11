@@ -8,5 +8,5 @@ RUN cd /app && \
     ./manage.py migrate
 WORKDIR /app
 
-ENTRYPOINT ["./manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["./manage.py", "runserver", "0.0.0.0:8000", "--noreload"]
     
