@@ -1,4 +1,4 @@
-FROM docker.io/python:3.5.10-alpine3.12
+FROM docker.io/python:3.7.17-alpine3.18
 
 RUN mkdir /app
 COPY . /app
