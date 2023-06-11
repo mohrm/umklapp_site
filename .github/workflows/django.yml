@@ -27,4 +27,6 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        python manage.py test
+        coverage run --source='umklapp,umklapp_site' ./manage.py test -v2
+        coverage report --skip-covered --fail-under=92"
+
