@@ -204,7 +204,7 @@ def show_story(request, story_id):
 
         anonym = not s.participates_in(request.user)
 
-        if request.user.is_authenticated() and not request.user in s.read_by.all():
+        if request.user.is_authenticated and not request.user in s.read_by.all():
             s.read_by.add(request.user)
 
         context = {
