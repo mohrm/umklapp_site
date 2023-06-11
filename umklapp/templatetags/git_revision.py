@@ -6,10 +6,10 @@ register = template.Library()
 if 'OPENSHIFT_APP_NAME' in os.environ:
     OPENSHIFT_APP_NAME = os.environ['OPENSHIFT_APP_NAME']
     OPENSHIFT_HOMEDIR = os.environ['OPENSHIFT_HOMEDIR']
-    with open(os.path.join(OPENSHIFT_HOMEDIR, "git", OPENSHIFT_APP_NAME + ".git", "refs", "heads", "master")) as fh:
+    with open(os.path.join(OPENSHIFT_HOMEDIR, "git", OPENSHIFT_APP_NAME + ".git", "refs", "heads", "main")) as fh:
         GIT_REVISION = fh.read() or "unknown"
 else:
-    with open(os.path.join(".git", "refs", "heads", "master")) as fh:
+    with open(os.path.join(".git", "refs", "heads", "maim")) as fh:
         GIT_REVISION = fh.read() or "unknown"
 
 @register.simple_tag
