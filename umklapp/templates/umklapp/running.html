@@ -25,7 +25,7 @@
    </thead>
    <tbody>
     {% for s in running_stories %}
-     <tr {% if s.waiting_for = user %} class="actionable" {% endif %}>
+     <tr {% if s.waiting_for == user %} class="actionable" {% endif %}>
       <td class="ellipsis"><a class="tablelink" href="{% url 'show_story' story_id=s.id %}">{% if user in s.always_skip.all %}<small class="text-muted">{% endif %}{{ s.title }}{% if user in s.always_skip.all %}</small>{% endif %}</a></td>
       <td class="text-right">{{ s.parts_count }}</td>
       <td class="text-right">{{ s.active_count }}</td>
