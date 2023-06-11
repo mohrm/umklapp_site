@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import urlparse
+import urllib.parse
 import sys
 import logging
 import datetime
@@ -117,7 +117,7 @@ WSGI_APPLICATION = 'umklapp_site.wsgi.application'
 
 DATABASES = {}
 if 'OPENSHIFT_MYSQL_DB_URL' in os.environ:
-    url = urlparse.urlparse(os.environ.get('OPENSHIFT_MYSQL_DB_URL'))
+    url = urllib.parse.urlparse(os.environ.get('OPENSHIFT_MYSQL_DB_URL'))
 
     DATABASES['default'] = {
         'ENGINE' : 'django.db.backends.mysql',
