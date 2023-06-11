@@ -2,7 +2,7 @@
 
 from django.test import TestCase, Client
 from django.test.utils import override_settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from umklapp.models import *
 from umklapp.templatetags import git_revision
@@ -216,7 +216,7 @@ class ViewTests(UmklappTestCase):
             if i >= 3:
                 s.finish()
         c = Client()
-        r = c.post(reverse('django.contrib.auth.views.login'),
+        r = c.post(reverse('auth_login'),
             dict(username="user1", password="p455w0rd"), follow=True)
         with self.assertNumQueries(7):
             r = c.get(reverse("overview"))
@@ -233,7 +233,7 @@ class ViewTests(UmklappTestCase):
         self.assertEqual(r1.status_code, 200)
         assert("username" in r1.context['form'].fields)
         assert("password" in r1.context['form'].fields)
-        r2 = c.post(reverse('django.contrib.auth.views.login'),
+        r2 = c.post(reverse('auth_login'),
             dict(username="user1", password="p455w0rd"), follow=True)
         self.assertEqual(r2.status_code, 200)
         assert("my_new_finished_stories" in list(r2.context.keys()))
