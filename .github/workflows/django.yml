@@ -28,5 +28,5 @@ jobs:
     - name: Run Tests
       run: |
         coverage run --source='umklapp,umklapp_site' ./manage.py test -v2
-        coverage report --skip-covered --fail-under=92"
+        coverage report --skip-covered --fail-under=92
 
