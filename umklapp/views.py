@@ -87,7 +87,7 @@ def create_new_story(request):
             first_sentence = form.cleaned_data['firstSentence'],
             participating_users = users
             )
-        messages.success(request, u"Geschichte „%s“ gestartet" % s.title)
+        messages.success(request, "Geschichte „%s“ gestartet" % s.title)
         return redirect('overview')
     else:
         context = {
@@ -142,7 +142,7 @@ def continue_story(request, story_id):
             return redirect('show_story', story_id=s.id)
         else:
             s.continue_story(form.cleaned_data['nextSentence'])
-            messages.success(request, u"Geschichte „%s“ weitergeführt" % s.title)
+            messages.success(request, "Geschichte „%s“ weitergeführt" % s.title)
             return redirect('overview')
     else:
         context = {
@@ -164,9 +164,9 @@ def skip_always(request, story_id):
 
     try:
         s.set_always_skip(u)
-        messages.success(request, u"Du wirst nun automatisch übersprungen bei „%s“." % s.title)
+        messages.success(request, "Du wirst nun automatisch übersprungen bei „%s“." % s.title)
     except NotEnoughActivePlayers as e:
-        messages.success(request, u"Zuwenig aktive Spieler, als dass du überspringen kannst bei „%s“." % s.title)
+        messages.success(request, "Zuwenig aktive Spieler, als dass du überspringen kannst bei „%s“." % s.title)
     return redirect('overview')
 
 @login_required
@@ -180,7 +180,7 @@ def unskip_always(request, story_id):
     if s.is_finished:
         return HttpResponseBadRequest("Story already finished")
 
-    messages.success(request, u"Du schreibst wieder aktiv mit bei „%s“." % s.title)
+    messages.success(request, "Du schreibst wieder aktiv mit bei „%s“." % s.title)
     s.unset_always_skip(u)
     return redirect('overview')
 
@@ -265,7 +265,7 @@ def update_profile(request):
     form = UserUpdateForm(request.POST, instance=request.user)
     if form.is_valid():
         form.save()
-        messages.success(request, u"Daten gespeichert")
+        messages.success(request, "Daten gespeichert")
         return redirect('user_profile')
     else:
         context = {
@@ -307,7 +307,7 @@ def upvote_storypart(request, storypart_id):
     s = get_object_or_404(StoryPart.objects, id=storypart_id)
 
     if request.user == s.teller.user:
-        messages.warning(request, u"Du kannst deine eigenen Beiträge nicht upvoten.")
+        messages.warning(request, "Du kannst deine eigenen Beiträge nicht upvoten.")
         return redirect('show_story', story_id=s.teller.corresponding_story.id)
 
     s.upvote(request.user)

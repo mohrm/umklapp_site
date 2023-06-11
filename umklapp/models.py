@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -49,7 +49,7 @@ class Story(models.Model):
         firstPart = StoryPart(teller=t0, position=0, content=first_sentence)
         firstPart.save()
 
-        positions = range(1, len(participating_users)+1)
+        positions = list(range(1, len(participating_users)+1))
         for (u,p) in zip(participating_users, positions):
             t = Teller(user=u, corresponding_story=s, position=p)
             t.save()
