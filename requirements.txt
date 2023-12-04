@@ -1,4 +1,4 @@
-Django==4.2.7
+Django==5.0
 django-bootstrap-form==3.4
 django-registration==3.4
 django-debug-toolbar==4.2.0
