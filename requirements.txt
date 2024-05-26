@@ -1,3 +1,4 @@
+setuptools==70.0.0
 Django==5.0.6
 django-bootstrap-form==3.4
 django-registration==3.4
