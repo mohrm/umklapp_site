@@ -4,4 +4,4 @@ django-bootstrap-form==3.4
 django-registration==3.4
 django-debug-toolbar==4.3.0
 gunicorn==22.0.0
-coverage==7.5.3
+coverage==7.5.4
