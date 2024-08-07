@@ -1,5 +1,5 @@
 setuptools==72.1.0
-Django==5.0.8
+Django==5.1
 django-bootstrap-form==3.4
 django-registration==3.4
 django-debug-toolbar==4.4.6
