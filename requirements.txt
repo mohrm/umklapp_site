@@ -1,7 +1,7 @@
 setuptools==75.1.0
 Django==5.1.2
 django-bootstrap-form==3.4
-django-registration==3.4
+django-registration==5.1.0
 django-debug-toolbar==4.4.6
 gunicorn==23.0.0
 coverage==7.6.3
